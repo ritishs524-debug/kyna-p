@@ -1,5 +1,7 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../../lib/gsap'
+
+import { KynaSpinner } from '../../components/common/PageLoader'
 
 import chiropracticVideo from '../../assets/images/about-us/chiropractic.mp4'
 import cuppingVideo from '../../assets/images/about-us/cupping.mp4'
@@ -25,6 +27,25 @@ const mediaSpanPattern = ['row-span-2', 'row-span-3', 'row-span-2', 'row-span-4'
 
 export function AboutHeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const [loadedMap, setLoadedMap] = useState<Record<string, boolean>>({})
+
+	  // Fallback: ensure no tile spinner can get stuck forever (e.g. on hard refresh).
+	  // We also stagger the timeouts so, worst-case, tiles still appear one-by-one
+	  // instead of all popping in together after the same delay.
+	  useEffect(() => {
+	    const baseDelay = 3500 // ms
+	    const perTileStagger = 350 // ms
+
+	    const timeouts = aboutMedia.map((item, index) =>
+	      window.setTimeout(() => {
+	        setLoadedMap((prev) => (prev[item.src] ? prev : { ...prev, [item.src]: true }))
+	      }, baseDelay + index * perTileStagger),
+	    )
+
+	    return () => {
+	      timeouts.forEach((id) => window.clearTimeout(id))
+	    }
+	  }, [])
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -96,24 +117,47 @@ export function AboutHeroSection() {
 
 	        <div className="about-hero-media mt-4 w-full flex-1 lg:mt-0">
 	          <div className="grid h-full grid-flow-row-dense auto-rows-[82px] grid-cols-3 overflow-hidden rounded-3xl border border-slate-200/70 bg-slate-900/90 shadow-[0_22px_70px_rgba(15,23,42,0.7)] dark:border-slate-800/80 dark:bg-slate-950/90">
-            {aboutMedia.map((item, index) => {
-              const spanClass = mediaSpanPattern[index % mediaSpanPattern.length]
-              return (
-                <div key={item.src} className={`relative overflow-hidden ${spanClass}`}>
-                  <video
-                    className="h-full w-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                  >
-                    <source src={item.src} type="video/mp4" />
-                  </video>
-                </div>
-              )
-            })}
-          </div>
-        </div>
+	            {aboutMedia.map((item, index) => {
+	              const spanClass = mediaSpanPattern[index % mediaSpanPattern.length]
+	              const isLoaded = !!loadedMap[item.src]
+	
+	              return (
+	                <div key={item.src} className={`relative overflow-hidden ${spanClass}`}>
+	                  {!isLoaded && (
+	                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950">
+	                      <KynaSpinner size={40} />
+	                    </div>
+	                  )}
+	
+	                  <video
+	                    className={`h-full w-full object-cover transition-opacity duration-700 ${
+	                      isLoaded ? 'opacity-100' : 'opacity-0'
+	                    }`}
+	                    autoPlay
+	                    muted
+	                    loop
+	                    playsInline
+	                    preload="metadata"
+	                    onLoadedMetadata={() =>
+	                      setLoadedMap((prev) => ({
+	                        ...prev,
+	                        [item.src]: true,
+	                      }))
+	                    }
+	                    onError={() =>
+	                      setLoadedMap((prev) => ({
+	                        ...prev,
+	                        [item.src]: true,
+	                      }))
+	                    }
+	                  >
+	                    <source src={item.src} type="video/mp4" />
+	                  </video>
+	                </div>
+	              )
+	            })}
+	          </div>
+	        </div>
       </div>
     </section>
   )

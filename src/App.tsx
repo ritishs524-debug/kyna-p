@@ -1,16 +1,18 @@
 import './index.css'
-import { useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Header } from './components/layout/Header'
 import { Footer } from './components/layout/Footer'
-import { Home } from './pages/Home'
-import { AboutUs } from './pages/AboutUs'
-import { Services } from './pages/Services'
-import { Team } from './pages/Team'
-import { Contact } from './pages/Contact'
+import { PageLoader } from './components/common/PageLoader'
 
 type Theme = 'light' | 'dark'
 
 type Page = 'home' | 'about' | 'services' | 'team' | 'contact'
+
+const Home = lazy(() => import('./pages/Home.tsx').then((m) => ({ default: m.Home })))
+const AboutUs = lazy(() => import('./pages/AboutUs.tsx').then((m) => ({ default: m.AboutUs })))
+const Services = lazy(() => import('./pages/Services.tsx').then((m) => ({ default: m.Services })))
+const Team = lazy(() => import('./pages/Team.tsx').then((m) => ({ default: m.Team })))
+const Contact = lazy(() => import('./pages/Contact.tsx').then((m) => ({ default: m.Contact })))
 
 function getInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'dark'
@@ -65,13 +67,15 @@ function App() {
         currentPage={currentPage}
         onNavigate={setCurrentPage}
       />
-      <main className="pt-18">
-        {currentPage === 'home' && <Home />}
-        {currentPage === 'about' && <AboutUs />}
-        {currentPage === 'services' && <Services />}
-        {currentPage === 'team' && <Team />}
-        {currentPage === 'contact' && <Contact />}
-      </main>
+	      <main className="pt-18">
+	        <Suspense fallback={<PageLoader />}>
+	          {currentPage === 'home' && <Home />}
+	          {currentPage === 'about' && <AboutUs />}
+	          {currentPage === 'services' && <Services />}
+	          {currentPage === 'team' && <Team />}
+	          {currentPage === 'contact' && <Contact />}
+	        </Suspense>
+	      </main>
       <Footer onNavigate={setCurrentPage} />
     </div>
   )

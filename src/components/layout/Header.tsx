@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../../lib/gsap'
+import kynaLogo from '../../assets/logo/kyna_withoutbg-01.PNG'
 
 const navItems = ['Home', 'About Us', 'Services', 'Our Team', 'Contact'] as const
 
@@ -67,7 +68,7 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
             className="relative flex h-[3.5rem] w-[8rem] items-center focus:outline-none"
           >
             <img
-              src="/src/assets/logo/kyna_withoutbg-01.PNG"
+	              src={kynaLogo}
               alt="KYNA Physiotherapy — Intelligent Rehab Clinics"
               className="absolute left-0 top-1/2 h-[10rem] w-auto -translate-y-1/2 object-contain"
             />
