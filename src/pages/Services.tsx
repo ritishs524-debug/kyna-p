@@ -200,7 +200,7 @@ export function Services() {
 			                    muted
 			                    loop
 			                    playsInline
-			                    preload="metadata"
+					            preload="auto"
 			                    onLoadedMetadata={() =>
 			                      setLoadedMedia((prev) => ({
 			                        ...prev,

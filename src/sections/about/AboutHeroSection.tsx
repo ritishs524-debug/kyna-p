@@ -137,7 +137,7 @@ export function AboutHeroSection() {
 	                    muted
 	                    loop
 	                    playsInline
-	                    preload="metadata"
+					    preload="auto"
 	                    onLoadedMetadata={() =>
 	                      setLoadedMap((prev) => ({
 	                        ...prev,
