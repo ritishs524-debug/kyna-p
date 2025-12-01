@@ -114,11 +114,9 @@ export function HeroSection() {
       <div className="pointer-events-none hero-overlay absolute inset-0 z-10 bg-slate-100/10 dark:bg-slate-950/60" />
 
       <div className="relative z-20 mx-auto flex max-w-6xl flex-col gap-12 px-4 pb-20 pt-28 lg:flex-row lg:items-center lg:gap-16 lg:px-6 lg:pb-28 lg:pt-32">
-        <div className="max-w-xl space-y-6">
+	        <div className="max-w-xl space-y-6">
 	          <div className="hero-badge inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-sky-700 shadow-sm dark:bg-slate-900/80 dark:text-sky-300">
-	            Intelligent Rehab
-	            <span className="h-1 w-1 rounded-full bg-sky-400" />
-	            Patiala &amp; Samana Clinics
+	            Intelligent Rehab at KYNA
 	          </div>
 
           <div className="space-y-4">
@@ -148,7 +146,7 @@ export function HeroSection() {
           </div>
 
           <p className="text-xs font-medium uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">
-            Patiala • Samana
+            Patiala • Samana • Sangrur • Nabha
           </p>
         </div>
 

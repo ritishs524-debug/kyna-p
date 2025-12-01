@@ -1,7 +1,11 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
 
-export function AboutTeamCtaSection() {
+type AboutTeamCtaSectionProps = {
+  onNavigateToTeam?: () => void
+}
+
+export function AboutTeamCtaSection({ onNavigateToTeam }: AboutTeamCtaSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
@@ -36,6 +40,7 @@ export function AboutTeamCtaSection() {
             <div className="flex justify-center pt-2">
               <button
                 type="button"
+                onClick={() => onNavigateToTeam?.()}
                 className="rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-10 py-3 text-xs font-semibold uppercase tracking-[0.32em] text-white shadow-[0_18px_45px_rgba(56,189,248,0.55)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_rgba(56,189,248,0.75)]"
               >
                 Our Team

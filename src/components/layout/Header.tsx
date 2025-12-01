@@ -102,17 +102,6 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => setMobileOpen((v) => !v)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            className="inline-flex flex-col items-center justify-center gap-1 rounded-lg border border-slate-700/70 p-2 text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300 md:hidden"
-          >
-            <span className="block h-[2px] w-5 bg-current"></span>
-            <span className="block h-[2px] w-5 bg-current"></span>
-            <span className="block h-[2px] w-5 bg-current"></span>
-          </button>
-
-          <button
-            type="button"
             onClick={onToggleTheme}
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             className="relative flex h-8 w-16 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 px-1 text-[0.6rem] font-semibold tracking-[0.18em] text-slate-400 shadow-sm transition hover:border-sky-400 hover:text-sky-200"
@@ -141,6 +130,17 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
                 </svg>
               )}
             </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            className="inline-flex flex-col items-center justify-center gap-1 rounded-lg border border-slate-700/70 p-2 text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300 md:hidden"
+          >
+            <span className="block h-[2px] w-5 bg-current"></span>
+            <span className="block h-[2px] w-5 bg-current"></span>
+            <span className="block h-[2px] w-5 bg-current"></span>
           </button>
         </div>
       </div>

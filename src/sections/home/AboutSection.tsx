@@ -44,16 +44,16 @@ export function AboutSection() {
             with personalised, one-to-one guidance.
           </p>
           <ul className="mt-4 grid gap-2 text-base text-slate-800 sm:grid-cols-2 dark:text-slate-200">
-            <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400" />
+            <li className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-sky-400" />
               Whole-body, holistic assessment
             </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400" />
+            <li className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-sky-400" />
               Evidence-based treatment plans
             </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400" />
+            <li className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-sky-400" />
               Personalised follow-up and support
             </li>
             <li className="flex items-start gap-2">

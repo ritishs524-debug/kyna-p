@@ -90,9 +90,9 @@ export function AboutHeroSection() {
 
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-start gap-10 px-4 pb-20 pt-24 lg:flex-row lg:items-start lg:gap-16 lg:px-6 lg:pb-28">
         <div className="max-w-xl space-y-6">
-          <p className="about-hero-badge inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-sky-700 shadow-sm dark:bg-slate-900/80 dark:text-sky-300">
+          <p className="about-hero-badge inline-flex items-center gap-2 rounded-full bg-[#4b55ad] px-4 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-sky-50 shadow-sm shadow-[0_10px_26px_rgba(15,23,42,0.45)] dark:bg-[#4b55ad] dark:text-sky-50">
             We Are Highly Recommended
-            <span className="h-1 w-1 rounded-full bg-sky-400" />
+            <span className="h-1 w-1 rounded-full bg-sky-200" />
             Since Oct 2021
           </p>
 

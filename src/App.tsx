@@ -9,7 +9,7 @@ type Theme = 'light' | 'dark'
 type Page = 'home' | 'about' | 'services' | 'team' | 'contact'
 
 const Home = lazy(() => import('./pages/Home.tsx').then((m) => ({ default: m.Home })))
-const AboutUs = lazy(() => import('./pages/AboutUs.tsx').then((m) => ({ default: m.AboutUs })))
+	const AboutUs = lazy(() => import('./pages/AboutUs.tsx').then((m) => ({ default: m.AboutUs })))
 const Services = lazy(() => import('./pages/Services.tsx').then((m) => ({ default: m.Services })))
 const Team = lazy(() => import('./pages/Team.tsx').then((m) => ({ default: m.Team })))
 const Contact = lazy(() => import('./pages/Contact.tsx').then((m) => ({ default: m.Contact })))
@@ -59,23 +59,23 @@ function App() {
 	    window.localStorage.setItem('currentPage', currentPage)
 	  }, [currentPage])
 
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-50">
+	  return (
+	    <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-50">
       <Header
         theme={theme}
         onToggleTheme={toggleTheme}
         currentPage={currentPage}
         onNavigate={setCurrentPage}
       />
-	      <main className="pt-18">
-	        <Suspense fallback={<PageLoader />}>
-	          {currentPage === 'home' && <Home />}
-	          {currentPage === 'about' && <AboutUs />}
-	          {currentPage === 'services' && <Services />}
-	          {currentPage === 'team' && <Team />}
-	          {currentPage === 'contact' && <Contact />}
-	        </Suspense>
-	      </main>
+			      <main className="pt-18">
+			        <Suspense fallback={<PageLoader />}>
+          {currentPage === 'home' && <Home onNavigate={setCurrentPage} />}
+			          {currentPage === 'about' && <AboutUs onNavigate={setCurrentPage} />}
+			          {currentPage === 'services' && <Services />}
+			          {currentPage === 'team' && <Team />}
+			          {currentPage === 'contact' && <Contact />}
+			        </Suspense>
+			      </main>
       <Footer onNavigate={setCurrentPage} />
     </div>
   )

@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased font-sans dark:bg-slate-950 dark:text-slate-50;
+	    @apply bg-white text-slate-900 antialiased font-sans dark:bg-slate-950 dark:text-slate-50;
   }
 }
 
@@ -52,5 +52,31 @@
 @keyframes kyna-shimmer {
   to {
     transform: translateX(100%);
+  }
+}
+
+/* Home services section – infinite horizontal marquee on desktop */
+.services-marquee-viewport {
+  overflow: hidden;
+}
+
+.services-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: services-marquee 45s linear infinite;
+}
+
+@keyframes services-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-marquee-track {
+    animation: none;
   }
 }

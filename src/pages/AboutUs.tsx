@@ -4,14 +4,22 @@ import { AboutTherapiesSection } from '../sections/about/AboutTherapiesSection'
 import { AboutValuesSection } from '../sections/about/AboutValuesSection'
 import { AboutTeamCtaSection } from '../sections/about/AboutTeamCtaSection'
 
-export function AboutUs() {
+type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
+
+type AboutUsProps = {
+  onNavigate?: (page: PageLabel) => void
+}
+
+export function AboutUs({ onNavigate }: AboutUsProps) {
   return (
     <div className="flex flex-col gap-0 pb-4 lg:pb-6">
       <AboutHeroSection />
       <AboutStorySection />
       <AboutTherapiesSection />
       <AboutValuesSection />
-      <AboutTeamCtaSection />
+      <AboutTeamCtaSection
+        onNavigateToTeam={onNavigate ? () => onNavigate('team') : undefined}
+      />
     </div>
   )
 }

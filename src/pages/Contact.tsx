@@ -76,11 +76,11 @@ export function Contact() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(148,163,184,0.18),_transparent_70%)]" />
 
 	      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 lg:px-6">
-	        {/* Top intro */}
-	        <div className="contact-hero mb-12 space-y-4 text-center">
-	          <p className="inline-flex items-center justify-center gap-2 rounded-full bg-white/90 px-5 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-sky-700 shadow-sm dark:bg-slate-900/80 dark:text-sky-300">
-	            Contact Us
-	          </p>
+        {/* Top intro */}
+        <div className="contact-hero mb-12 space-y-4 text-center">
+          <p className="inline-flex items-center justify-center gap-2 rounded-full bg-[#4b55ad] px-5 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-sky-50 shadow-sm shadow-[0_10px_26px_rgba(15,23,42,0.45)] dark:bg-[#4b55ad] dark:text-sky-50">
+            Contact Us
+          </p>
           <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
             Have a Question?
           </h1>
@@ -97,7 +97,7 @@ export function Contact() {
               className="contact-location-card flex h-full flex-col justify-between rounded-3xl border border-slate-200/80 bg-white/95 p-5 text-sm shadow-[0_18px_55px_rgba(15,23,42,0.12)] dark:border-slate-800/80 dark:bg-slate-900/90"
             >
               <div className="space-y-2">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-sky-500 dark:text-sky-300">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-[#4b55ad] dark:text-sky-200">
                   {loc.name}
                 </p>
                 <p className="text-slate-700 dark:text-slate-300">{loc.address}</p>
@@ -106,7 +106,7 @@ export function Contact() {
               <div className="mt-4 flex flex-wrap gap-2 text-[0.7rem]">
                 <a
                   href="tel:9878182115"
-                  className="rounded-full border border-sky-400/80 px-3 py-1.5 font-semibold uppercase tracking-[0.24em] text-sky-600 transition hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-900 dark:text-sky-200 dark:hover:bg-slate-800"
+                  className="rounded-full border border-[#4b55ad] px-3 py-1.5 font-semibold uppercase tracking-[0.24em] text-[#4b55ad] transition hover:-translate-y-0.5 hover:border-[#4b55ad] hover:bg-[#4b55ad] hover:text-white dark:border-sky-400/80 dark:text-sky-200 dark:hover:bg-slate-800"
                 >
                   Call Clinic
                 </a>

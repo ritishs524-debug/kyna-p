@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../lib/gsap'
 import { KynaSpinner } from '../components/common/PageLoader'
 
@@ -110,6 +110,24 @@ export function Services() {
   const sectionRef = useRef<HTMLElement | null>(null)
 	  const [loadedMedia, setLoadedMedia] = useState<Record<string, boolean>>({})
 
+	  // Fallback so that no card loader stays stuck forever
+	  // (e.g. very slow connection or blocked media request).
+	  useEffect(() => {
+	    const timeoutId = window.setTimeout(() => {
+	      setLoadedMedia((prev) => {
+	        const next: Record<string, boolean> = { ...prev }
+	        for (const service of services) {
+	          if (!next[service.id]) {
+	            next[service.id] = true
+	          }
+	        }
+	        return next
+	      })
+	    }, 4500)
+
+	    return () => window.clearTimeout(timeoutId)
+	  }, [])
+
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from('.services-hero', {
@@ -159,11 +177,11 @@ export function Services() {
         </div>
 
 		        <div className="grid gap-8 md:grid-cols-2 md:gap-10">
-		          {services.map((service) => (
+          {services.map((service) => (
             <article
               id={'service-' + service.id}
               key={service.id}
-              className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90"
+              className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
             >
 			              <div className="relative overflow-hidden rounded-3xl rounded-b-none">
 			                {!loadedMedia[service.id] && (
@@ -171,62 +189,53 @@ export function Services() {
 			                    <KynaSpinner size={40} />
 			                  </div>
 			                )}
-			                {service.mediaType === 'image' ? (
-			                  <img
-			                    src={service.mediaSrc}
-			                    alt={service.title}
-			                    onLoad={() =>
-			                      setLoadedMedia((prev) => ({
-			                        ...prev,
-			                        [service.id]: true,
-			                      }))
-			                    }
-			                    onError={() =>
-			                      setLoadedMedia((prev) => ({
-			                        ...prev,
-			                        [service.id]: true,
-			                      }))
-			                    }
-			                    className={`h-52 w-full object-cover transition-opacity duration-700 ease-out group-hover:scale-105 group-hover:brightness-110 md:h-64 ${
-			                      loadedMedia[service.id] ? 'opacity-100' : 'opacity-0'
-			                    }`}
-			                  />
-			                ) : (
-			                  <video
-			                    className={`h-52 w-full object-cover transition-opacity duration-700 md:h-64 ${
-			                      loadedMedia[service.id] ? 'opacity-100' : 'opacity-0'
-			                    }`}
-			                    autoPlay
-			                    muted
-			                    loop
-			                    playsInline
-			                    preload="auto"
-			                    disablePictureInPicture
-			                    disableRemotePlayback
-			                    onCanPlay={(event) => {
-			                      const video = event.currentTarget
-			                      if (video.paused) {
-			                        void video.play().catch(() => {
-			                          // Ignore autoplay errors; card media stays gracefully paused.
-			                        })
-			                      }
-			                    }}
-			                    onLoadedMetadata={() =>
-			                      setLoadedMedia((prev) => ({
-			                        ...prev,
-			                        [service.id]: true,
-			                      }))
-			                    }
-			                    onError={() =>
-			                      setLoadedMedia((prev) => ({
-			                        ...prev,
-			                        [service.id]: true,
-			                      }))
-			                    }
-			                  >
-			                    <source src={service.mediaSrc} type="video/mp4" />
-			                  </video>
-			                )}
+                {service.mediaType === 'image' ? (
+                  <img
+                    src={service.mediaSrc}
+                    alt={service.title}
+                    loading="lazy"
+                    onLoad={() =>
+                      setLoadedMedia((prev) => ({
+                        ...prev,
+                        [service.id]: true,
+                      }))
+                    }
+                    onError={() =>
+                      setLoadedMedia((prev) => ({
+                        ...prev,
+                        [service.id]: true,
+                      }))
+                    }
+                    className={`h-52 w-full object-cover transition-opacity duration-700 ease-out group-hover:scale-105 group-hover:brightness-110 md:h-64 ${
+                      loadedMedia[service.id] ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  />
+                ) : (
+                  <video
+                    className={`h-52 w-full object-cover transition-opacity duration-700 md:h-64 ${
+                      loadedMedia[service.id] ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    muted
+                    playsInline
+                    preload="metadata"
+                    disablePictureInPicture
+                    disableRemotePlayback
+                    onLoadedMetadata={() =>
+                      setLoadedMedia((prev) => ({
+                        ...prev,
+                        [service.id]: true,
+                      }))
+                    }
+                    onError={() =>
+                      setLoadedMedia((prev) => ({
+                        ...prev,
+                        [service.id]: true,
+                      }))
+                    }
+                  >
+                    <source src={service.mediaSrc} type="video/mp4" />
+                  </video>
+                )}
 			
 		                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-transparent" />
 		
