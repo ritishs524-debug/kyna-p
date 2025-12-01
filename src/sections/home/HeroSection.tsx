@@ -91,12 +91,23 @@ export function HeroSection() {
       className="relative min-h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50"
     >
       <video
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
+	        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+	        autoPlay
+	        muted
+	        loop
+	        playsInline
+	        preload="auto"
+	        disablePictureInPicture
+	        disableRemotePlayback
+	        onCanPlay={(event) => {
+	          const video = event.currentTarget
+	          if (video.paused) {
+	            void video.play().catch(() => {
+	              // Autoplay might be blocked by the browser; safely ignore.
+	            })
+	          }
+	        }}
+	      >
         <source src={homePageVideo} type="video/mp4" />
       </video>
 
@@ -104,11 +115,11 @@ export function HeroSection() {
 
       <div className="relative z-20 mx-auto flex max-w-6xl flex-col gap-12 px-4 pb-20 pt-28 lg:flex-row lg:items-center lg:gap-16 lg:px-6 lg:pb-28 lg:pt-32">
         <div className="max-w-xl space-y-6">
-          <div className="hero-badge inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-sky-700 shadow-sm dark:bg-slate-900/80 dark:text-sky-300">
-            Intelligent Rehab
-            <span className="h-1 w-1 rounded-full bg-sky-400" />
-            Punjab Clinics
-          </div>
+	          <div className="hero-badge inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-sky-700 shadow-sm dark:bg-slate-900/80 dark:text-sky-300">
+	            Intelligent Rehab
+	            <span className="h-1 w-1 rounded-full bg-sky-400" />
+	            Patiala &amp; Samana Clinics
+	          </div>
 
           <div className="space-y-4">
             <h1 className="hero-heading text-balance text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl dark:text-slate-50">

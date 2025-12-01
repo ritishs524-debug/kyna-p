@@ -200,7 +200,17 @@ export function Services() {
 			                    muted
 			                    loop
 			                    playsInline
-					            preload="auto"
+			                    preload="auto"
+			                    disablePictureInPicture
+			                    disableRemotePlayback
+			                    onCanPlay={(event) => {
+			                      const video = event.currentTarget
+			                      if (video.paused) {
+			                        void video.play().catch(() => {
+			                          // Ignore autoplay errors; card media stays gracefully paused.
+			                        })
+			                      }
+			                    }}
 			                    onLoadedMetadata={() =>
 			                      setLoadedMedia((prev) => ({
 			                        ...prev,

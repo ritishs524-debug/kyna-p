@@ -129,28 +129,38 @@ export function AboutHeroSection() {
 	                    </div>
 	                  )}
 	
-	                  <video
-	                    className={`h-full w-full object-cover transition-opacity duration-700 ${
-	                      isLoaded ? 'opacity-100' : 'opacity-0'
-	                    }`}
-	                    autoPlay
-	                    muted
-	                    loop
-	                    playsInline
-					    preload="auto"
-	                    onLoadedMetadata={() =>
-	                      setLoadedMap((prev) => ({
-	                        ...prev,
-	                        [item.src]: true,
-	                      }))
-	                    }
-	                    onError={() =>
-	                      setLoadedMap((prev) => ({
-	                        ...prev,
-	                        [item.src]: true,
-	                      }))
-	                    }
-	                  >
+			              <video
+			                className={`h-full w-full object-cover transition-opacity duration-700 ${
+			                  isLoaded ? 'opacity-100' : 'opacity-0'
+			                }`}
+			                autoPlay
+			                muted
+			                loop
+			                playsInline
+			                preload="auto"
+			                disablePictureInPicture
+			                disableRemotePlayback
+			                onCanPlay={(event) => {
+			                  const video = event.currentTarget
+			                  if (video.paused) {
+			                    void video.play().catch(() => {
+			                      // Ignore autoplay errors; video will remain muted background.
+			                    })
+			                  }
+			                }}
+			                onLoadedMetadata={() =>
+			                  setLoadedMap((prev) => ({
+			                    ...prev,
+			                    [item.src]: true,
+			                  }))
+			                }
+			                onError={() =>
+			                  setLoadedMap((prev) => ({
+			                    ...prev,
+			                    [item.src]: true,
+			                  }))
+			                }
+			              >
 	                    <source src={item.src} type="video/mp4" />
 	                  </video>
 	                </div>

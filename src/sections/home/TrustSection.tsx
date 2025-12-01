@@ -4,8 +4,8 @@ import { gsap } from '../../lib/gsap'
 const stats = [
   {
     label: 'Patients treated',
-    value: '1,00,000+',
-    numericValue: 100000,
+	    value: '99,999+',
+	    numericValue: 99999,
   },
   {
     label: 'Clinics across Punjab',

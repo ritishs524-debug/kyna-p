@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { gsap } from '../../lib/gsap'
 
 const services = [
   'Physiotherapy',
@@ -17,6 +18,57 @@ export function ServicesSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+
+	  useLayoutEffect(() => {
+	    const ctx = gsap.context(() => {
+	      gsap.from('.services-heading', {
+	        opacity: 0,
+	        y: 28,
+	        duration: 0.8,
+	        ease: 'power3.out',
+	      })
+
+	      gsap.from('.services-card', {
+	        opacity: 0,
+	        y: 32,
+	        scale: 0.96,
+	        duration: 0.9,
+	        ease: 'power3.out',
+	        stagger: 0.16,
+	        scrollTrigger: {
+	          trigger: sectionRef.current,
+	          start: 'top 75%',
+	        },
+	      })
+	    }, sectionRef)
+
+	    return () => ctx.revert()
+	  }, [])
+
+	  useEffect(() => {
+	    const ctx = gsap.context(() => {
+	      gsap.fromTo(
+	        '.service-card--active',
+	        {
+	          opacity: 0,
+	          y: 20,
+	          scale: 0.95,
+	          filter: 'blur(6px)',
+	        },
+	        {
+	          opacity: 1,
+	          y: 0,
+	          scale: 1,
+	          filter: 'blur(0px)',
+	          duration: 0.6,
+	          ease: 'power3.out',
+	          clearProps: 'transform,opacity,filter',
+	        },
+	      )
+	    }, sectionRef)
+
+	    return () => ctx.revert()
+	  }, [activeIndex])
 
 	  const goToPrevious = () => {
 	    setActiveIndex((prev) => (prev - 1 + services.length) % services.length)
@@ -49,11 +101,11 @@ export function ServicesSection() {
       <div className="pointer-events-none absolute inset-0 z-10 bg-white/65 dark:bg-slate-950/70" />
 
       <div className="relative z-20 mx-auto max-w-6xl px-4 py-20 lg:px-6">
-        <div className="mb-10 space-y-3 text-center">
+	        <div className="mb-10 space-y-3 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-300">
             What We Offer
           </p>
-          <h2 className="text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-50">
+	          <h2 className="services-heading text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-50">
             Services at KYNA Physiotherapy
           </h2>
           <p className="text-[0.7rem] text-slate-500 sm:text-xs dark:text-slate-400">About our services</p>
@@ -63,15 +115,15 @@ export function ServicesSection() {
           </p>
         </div>
 
-	        <div
-	          className="space-y-6"
-	          onMouseEnter={() => setIsPaused(true)}
-	          onMouseLeave={() => setIsPaused(false)}
-	        >
+		        <div
+		          className="space-y-6"
+		          onMouseEnter={() => setIsPaused(true)}
+		          onMouseLeave={() => setIsPaused(false)}
+		        >
 	          <div className="flex items-stretch justify-center sm:hidden">
 	            <button
 	              type="button"
-	              className="service-card group relative flex w-full max-w-xs flex-row items-start gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-5 text-left text-sm shadow-[0_18px_50px_rgba(15,23,42,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90"
+		              className="services-card service-card service-card--active group relative flex w-full max-w-xs flex-row items-start gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-5 text-left text-sm shadow-[0_18px_50px_rgba(15,23,42,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90"
 	            >
 	              <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#4b55ad] to-sky-500 text-[0.8rem] font-bold text-white shadow-[0_10px_28px_rgba(56,189,248,0.55)]">
 	                ☆
@@ -90,19 +142,23 @@ export function ServicesSection() {
 	            </button>
 	          </div>
 
-	          <div className="hidden items-stretch justify-center gap-4 sm:flex sm:gap-6">
+		          <div className="hidden items-stretch justify-center gap-4 sm:flex sm:gap-6">
             {[-1, 0, 1].map((offset) => {
               const index = (activeIndex + offset + services.length) % services.length
               const name = services[index]
               const isActive = offset === 0
 
-              return (
-                <button
-                  key={offset}
-                  type="button"
-                  onClick={() => setActiveIndex(index)}
-                  className={`service-card group relative flex w-full max-w-xs flex-row items-start gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-5 text-left text-sm shadow-[0_18px_50px_rgba(15,23,42,0.18)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(15,23,42,0.28)] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90 ${isActive ? 'ring-1 ring-sky-400/60' : ''}`}
-                >
+		              return (
+		                <button
+		                  key={offset}
+		                  type="button"
+		                  onClick={() => setActiveIndex(index)}
+		                  className={`services-card service-card group relative flex w-full max-w-xs flex-row items-start gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-5 text-left text-sm shadow-[0_18px_50px_rgba(15,23,42,0.18)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(15,23,42,0.28)] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90 ${
+		                    isActive
+		                      ? 'service-card--active ring-1 ring-sky-400/60 shadow-[0_26px_80px_rgba(15,23,42,0.32)]'
+		                      : 'service-card--inactive opacity-75'
+		                  }`}
+		                >
                   <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#4b55ad] to-sky-500 text-[0.8rem] font-bold text-white shadow-[0_10px_28px_rgba(56,189,248,0.55)]">☆</div>
                   <div className="space-y-2">
                     <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{name}</p>
