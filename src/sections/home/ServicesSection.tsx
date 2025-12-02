@@ -86,9 +86,19 @@ type ServicesSectionProps = {
 	  const sectionRef = useRef<HTMLElement | null>(null)
 	  const [isPaused, setIsPaused] = useState(false)
 
-	  // Intro animation for heading + whole carousel (not individual cards)
+	  // Intro animation for heading + whole carousel (desktop only for performance)
 	  useLayoutEffect(() => {
 	    const ctx = gsap.context(() => {
+	      const prefersReducedMotion =
+	        typeof window !== 'undefined' &&
+	        window.matchMedia &&
+	        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+	      const isMobile =
+	        typeof window !== 'undefined' &&
+	        window.matchMedia &&
+	        window.matchMedia('(max-width: 639px)').matches
+
 	      gsap.from('.services-heading', {
 	        opacity: 0,
 	        y: 28,
@@ -96,16 +106,19 @@ type ServicesSectionProps = {
 	        ease: 'power3.out',
 	      })
 
-	      gsap.from('.services-carousel', {
-	        opacity: 0,
-	        y: 30,
-	        duration: 0.9,
-	        ease: 'power3.out',
-	        scrollTrigger: {
-	          trigger: sectionRef.current,
-	          start: 'top 75%',
-	        },
-	      })
+	      // Scroll-triggered animation only on larger screens to avoid jank on mobile
+	      if (!prefersReducedMotion && !isMobile) {
+	        gsap.from('.services-carousel', {
+	          opacity: 0,
+	          y: 30,
+	          duration: 0.9,
+	          ease: 'power3.out',
+	          scrollTrigger: {
+	            trigger: sectionRef.current,
+	            start: 'top 75%',
+	          },
+	        })
+	      }
 	    }, sectionRef)
 
 	    return () => ctx.revert()
@@ -158,17 +171,17 @@ type ServicesSectionProps = {
 	          </p>
 	        </div>
 
-	        {/* MOBILE: horizontally scrollable row of cards */}
+	        {/* MOBILE: auto-scrolling marquee of cards (infinite loop) */}
 	        <div className="sm:hidden">
-	          <div className="services-carousel -mx-4 overflow-x-auto px-1 pb-3 pt-1">
-	            <div className="flex gap-4 px-3">
-              {services.map((service) => (
-                <button
-                  key={service.id}
-                  type="button"
-                  onClick={() => handleNavigateToService(service.id)}
-                  className="services-card service-card group flex h-[290px] min-w-[240px] max-w-[260px] flex-1 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-4 text-left text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-                >
+	          <div className="services-carousel services-marquee-viewport-mobile pb-4 pt-1">
+	            <div className="services-marquee-track-mobile">
+	              {[...services, ...services].map((service, index) => (
+	                <button
+	                  key={`${service.id}-mobile-${index}`}
+	                  type="button"
+	                  onClick={() => handleNavigateToService(service.id)}
+		                  className="services-card service-card group flex h-[280px] w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-4 text-left text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
+	                >
 	                  <div className="mb-3 h-24 w-full overflow-hidden rounded-2xl bg-slate-100/90 dark:bg-slate-800/80">
 	                    {service.mediaType === 'image' ? (
 	                      <img

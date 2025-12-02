@@ -76,7 +76,33 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .services-marquee-track {
-    animation: none;
-  }
+	  .services-marquee-track,
+	  .services-marquee-track-mobile {
+	    animation: none;
+	  }
+}
+
+/* Home services section – auto-scrolling marquee on mobile */
+@media (max-width: 639px) {
+	  .services-marquee-viewport-mobile {
+	    overflow: hidden;
+		    padding-left: 0; /* edge-to-edge cards on mobile */
+		    padding-right: 0;
+	  }
+
+	  .services-marquee-track-mobile {
+	    display: flex;
+	    width: max-content;
+	    gap: 1rem;
+	    animation: services-marquee-mobile 40s linear infinite;
+	  }
+}
+
+@keyframes services-marquee-mobile {
+	  0% {
+	    transform: translateX(-50%);
+	  }
+	  100% {
+	    transform: translateX(0);
+	  }
 }

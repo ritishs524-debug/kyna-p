@@ -20,7 +20,7 @@ export function Home({ onNavigate }: HomeProps) {
       <AboutSection />
       <ServicesSection onNavigate={onNavigate} />
       <TeamPreviewSection />
-      <LocationsSection />
+      <LocationsSection onNavigate={onNavigate} />
       <FinalCtaSection />
     </div>
   )
