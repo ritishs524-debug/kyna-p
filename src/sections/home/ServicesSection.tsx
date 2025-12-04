@@ -1,80 +1,48 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../../lib/gsap'
 
-// Re-use the same media used on the Services page for each topic
-import physiotherapyImg from '../../assets/images/services/1. pyhsiotherapy.jpg'
-import osteopathyVideo from '../../assets/images/services/2. osteopathy.mp4'
-import chiropracticImg from '../../assets/images/services/3. chiropractic.jpg'
-import exerciseTherapyVideo from '../../assets/images/services/4. exercise therapy.mp4'
-import manualTherapyImg from '../../assets/images/services/5. manual pyhsical therapy.jpg'
-import womensHealthVideo from '../../assets/images/services/6. woman healyh physiotherapy.mp4'
-import pelvicFloorImg from '../../assets/images/services/7. Pelvic Floor Rehabilitation.jpg'
-import fallsPreventionVideo from '../../assets/images/services/8.  Evidence-Based Falls Prevention.mp4'
-import homePhysioImg from '../../assets/images/services/9 Physiotherapy at Home.jpg'
-import childbirthEducationVideo from '../../assets/images/services/10 . Childbirth Education.mp4'
-
 type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
 
-const services = [
+	const services = [
 	  {
 	    id: 'physiotherapy',
 	    name: 'Physiotherapy',
-	    mediaType: 'image' as const,
-	    mediaSrc: physiotherapyImg,
 	  },
 	  {
 	    id: 'osteopathy',
 	    name: 'Osteopathy (Cranial and Visceral)',
-	    mediaType: 'video' as const,
-	    mediaSrc: osteopathyVideo,
 	  },
 	  {
 	    id: 'chiropractic',
 	    name: 'Chiropractic',
-	    mediaType: 'image' as const,
-	    mediaSrc: chiropracticImg,
 	  },
 	  {
 	    id: 'exercise-therapy',
 	    name: 'Exercise Therapy',
-	    mediaType: 'video' as const,
-	    mediaSrc: exerciseTherapyVideo,
 	  },
 	  {
 	    id: 'manual-therapy',
 	    name: 'Manual Physical Therapy',
-	    mediaType: 'image' as const,
-	    mediaSrc: manualTherapyImg,
 	  },
 	  {
 	    id: 'womens-health',
 	    name: "Women's Health Physiotherapy",
-	    mediaType: 'video' as const,
-	    mediaSrc: womensHealthVideo,
 	  },
 	  {
 	    id: 'pelvic-floor',
 	    name: 'Pelvic Floor Rehabilitation',
-	    mediaType: 'image' as const,
-	    mediaSrc: pelvicFloorImg,
 	  },
 	  {
 	    id: 'falls-prevention',
 	    name: 'Evidence-Based Falls Prevention',
-	    mediaType: 'video' as const,
-	    mediaSrc: fallsPreventionVideo,
 	  },
 	  {
 	    id: 'home-physiotherapy',
 	    name: 'Physiotherapy at Home',
-	    mediaType: 'image' as const,
-	    mediaSrc: homePhysioImg,
 	  },
 	  {
 	    id: 'antenatal-education',
 	    name: 'Antenatal / Childbirth Education',
-	    mediaType: 'video' as const,
-	    mediaSrc: childbirthEducationVideo,
 	  },
 	] as const
 
@@ -181,23 +149,8 @@ type ServicesSectionProps = {
 	                  type="button"
 	                  onClick={() => handleNavigateToService(service.id)}
 		                  className="services-card service-card group flex h-[280px] w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-4 text-left text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-	                >
-	                  <div className="mb-3 h-24 w-full overflow-hidden rounded-2xl bg-slate-100/90 dark:bg-slate-800/80">
-	                    {service.mediaType === 'image' ? (
-	                      <img
-	                        src={service.mediaSrc}
-	                        alt={service.name}
-	                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-	                      />
-	                    ) : (
-	                      <video
-	                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-	                        preload="metadata"
-	                      >
-	                        <source src={service.mediaSrc} type="video/mp4" />
-	                      </video>
-	                    )}
-	                  </div>
+		                >
+		                  <div className="mb-3 h-24 w-full rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950" />
 	                  <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
 	                    {service.name}
 	                  </p>
@@ -233,23 +186,8 @@ type ServicesSectionProps = {
                   type="button"
                   onClick={() => handleNavigateToService(service.id)}
                   className="services-card service-card group flex h-[290px] w-60 flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-5 text-left text-sm transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-950/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-                >
-	                <div className="mb-4 h-28 w-full overflow-hidden rounded-2xl bg-slate-100/90 dark:bg-slate-800/80">
-	                  {service.mediaType === 'image' ? (
-	                    <img
-	                      src={service.mediaSrc}
-	                      alt={service.name}
-	                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-	                    />
-	                  ) : (
-	                    <video
-	                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-	                      preload="metadata"
-	                    >
-	                      <source src={service.mediaSrc} type="video/mp4" />
-	                    </video>
-	                  )}
-	                </div>
+		                >
+		                <div className="mb-4 h-28 w-full rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950" />
 	                <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
 	                  {service.name}
 	                </p>

@@ -89,35 +89,36 @@ export function Contact() {
           </p>
         </div>
 
-        {/* Locations row */}
-        <div className="mb-12 grid gap-6 md:grid-cols-3">
-          {locations.map((loc) => (
-            <article
-              key={loc.name}
-              className="contact-location-card flex h-full flex-col justify-between rounded-3xl border border-slate-200/80 bg-white/95 p-5 text-sm shadow-[0_18px_55px_rgba(15,23,42,0.12)] dark:border-slate-800/80 dark:bg-slate-900/90"
-            >
-              <div className="space-y-2">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-[#4b55ad] dark:text-sky-200">
-                  {loc.name}
-                </p>
-                <p className="text-slate-700 dark:text-slate-300">{loc.address}</p>
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-2 text-[0.7rem]">
-                <a
-                  href="tel:9878182115"
-                  className="rounded-full border border-[#4b55ad] px-3 py-1.5 font-semibold uppercase tracking-[0.24em] text-[#4b55ad] transition hover:-translate-y-0.5 hover:border-[#4b55ad] hover:bg-[#4b55ad] hover:text-white dark:border-sky-400/80 dark:text-sky-200 dark:hover:bg-slate-800"
-                >
-                  Call Clinic
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {/* Contact form */}
-        <div className="contact-form-card mx-auto max-w-4xl rounded-[2.5rem] bg-white/95 p-8 shadow-[0_26px_80px_rgba(15,23,42,0.18)] backdrop-blur dark:bg-slate-900/95">
-          <form onSubmit={handleSubmit} className="space-y-6">
+	        {/* Locations row */}
+	        <div className="mb-12 grid gap-6 md:grid-cols-3">
+	          {locations.map((loc) => (
+	            <article
+	              key={loc.name}
+	              className="contact-location-card flex h-full flex-col justify-between rounded-3xl border border-slate-200/80 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-5 text-sm text-slate-900 shadow-[0_20px_60px_rgba(15,23,42,0.18)] dark:border-slate-800/80 dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 dark:text-slate-50"
+	            >
+	              <div className="space-y-2">
+	                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-sky-700 dark:text-sky-300">
+	                  {loc.name}
+	                </p>
+	                <p className="text-slate-600 dark:text-slate-200/90">{loc.address}</p>
+	              </div>
+	
+	              <div className="mt-4 flex flex-wrap gap-2 text-[0.7rem]">
+	                <a
+	                  href="tel:9878182115"
+	                  className="rounded-full border border-sky-500/60 bg-white/80 px-3 py-1.5 font-semibold uppercase tracking-[0.24em] text-sky-700 shadow-[0_14px_35px_rgba(15,23,42,0.22)] transition hover:-translate-y-0.5 hover:border-sky-500 hover:bg-gradient-to-r hover:from-[#4b55ad] hover:to-sky-500 hover:text-white dark:border-sky-400/70 dark:bg-slate-900/80 dark:text-sky-100 dark:hover:border-sky-300 dark:hover:bg-gradient-to-r dark:hover:from-[#4b55ad] dark:hover:to-sky-500"
+	                >
+	                  Call Clinic
+	                </a>
+	              </div>
+	            </article>
+	          ))}
+	        </div>
+	
+	        {/* Contact form */}
+	        <div className="contact-form-card mx-auto max-w-4xl rounded-[2.5rem] bg-gradient-to-br from-[#020617] via-[#0f172a] to-sky-500/90 p-[1px] shadow-[0_32px_95px_rgba(15,23,42,0.7)]">
+	          <div className="rounded-[2.4rem] bg-white/98 px-6 py-7 shadow-[0_12px_40px_rgba(15,23,42,0.18)] backdrop-blur-sm sm:px-8 sm:py-8 dark:bg-slate-950/95">
+	            <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -156,8 +157,8 @@ export function Contact() {
               />
             </div>
 
-            <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
-              <p className="text-[0.7rem] text-slate-500 dark:text-slate-400">
+	            <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
+	              <p className="text-[0.7rem] text-slate-500 dark:text-slate-400">
                 We typically respond within the same working day.
               </p>
               <button
@@ -165,11 +166,12 @@ export function Contact() {
                 disabled={isSubmitting}
                 className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_18px_45px_rgba(56,189,248,0.55)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_rgba(56,189,248,0.75)] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </button>
-            </div>
-          </form>
-        </div>
+	                {isSubmitting ? 'Sending...' : 'Send Message'}
+	              </button>
+	            </div>
+	          </form>
+	          </div>
+	        </div>
       </div>
     </section>
   )

@@ -41,8 +41,8 @@ export function AboutStorySection() {
           </p>
         </div>
 
-        <div className="about-story-col grid gap-6 md:grid-cols-3">
-          <article className="h-full rounded-3xl border border-slate-200/80 bg-slate-50/80 p-6 text-sm shadow-[0_18px_55px_rgba(15,23,42,0.12)] dark:border-slate-800/80 dark:bg-slate-900/80">
+	        <div className="about-story-col grid gap-6 md:grid-cols-3">
+	          <article className="h-full rounded-3xl border border-sky-100/90 bg-gradient-to-b from-sky-50/95 via-white to-sky-100/90 p-6 text-sm shadow-[0_22px_65px_rgba(15,23,42,0.16)] dark:border-slate-800/80 dark:from-slate-900/95 dark:via-slate-950 dark:to-slate-900/95">
             <p className="text-[0.7rem] font-semibold uppercase tracking-[0.26em] text-sky-500">Our Aim</p>
             <p className="mt-3 leading-relaxed text-slate-800 dark:text-slate-100">
               <span className="font-semibold">KYNA</span> means <span className="italic">Intelligent</span>; as the name suggests, we are pledged
@@ -55,7 +55,7 @@ export function AboutStorySection() {
             </p>
           </article>
 
-          <article className="h-full rounded-3xl border border-slate-200/80 bg-slate-50/80 p-6 text-sm shadow-[0_18px_55px_rgba(15,23,42,0.12)] dark:border-slate-800/80 dark:bg-slate-900/80">
+	          <article className="h-full rounded-3xl border border-sky-100/90 bg-gradient-to-b from-sky-50/95 via-white to-sky-100/90 p-6 text-sm shadow-[0_22px_65px_rgba(15,23,42,0.16)] dark:border-slate-800/80 dark:from-slate-900/95 dark:via-slate-950 dark:to-slate-900/95">
             <p className="text-[0.7rem] font-semibold uppercase tracking-[0.26em] text-sky-500">Our Vision</p>
             <p className="mt-3 leading-relaxed text-slate-800 dark:text-slate-100">
               To become the preferred, integrated rehabilitation centre in India utilizing comprehensive
@@ -64,7 +64,7 @@ export function AboutStorySection() {
             </p>
           </article>
 
-          <article className="h-full rounded-3xl border border-slate-200/80 bg-slate-50/80 p-6 text-sm shadow-[0_18px_55px_rgba(15,23,42,0.12)] dark:border-slate-800/80 dark:bg-slate-900/80">
+	          <article className="h-full rounded-3xl border border-sky-100/90 bg-gradient-to-b from-sky-50/95 via-white to-sky-100/90 p-6 text-sm shadow-[0_22px_65px_rgba(15,23,42,0.16)] dark:border-slate-800/80 dark:from-slate-900/95 dark:via-slate-950 dark:to-slate-900/95">
             <p className="text-[0.7rem] font-semibold uppercase tracking-[0.26em] text-sky-500">Our Mission</p>
             <p className="mt-3 leading-relaxed text-slate-800 dark:text-slate-100">
               Our mission is to educate and inspire the budding physiotherapist for creating evidence based

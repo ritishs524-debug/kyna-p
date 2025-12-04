@@ -51,12 +51,7 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
 	        window.matchMedia &&
 	        window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-	      const isMobile =
-	        typeof window !== 'undefined' &&
-	        window.matchMedia &&
-	        window.matchMedia('(max-width: 640px)').matches
-
-	      if (!prefersReducedMotion && !isMobile) {
+	      if (!prefersReducedMotion) {
 	        const tl = gsap.timeline({
 	          scrollTrigger: {
 	            trigger: '.locations-cinematic',
@@ -154,34 +149,6 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
 	            },
 	            '<'
 	          )
-	      }
-
-	      // Mobile: light scroll-in animation (no pin) so it also feels alive on phones
-	      if (!prefersReducedMotion && isMobile) {
-	        gsap.from('.locations-hero-logo', {
-	          opacity: 0,
-	          y: 24,
-	          scale: 0.9,
-	          duration: 0.7,
-	          ease: 'power3.out',
-	          scrollTrigger: {
-	            trigger: '.locations-cinematic',
-	            start: 'top 80%',
-	            toggleActions: 'play none none reverse',
-	          },
-	        })
-
-	        gsap.from('.locations-tree', {
-	          opacity: 0,
-	          y: 24,
-	          duration: 0.8,
-	          ease: 'power3.out',
-	          scrollTrigger: {
-	            trigger: '.locations-cinematic',
-	            start: 'top 78%',
-	            toggleActions: 'play none none reverse',
-	          },
-	        })
 	      }
 
       gsap.from('.locations-static-heading', {
