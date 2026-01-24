@@ -1,51 +1,53 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
 
-import { KynaSpinner } from '../../components/common/PageLoader'
+// NOTE: The video collage on the About hero is temporarily disabled to avoid
+// missing-asset build errors and to keep the page lighter. All original
+// imports and mapping logic are kept commented below so they can be restored
+// easily later if needed.
+// import { KynaSpinner } from '../../components/common/PageLoader'
+// import chiropracticVideo from '../../assets/images/about-us/chiropractic.mp4'
+// import cuppingVideo from '../../assets/images/about-us/cupping.mp4'
+// import kneeVideo from '../../assets/images/about-us/knee.mp4'
+// import neckVideo from '../../assets/images/about-us/neck.mp4'
+// import neck2Video from '../../assets/images/about-us/neck2.mp4'
+// import needleVideo from '../../assets/images/about-us/needle..mp4'
+// import homePageVideo from '../../assets/images/about-us/home-page.mp4'
 
-import chiropracticVideo from '../../assets/images/about-us/chiropractic.mp4'
-import cuppingVideo from '../../assets/images/about-us/cupping.mp4'
-import kneeVideo from '../../assets/images/about-us/knee.mp4'
-import neckVideo from '../../assets/images/about-us/neck.mp4'
-import neck2Video from '../../assets/images/about-us/neck2.mp4'
-import needleVideo from '../../assets/images/about-us/needle..mp4'
-import homePageVideo from '../../assets/images/about-us/home-page.mp4'
-
-type AboutMediaItem = { src: string }
-
-const aboutMedia: AboutMediaItem[] = [
-	{ src: chiropracticVideo },
-	{ src: cuppingVideo },
-	{ src: kneeVideo },
-	{ src: neckVideo },
-	{ src: neck2Video },
-	{ src: needleVideo },
-	{ src: homePageVideo },
-]
-
-const mediaSpanPattern = ['row-span-2', 'row-span-3', 'row-span-2', 'row-span-4']
+// type AboutMediaItem = { src: string }
+// const aboutMedia: AboutMediaItem[] = [
+//   { src: chiropracticVideo },
+//   { src: cuppingVideo },
+//   { src: kneeVideo },
+//   { src: neckVideo },
+//   { src: neck2Video },
+//   { src: needleVideo },
+//   { src: homePageVideo },
+// ]
+// const mediaSpanPattern = ['row-span-2', 'row-span-3', 'row-span-2', 'row-span-4']
 
 export function AboutHeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
-  const [loadedMap, setLoadedMap] = useState<Record<string, boolean>>({})
 
-	  // Fallback: ensure no tile spinner can get stuck forever (e.g. on hard refresh).
-	  // We also stagger the timeouts so, worst-case, tiles still appear one-by-one
-	  // instead of all popping in together after the same delay.
-	  useEffect(() => {
-	    const baseDelay = 3500 // ms
-	    const perTileStagger = 350 // ms
-
-	    const timeouts = aboutMedia.map((item, index) =>
-	      window.setTimeout(() => {
-	        setLoadedMap((prev) => (prev[item.src] ? prev : { ...prev, [item.src]: true }))
-	      }, baseDelay + index * perTileStagger),
-	    )
-
-	    return () => {
-	      timeouts.forEach((id) => window.clearTimeout(id))
-	    }
-	  }, [])
+	  // const [loadedMap, setLoadedMap] = useState<Record<string, boolean>>({})
+	  //
+	  // // Fallback: ensure no tile spinner can get stuck forever (e.g. on hard refresh).
+	  // // We also stagger the timeouts so, worst-case, tiles still appear one-by-one
+	  // // instead of all popping in together after the same delay.
+	  // useEffect(() => {
+	  //   const baseDelay = 3500 // ms
+	  //   const perTileStagger = 350 // ms
+	  //
+	  //   const timeouts = aboutMedia.map((item, index) =>
+	  //     window.setTimeout(() => {
+	  //       setLoadedMap((prev) => (prev[item.src] ? prev : { ...prev, [item.src]: true }))
+	  //     }, baseDelay + index * perTileStagger),
+	  //   )
+	  //
+	  //   return () => {
+	  //     timeouts.forEach((id) => window.clearTimeout(id))
+	  //   }
+	  // }, [])
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -117,6 +119,7 @@ export function AboutHeroSection() {
 
 	        <div className="about-hero-media mt-4 w-full flex-1 lg:mt-0">
 	          <div className="grid h-full grid-flow-row-dense auto-rows-[82px] grid-cols-3 overflow-hidden rounded-3xl border border-slate-200/70 bg-slate-900/90 shadow-[0_22px_70px_rgba(15,23,42,0.7)] dark:border-slate-800/80 dark:bg-slate-950/90">
+	            {/* Original video collage (disabled for now to prevent build errors)
 	            {aboutMedia.map((item, index) => {
 	              const spanClass = mediaSpanPattern[index % mediaSpanPattern.length]
 	              const isLoaded = !!loadedMap[item.src]
@@ -129,43 +132,50 @@ export function AboutHeroSection() {
 	                    </div>
 	                  )}
 	
-			              <video
-			                className={`h-full w-full object-cover transition-opacity duration-700 ${
-			                  isLoaded ? 'opacity-100' : 'opacity-0'
-			                }`}
-			                autoPlay
-			                muted
-			                loop
-			                playsInline
-			                preload="auto"
-			                disablePictureInPicture
-			                disableRemotePlayback
-			                onCanPlay={(event) => {
-			                  const video = event.currentTarget
-			                  if (video.paused) {
-			                    void video.play().catch(() => {
-			                      // Ignore autoplay errors; video will remain muted background.
-			                    })
-			                  }
-			                }}
-			                onLoadedMetadata={() =>
-			                  setLoadedMap((prev) => ({
-			                    ...prev,
-			                    [item.src]: true,
-			                  }))
-			                }
-			                onError={() =>
-			                  setLoadedMap((prev) => ({
-			                    ...prev,
-			                    [item.src]: true,
-			                  }))
-			                }
-			              >
+	                  <video
+	                    className={`h-full w-full object-cover transition-opacity duration-700 ${
+	                      isLoaded ? 'opacity-100' : 'opacity-0'
+	                    }`}
+	                    autoPlay
+	                    muted
+	                    loop
+	                    playsInline
+	                    preload="auto"
+	                    disablePictureInPicture
+	                    disableRemotePlayback
+	                    onCanPlay={(event) => {
+	                      const video = event.currentTarget
+	                      if (video.paused) {
+	                        void video.play().catch(() => {
+	                          // Ignore autoplay errors; video will remain muted background.
+	                        })
+	                      }
+	                    }}
+	                    onLoadedMetadata={() =>
+	                      setLoadedMap((prev) => ({
+	                        ...prev,
+	                        [item.src]: true,
+	                      }))
+	                    }
+	                    onError={() =>
+	                      setLoadedMap((prev) => ({
+	                        ...prev,
+	                        [item.src]: true,
+	                      }))
+	                    }
+	                  >
 	                    <source src={item.src} type="video/mp4" />
 	                  </video>
 	                </div>
 	              )
 	            })}
+	            */}
+	            <div className="row-span-2 bg-gradient-to-br from-sky-500/60 via-sky-400/30 to-slate-900" />
+	            <div className="row-span-3 bg-gradient-to-br from-sky-400/40 via-sky-300/10 to-slate-900" />
+	            <div className="row-span-2 bg-gradient-to-br from-sky-500/50 via-sky-400/20 to-slate-900" />
+	            <div className="row-span-4 bg-gradient-to-br from-sky-500/70 via-sky-400/40 to-slate-900" />
+	            <div className="row-span-2 bg-gradient-to-br from-sky-400/35 via-sky-300/15 to-slate-900" />
+	            <div className="row-span-3 bg-gradient-to-br from-sky-500/50 via-sky-400/20 to-slate-900" />
 	          </div>
 	        </div>
       </div>

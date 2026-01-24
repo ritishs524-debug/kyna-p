@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
-import homePageVideo from '../../assets/videos/home-page2.mp4'
 
 const heroHighlights = [
   {
@@ -90,26 +89,8 @@ export function HeroSection() {
       ref={sectionRef}
       className="relative min-h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50"
     >
-      <video
-	        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
-	        autoPlay
-	        muted
-	        loop
-	        playsInline
-	        preload="auto"
-	        disablePictureInPicture
-	        disableRemotePlayback
-	        onCanPlay={(event) => {
-	          const video = event.currentTarget
-	          if (video.paused) {
-	            void video.play().catch(() => {
-	              // Autoplay might be blocked by the browser; safely ignore.
-	            })
-	          }
-	        }}
-	      >
-        <source src={homePageVideo} type="video/mp4" />
-      </video>
+	      {/* Background: remove heavy video and use a soft gradient instead */}
+	      <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-sky-200 via-sky-100 to-slate-100 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900" />
 
       <div className="pointer-events-none hero-overlay absolute inset-0 z-10 bg-slate-100/10 dark:bg-slate-950/60" />
 

@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
 import kynaLogo from '../../assets/logo/kyna_withoutbg-01.PNG'
-import locationsVideo from '../../assets/images/locations/locations.mp4'
 
 type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
 
@@ -205,25 +204,14 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
 	      ref={sectionRef}
 	      className="relative overflow-hidden bg-slate-900 text-slate-50 dark:bg-black"
 	    >
-	      {/* Subtle looping background video behind the locations hero */}
-	      <video
-	        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-25"
-	        autoPlay
-	        loop
-	        muted
-	        playsInline
-	      >
-	        <source src={locationsVideo} type="video/mp4" />
-	      </video>
-
-	      {/* Dark radial overlay on top of the video */}
+	      {/* Dark radial overlay */}
 	      <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.9),_transparent_70%)]" />
 
 	      <div className="relative z-20">
 	        {/* Cinematic hero: Big KYNA logo with branching clinics emerging like a tree */}
 	        <div className="locations-cinematic">
 		          <div className="flex min-h-[520px] items-start justify-center pt-6 sm:sticky sm:top-0 sm:h-screen sm:items-center sm:pt-0">
-		            <div className="locations-hero-parallax relative mt-[-2.5rem] -translate-y-[10px] flex w-full max-w-5xl flex-col items-center justify-center px-4 py-10 sm:mt-[-5rem] lg:mt-[-7rem] lg:px-6 lg:py-16">
+		            <div className="locations-hero-parallax relative mt-[-2.5rem] mb-[150px] -translate-y-[10px] flex w-full max-w-5xl flex-col items-center justify-center px-4 py-10 sm:mt-[-5rem] lg:mt-[-7rem] lg:px-6 lg:py-16">
 	              {/* Hero logo */}
 	              <img
 	                src={kynaLogo}
