@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../../lib/gsap'
 import servicesBg from '../../assets/images/services-section.jpg'
+import { ImageWithLoader } from '../../components/common/ImageWithLoader'
 
 // Service card images – use the actual filenames from src/assets/services
 import doctorHelpingPatientRehabilitation from '../../assets/services/doctor-helping-patient-rehabilitation.jpg'
@@ -209,21 +210,20 @@ type ServicesSectionProps = {
 		        <div className="sm:hidden">
 		          <div className="services-carousel services-marquee-viewport-mobile pb-4 pt-1">
 		            <div className="services-marquee-track-mobile">
-				              {marqueeServices.map((service, index) => (
+			              {marqueeServices.map((service, index) => (
 		                <button
 		                  key={`${service.id}-mobile-${index}`}
 		                  type="button"
 		                  onClick={() => handleNavigateToService(service.id)}
 				                  className="services-card service-card group flex h-[280px] w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-4 text-left text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-				                >
-				                  <div className="mb-3 h-24 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950">
-				                    <img
-				                      src={serviceImages[service.id].src}
-				                      alt={serviceImages[service.id].alt}
-				                      loading="lazy"
-				                      className="h-full w-full object-cover object-top"
-				                    />
-				                  </div>
+			                >
+				                  <ImageWithLoader
+				                    src={serviceImages[service.id].src}
+				                    alt={serviceImages[service.id].alt}
+				                    loading="lazy"
+				                    containerClassName="mb-3 h-24 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950"
+				                    imageClassName="object-top"
+				                  />
 			                  <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
 			                    {service.name}
 			                  </p>
@@ -243,31 +243,30 @@ type ServicesSectionProps = {
 	      </div>
 
 	      {/* DESKTOP/TABLET: full-width, infinite auto-scrolling row of cards */}
-	      <div
-	        className="relative z-20 hidden w-screen -translate-x-1/2 transform left-1/2 sm:block"
-	        onMouseEnter={() => setIsPaused(true)}
-	        onMouseLeave={() => setIsPaused(false)}
-	      >
-			      <div className="services-carousel services-marquee-viewport overflow-hidden px-4 pb-8 sm:px-8 lg:px-16">
-			          <div
-			            className="services-marquee-track flex gap-5"
-			            style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
-			          >
-			            			    {marqueeServices.map((service, index) => (
-			                <button
-			                  key={`${service.id}-${index}`}
-			                  type="button"
-			                  onClick={() => handleNavigateToService(service.id)}
-			                  className="services-card service-card group flex h-[290px] w-60 flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-5 text-left text-sm transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-950/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-				                >
-				                <div className="mb-4 h-28 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950">
-				                  <img
-				                    src={serviceImages[service.id].src}
-				                    alt={serviceImages[service.id].alt}
-				                    loading="lazy"
-				                    className="h-full w-full object-cover object-top"
-				                  />
-				                </div>
+		      <div
+		        className="relative z-20 hidden w-screen -translate-x-1/2 transform left-1/2 sm:block"
+		        onMouseEnter={() => setIsPaused(true)}
+		        onMouseLeave={() => setIsPaused(false)}
+		      >
+				      <div className="services-carousel services-marquee-viewport overflow-hidden px-4 pb-8 sm:px-8 lg:px-16">
+				          <div
+				            className="services-marquee-track flex gap-5"
+				            style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
+				          >
+				            			    {marqueeServices.map((service, index) => (
+				                <button
+				                  key={`${service.id}-${index}`}
+				                  type="button"
+				                  onClick={() => handleNavigateToService(service.id)}
+				                  className="services-card service-card group flex h-[290px] w-60 flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-5 text-left text-sm transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-950/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
+					                >
+					                <ImageWithLoader
+					                  src={serviceImages[service.id].src}
+					                  alt={serviceImages[service.id].alt}
+					                  loading="lazy"
+					                  containerClassName="mb-4 h-28 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950"
+					                  imageClassName="object-top"
+					                />
 			                <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
 			                  {service.name}
 			                </p>

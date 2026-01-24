@@ -1,7 +1,8 @@
-		import { useLayoutEffect, useRef } from 'react'
-		import { gsap } from '../lib/gsap'
-
-		// Service images – use the actual filenames from src/assets/services
+			import { useLayoutEffect, useRef } from 'react'
+			import { gsap } from '../lib/gsap'
+			import { ImageWithLoader } from '../components/common/ImageWithLoader'
+		
+			// Service images – use the actual filenames from src/assets/services
 		import doctorHelpingPatientRehabilitation from '../assets/services/doctor-helping-patient-rehabilitation.jpg'
 		import frontViewYoungMaleBrokenFoot from '../assets/services/front-view-young-male-sitting-with-broken-foot-crutches-grey-wall-pain-accident-broken-twist-foot-leg.jpg'
 		import pexelsFunkcinesTerapijos from '../assets/services/pexels-funkcines-terapijos-centras-927573878-20860591.jpg'
@@ -190,13 +191,13 @@ export function Services() {
 			            className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
 			          >
 			            <div className="relative h-52 md:h-60 w-full overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 dark:from-slate-800 dark:to-slate-900">
-	                <img
-	                  src={serviceImages[service.id].src}
-	                  alt={serviceImages[service.id].alt}
-	                  loading="lazy"
-	                  className="h-full w-full object-cover"
-	                />
-	                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
+			                <ImageWithLoader
+			                  src={serviceImages[service.id].src}
+			                  alt={serviceImages[service.id].alt}
+			                  loading="lazy"
+			                  containerClassName="h-full w-full"
+			                />
+			                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
 	                <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
 	                  <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
 	                    <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">
