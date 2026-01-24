@@ -4,48 +4,196 @@ import { gsap } from '../../lib/gsap'
 import kynaMark from '../../assets/logo/kyna_withoutbg-04.PNG'
 
 type ChatMessage = {
-  id: number
-  sender: 'user' | 'assistant'
-  text: string
+	id: number
+	sender: 'user' | 'assistant'
+	text: string
 }
 
-	export function ChatbotWidget() {
-		  const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 1,
-      sender: 'assistant',
-      text: "Hi, I'm the KYNA assistant. Ask anything about physiotherapy, our services, or locations.",
-    },
-  ])
-  const [input, setInput] = useState('')
+	const SYSTEM_PROMPT = `
+	You are the friendly KYNA Physiotherapy assistant for the official KYNA website.
+	- Always base your answers first on the KYNA website information provided below.
+	- Answer briefly (2–5 lines) in simple, friendly language. You can mix light Hinglish if the user does.
+	- You can explain physiotherapy concepts, KYNA services, locations and team specialities.
+	- Do NOT give specific medical diagnoses, prescriptions or exact promises of cure.
+	- For anything serious, unclear or very personal, politely suggest visiting or calling the clinic.
+	- When you are not fully sure, be honest and guide the user to contact KYNA directly.
+	` as const
 
-	  const panelRef = useRef<HTMLDivElement | null>(null)
-	  const bubbleRef = useRef<HTMLButtonElement | null>(null)
-	  const messagesRef = useRef<HTMLDivElement | null>(null)
+	const WEBSITE_KNOWLEDGE = `
+	Core facts from the KYNA Physiotherapy website. Use this as reference:
 
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault()
-    const trimmed = input.trim()
-    if (!trimmed) return
+	CLINIC OVERVIEW
+	- KYNA Physiotherapy is a physiotherapy and rehabilitation clinic group based around Patiala, Punjab (India).
+	- The website has pages: Home, About, Services, Reviews, Team and Contact.
+	- The focus is long-term rehab, not quick fixes: detailed assessment, hands-on work and structured exercise.
 
-    const nextId = messages.length ? messages[messages.length - 1].id + 1 : 1
+	LOCATIONS & CONTACT (from the Contact page)
+	- KYNA has multiple locations:
+	  1) Patiala: "SCF-34, DLF Colony, Patiala".
+	  2) Anamiva Physiotherapy: "Sco 7-8, behind Moti Palace, Malwa Colony, Rose Avenue, New Officers Colony, Patiala, Punjab 147001".
+	  3) Samana: "Krishna Basti, Opp Jain Terapanthi Sabha, Near Ganpati Jewellers, Waraich Colony, Samana, Punjab 147101".
+	- Phone number for all clinics (from the Contact cards): +91 9878182115.
+	- The contact form note: "We typically respond within the same working day." So response is usually same-day on working days.
+	- Users can either call directly or fill the form on the Contact page.
 
-    const userMessage: ChatMessage = {
-      id: nextId,
-      sender: 'user',
-      text: trimmed,
-    }
+	SERVICES (from the Services page)
+	All services are available under one roof at KYNA Physiotherapy:
+	1) Physiotherapy (Core Rehabilitation)
+	   - Restores pain-free movement and strength after injury, surgery or chronic pain.
+	   - Uses assessment, hands-on therapy, targeted exercises, posture correction and education.
 
-    const placeholderReply: ChatMessage = {
-      id: nextId + 1,
-      sender: 'assistant',
-      text: "Thanks for your message. Our live KYNA assistant is coming soon. For now, you can also reach us via the Contact page form or phone.",
-    }
+	2) Osteopathy – Cranial and Visceral (Gentle Whole-Body Work)
+	   - Very gentle, precise hands-on techniques working with nervous system, fascia and internal structures.
+	   - Helpful for people sensitive to strong pressure, with headaches, digestive discomfort or postural issues.
 
-    setMessages((prev) => [...prev, userMessage, placeholderReply])
-    setInput('')
-  }
+	3) Chiropractic (Spine & Joint Alignment)
+	   - Focus on spine and major joint alignment and mobility using safe, controlled adjustments.
+	   - Often used for neck/back pain, stiffness, radiating nerve symptoms and frequent headaches.
+
+	4) Exercise Therapy (Strength & Conditioning)
+	   - Personalised exercise programmes, not generic workouts.
+	   - Combines mobility, strength, balance and endurance with coached technique for safe movement.
+
+	5) Manual Physical Therapy (Hands-On Relief)
+	   - Hands-on joint mobilisation, soft-tissue release, myofascial work and stretching.
+	   - Helpful for frozen shoulder, neck and back stiffness, sports injuries and postural strain.
+
+	6) Women's Health Physiotherapy (For Every Life Stage)
+	   - Supports pregnancy, postnatal recovery and hormonal transitions.
+	   - Addresses pelvic pain, low back/hip issues, abdominal separation, incontinence and daily discomfort.
+
+	7) Pelvic Floor Rehabilitation (Confident Control)
+	   - For leakage, urgency, heaviness, postnatal weakness or pelvic pain.
+	   - Uses assessment, targeted exercises, breathing, relaxation and strength work.
+
+	8) Evidence-Based Falls Prevention (Balance & Confidence)
+	   - Built for older adults or anyone feeling unsteady or fearful of falling.
+	   - Uses researched exercises for strength, balance, reaction speed and home/practical safety tips.
+
+	9) Physiotherapy at Home (Care That Comes to You)
+	   - Home visits for people who cannot easily travel: after surgery, illness, elderly, or those preferring home.
+	   - Therapist adapts exercises to the home environment and involves caregivers when needed.
+
+	10) Antenatal / Childbirth Education (Prepared Birth Journey)
+	    - Combines physiotherapy insight with practical birth preparation for expecting parents and partners.
+	    - Covers posture, breathing, pelvic floor care, labour positions, pain-management options and early recovery.
+
+	TEAM HIGHLIGHTS (from the Team page)
+	- All therapists are licensed physiotherapists with advanced training. They blend sports rehab, orthopaedics,
+	  neurology and women's health to build personalised treatment journeys.
+	- Key team members and focus areas:
+	  • Sorabh Sharma (PT): Sports Specialist · Osteopath – sports rehab and gentle osteopathic techniques.
+	  • Pradeep Kumar (PT): Ortho & Neuro Specialist – spine, joint and nerve conditions, strength and balance.
+	  • Angadjot Singh (PT): Ortho Specialist · Osteopath – joint alignment, posture, long-term comfort.
+	  • Pratima Chakraborty (PT): Gynae Specialist · Lamaze Practitioner – women’s health, pregnancy, birth prep.
+	  • Aakash Kalra (PT): Ortho Specialist – knee and shoulder, return to sport and daily activity.
+	  • Harpreet Kaur (PT): Ortho Specialist – chronic pain and posture-related issues.
+	  • Naina Rattan (PT): Ortho Specialist – spine and everyday mobility.
+	  • Divyansh Bansal (PT): Sports Specialist – athlete care and performance.
+	  • Komalpreet Kaur (PT): Physiotherapist – rehab support and patient education.
+	  • Mansi (PT): Physiotherapist – exercise therapy and recovery.
+
+	ANSWERING STYLE
+	- When asked about "which therapy is right for me" or specific pain, you can explain possible options from the
+	  services list, but always say that exact treatment is decided only after in-person assessment.
+	- When asked about addresses, phone number or locations, use the details above.
+	- When asked about a particular therapist, mention their role and focus areas from the list above.
+	- When users ask something NOT covered by this knowledge, you may use general physio knowledge but keep it
+	  generic and encourage contacting KYNA for personalised advice.
+	` as const
+
+export function ChatbotWidget() {
+	const [isOpen, setIsOpen] = useState(false)
+	const [messages, setMessages] = useState<ChatMessage[]>([
+		{
+			id: 1,
+			sender: 'assistant',
+			text: "Hi, I'm the KYNA assistant. Ask anything about physiotherapy, our services, or locations.",
+		},
+	])
+	const [input, setInput] = useState('')
+	const [isLoading, setIsLoading] = useState(false)
+
+	const panelRef = useRef<HTMLDivElement | null>(null)
+	const bubbleRef = useRef<HTMLButtonElement | null>(null)
+	const messagesRef = useRef<HTMLDivElement | null>(null)
+
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault()
+		const trimmed = input.trim()
+		if (!trimmed || isLoading) return
+
+		const nextId = messages.length ? messages[messages.length - 1].id + 1 : 1
+
+		const userMessage: ChatMessage = {
+			id: nextId,
+			sender: 'user',
+			text: trimmed,
+		}
+
+		setMessages((prev) => [...prev, userMessage])
+		setInput('')
+		setIsLoading(true)
+
+		try {
+			const apiKey = import.meta.env.VITE_GROQ_API_KEY as string | undefined
+			if (!apiKey) {
+				throw new Error('Missing Groq API key')
+			}
+
+			// Prepare recent conversation history for better context
+			const history = messages.slice(-6).map((message) => ({
+				role: message.sender === 'user' ? 'user' : 'assistant',
+				content: message.text,
+			}))
+
+			const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${apiKey}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					model: 'llama-3.3-70b-versatile',
+					messages: [
+						{ role: 'system', content: SYSTEM_PROMPT },
+						{ role: 'system', content: WEBSITE_KNOWLEDGE },
+						...history,
+						{ role: 'user', content: trimmed },
+					],
+					temperature: 0.3,
+				}),
+			})
+
+			if (!response.ok) {
+				throw new Error(`Groq API error: ${response.status}`)
+			}
+
+			const data = await response.json()
+			const content: string =
+				data?.choices?.[0]?.message?.content?.toString().trim() ??
+				"I'm having trouble responding right now. Please try again in a moment or contact the clinic directly."
+
+			const assistantMessage: ChatMessage = {
+				id: nextId + 1,
+				sender: 'assistant',
+				text: content,
+			}
+
+			setMessages((prev) => [...prev, assistantMessage])
+		} catch (error) {
+			console.error('Groq chat error', error)
+			const fallback: ChatMessage = {
+				id: nextId + 1,
+				sender: 'assistant',
+				text:
+					"Sorry, I'm not able to answer right now. Please try again later or call the KYNA clinic for quick help.",
+			}
+			setMessages((prev) => [...prev, fallback])
+		} finally {
+			setIsLoading(false)
+		}
+	}
 
 	  const handleOpen = () => {
 	    setIsOpen(true)
@@ -242,23 +390,21 @@ type ChatMessage = {
 	                    />
                   </div>
                 )}
-	                <div
-	                  className={
-	                    message.sender === 'assistant'
-	                      ? message.id === 1
-	                        ? 'max-w-[82%] rounded-3xl bg-gradient-to-r from-sky-500 to-indigo-500 px-4 py-2.5 text-white shadow-md dark:from-sky-400 dark:to-indigo-400'
-	                        : 'max-w-[82%] rounded-3xl bg-white px-4 py-2.5 text-slate-900 shadow-sm dark:bg-slate-900/80 dark:text-slate-100'
-	                      : 'max-w-[82%] rounded-3xl bg-slate-900 px-4 py-2.5 text-slate-50 shadow-sm dark:bg-sky-500/90'
-	                  }
-	                >
+		            <div
+		                  className={
+		                    message.sender === 'assistant'
+		                      ? 'max-w-[82%] rounded-3xl bg-gradient-to-r from-sky-500 to-indigo-500 px-4 py-2.5 text-white shadow-md dark:from-sky-400 dark:to-indigo-400'
+		                      : 'max-w-[82%] rounded-3xl bg-sky-100 px-4 py-2.5 text-slate-900 shadow-sm dark:bg-slate-800 dark:text-slate-50'
+		                  }
+		                >
                   {message.text}
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Input */}
-	          <form onSubmit={handleSubmit} className="mt-1 flex items-center gap-3">
+	          {/* Input */}
+		          <form onSubmit={handleSubmit} className="mt-1 flex items-center gap-3">
 	            <div className="relative flex-1">
 	              <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-sky-400 to-indigo-500 opacity-70" />
 	              <div className="relative rounded-full bg-white/95 px-[1px] py-[1px] dark:bg-slate-950/90">
@@ -273,24 +419,25 @@ type ChatMessage = {
 	                />
 	              </div>
 	            </div>
-	            <button
-	              type="submit"
-	              className="inline-flex h-10 min-w-[3.25rem] items-center justify-center rounded-full
-	                bg-gradient-to-br from-sky-500 to-indigo-500 px-3 text-[0.68rem]
-	                font-semibold uppercase tracking-[0.18em] text-white
-	                shadow-[0_16px_45px_rgba(15,23,42,0.85)] transition
-	                hover:translate-y-[-1px] hover:shadow-[0_20px_60px_rgba(15,23,42,0.95)]
-	                disabled:opacity-60 dark:from-sky-400 dark:to-indigo-400"
-	              disabled={!input.trim()}
-	            >
-	              SEND
-	            </button>
+		            <button
+		              type="submit"
+		              className="inline-flex h-10 min-w-[3.25rem] items-center justify-center rounded-full
+		                bg-gradient-to-br from-sky-500 to-indigo-500 px-3 text-[0.68rem]
+		                font-semibold uppercase tracking-[0.18em] text-white
+		                shadow-[0_16px_45px_rgba(15,23,42,0.85)] transition
+		                hover:translate-y-[-1px] hover:shadow-[0_20px_60px_rgba(15,23,42,0.95)]
+		                disabled:opacity-60 dark:from-sky-400 dark:to-indigo-400"
+		              disabled={!input.trim() || isLoading}
+		            >
+		              {isLoading ? 'SENDING...' : 'SEND'}
+		            </button>
 	          </form>
-
-	          {/* Hint for future Groq integration */}
-	          <p className="mt-2 text-[0.65rem] text-slate-400/90 dark:text-slate-500">
-	            AI answers via Groq coming soon. This is a design preview.
-	          </p>
+		
+		          {/* Hint / disclaimer */}
+		          <p className="mt-2 text-[0.65rem] text-slate-400/90 dark:text-slate-500">
+		            Powered by Groq. Responses are AI-generated and do not replace medical advice from a
+		            qualified professional.
+		          </p>
         </div>
       )}
     </div>
