@@ -3,6 +3,7 @@ import { Suspense, lazy, useEffect, useState } from 'react'
 import { Header } from './components/layout/Header'
 import { Footer } from './components/layout/Footer'
 import { PageLoader } from './components/common/PageLoader'
+import { ChatbotWidget } from './components/common/ChatbotWidget'
 
 type Theme = 'light' | 'dark'
 
@@ -76,7 +77,8 @@ function App() {
 			          {currentPage === 'contact' && <Contact />}
 			        </Suspense>
 			      </main>
-      <Footer onNavigate={setCurrentPage} />
+	      <Footer onNavigate={setCurrentPage} />
+	      <ChatbotWidget />
     </div>
   )
 }
