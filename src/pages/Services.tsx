@@ -1,7 +1,19 @@
-import { useLayoutEffect, useRef } from 'react'
-import { gsap } from '../lib/gsap'
+		import { useLayoutEffect, useRef } from 'react'
+		import { gsap } from '../lib/gsap'
 
-const services = [
+		// Service images – use the actual filenames from src/assets/services
+		import doctorHelpingPatientRehabilitation from '../assets/services/doctor-helping-patient-rehabilitation.jpg'
+		import frontViewYoungMaleBrokenFoot from '../assets/services/front-view-young-male-sitting-with-broken-foot-crutches-grey-wall-pain-accident-broken-twist-foot-leg.jpg'
+		import pexelsFunkcinesTerapijos from '../assets/services/pexels-funkcines-terapijos-centras-927573878-20860591.jpg'
+		import pexelsKarola from '../assets/services/pexels-karola-g-4506078.jpg'
+		import physioDoingLegExercises from '../assets/services/physiotherapist-doing-leg-exercises-with-female-patient.jpg'
+		import professionalTherapistsStretching from '../assets/services/professional-therapists-is-stretching-muscles-patients-with-abnormal-muscular-symptoms-physical-rehabilitation-therapies-treatment-physiological-disorders-by-physiotherapists-concept.jpg'
+		import seniorManNursingHome from '../assets/services/senior-man-nursing-home-with-doing-physical-therapy-with-help-from-nurse-using-dumbbells.jpg'
+		import sideViewPregnantWomanMidwife from '../assets/services/side-view-pregnant-woman-midwife-home-woman-casual-clothes-sitting-bed-asian-doula-holding-hand-pregnancy-medicine-home-birth-concept.jpg'
+		import youngWomanChiropractorOsteopath from '../assets/services/young-woman-doctor-chiropractor-osteopath-fixing-lying-womans-back-with-hands-movements-visit-manual-therapy-clinic-professional-chiropractor-work.jpg'
+		import youngWomanWithBackProblems from '../assets/services/young-woman-with-back-problems-doing-physiotherapy-treatment.jpg'
+	
+	const services = [
   {
     id: 'physiotherapy',
     title: 'Physiotherapy',
@@ -65,14 +77,59 @@ const services = [
     description:
       'For patients who cannot easily travel to the clinic, our home physiotherapy service brings expert care to your doorstep. We come equipped with portable tools and clear treatment plans, adapting exercises to the space and equipment available in your home. This is ideal after surgery, during illness, for elderly family members or anyone who feels more comfortable in a familiar environment. We also involve caregivers, teaching safe handling techniques and simple routines to support daily progress.',
   },
-  {
-    id: 'antenatal-education',
-    title: 'Antenatal / Childbirth Education',
-    badge: 'Prepared Birth Journey',
-    description:
-      'Our antenatal and childbirth education sessions combine physiotherapy insight with practical, real-world guidance for expecting parents. We cover posture, breathing, pelvic floor care, labour positions, pain-management options and safe movement in the last months of pregnancy. Partners learn how to support actively through massage, touch and communication. The focus is on informed choices and realistic preparation, so you approach birth with less fear, more confidence and a clear plan for early postnatal recovery.',
-  },
-] as const
+	  {
+	    id: 'antenatal-education',
+	    title: 'Antenatal / Childbirth Education',
+	    badge: 'Prepared Birth Journey',
+	    description:
+	      'Our antenatal and childbirth education sessions combine physiotherapy insight with practical, real-world guidance for expecting parents. We cover posture, breathing, pelvic floor care, labour positions, pain-management options and safe movement in the last months of pregnancy. Partners learn how to support actively through massage, touch and communication. The focus is on informed choices and realistic preparation, so you approach birth with less fear, more confidence and a clear plan for early postnatal recovery.',
+	  },
+	] as const
+
+	type ServiceId = (typeof services)[number]['id']
+
+					const serviceImages: Record<ServiceId, { src: string; alt: string }> = {
+						physiotherapy: {
+							src: physioDoingLegExercises,
+							alt: 'Physiotherapist helping a patient with exercises in the clinic',
+						},
+						osteopathy: {
+							src: youngWomanChiropractorOsteopath,
+							alt: 'Osteopath providing gentle cranial or visceral treatment',
+						},
+						chiropractic: {
+							src: youngWomanWithBackProblems,
+							alt: "Chiropractor adjusting a patient's spine",
+						},
+						'exercise-therapy': {
+							src: doctorHelpingPatientRehabilitation,
+							alt: 'Patient performing guided exercise therapy with a physiotherapist',
+						},
+						'manual-therapy': {
+							src: professionalTherapistsStretching,
+							alt: 'Manual physical therapy with hands-on treatment',
+						},
+						'womens-health': {
+							src: pexelsKarola,
+							alt: "Women's health physiotherapy session",
+						},
+						'pelvic-floor': {
+							src: pexelsFunkcinesTerapijos,
+							alt: 'Pelvic floor rehabilitation exercises',
+						},
+						'falls-prevention': {
+							src: seniorManNursingHome,
+							alt: 'Senior person doing balance exercises for falls prevention',
+						},
+						'home-physiotherapy': {
+							src: frontViewYoungMaleBrokenFoot,
+							alt: 'Physiotherapist visiting a patient at home',
+						},
+						'antenatal-education': {
+							src: sideViewPregnantWomanMidwife,
+							alt: 'Couple attending antenatal or childbirth education session',
+						},
+					}
 
 export function Services() {
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -127,27 +184,36 @@ export function Services() {
 
 		        <div className="grid gap-8 md:grid-cols-2 md:gap-10">
 	          {services.map((service) => (
-            <article
-              id={'service-' + service.id}
-              key={service.id}
-              className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-            >
-              <div className="flex items-center justify-center bg-gradient-to-br from-sky-100 to-sky-200 py-6 dark:from-slate-800 dark:to-slate-900">
-                <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/75 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
-                  <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">
-                    {service.badge}
-                  </span>
-                </span>
-              </div>
-
-              <div className="flex-1 px-6 pb-6 pt-5 text-center text-xs sm:text-[0.8rem]">
-                <h2 className="text-base font-semibold sm:text-lg">{service.title}</h2>
-                <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
-                  {service.description}
-                </p>
-              </div>
-            </article>
-          ))}
+			          <article
+			            id={'service-' + service.id}
+			            key={service.id}
+			            className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
+			          >
+			            <div className="relative h-52 md:h-60 w-full overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 dark:from-slate-800 dark:to-slate-900">
+	                <img
+	                  src={serviceImages[service.id].src}
+	                  alt={serviceImages[service.id].alt}
+	                  loading="lazy"
+	                  className="h-full w-full object-cover"
+	                />
+	                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
+	                <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
+	                  <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
+	                    <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">
+	                      {service.badge}
+	                    </span>
+	                  </span>
+	                </div>
+	              </div>
+	
+	              <div className="flex-1 px-6 pb-6 pt-5 text-center text-xs sm:text-[0.8rem]">
+	                <h2 className="text-base font-semibold sm:text-lg">{service.title}</h2>
+	                <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
+	                  {service.description}
+	                </p>
+	              </div>
+	            </article>
+	          ))}
         </div>
       </div>
     </section>

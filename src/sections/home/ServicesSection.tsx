@@ -2,9 +2,21 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../../lib/gsap'
 import servicesBg from '../../assets/images/services-section.jpg'
 
-type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
+// Service card images – use the actual filenames from src/assets/services
+import doctorHelpingPatientRehabilitation from '../../assets/services/doctor-helping-patient-rehabilitation.jpg'
+import frontViewYoungMaleBrokenFoot from '../../assets/services/front-view-young-male-sitting-with-broken-foot-crutches-grey-wall-pain-accident-broken-twist-foot-leg.jpg'
+import pexelsFunkcinesTerapijos from '../../assets/services/pexels-funkcines-terapijos-centras-927573878-20860591.jpg'
+import pexelsKarola from '../../assets/services/pexels-karola-g-4506078.jpg'
+import physioDoingLegExercises from '../../assets/services/physiotherapist-doing-leg-exercises-with-female-patient.jpg'
+import professionalTherapistsStretching from '../../assets/services/professional-therapists-is-stretching-muscles-patients-with-abnormal-muscular-symptoms-physical-rehabilitation-therapies-treatment-physiological-disorders-by-physiotherapists-concept.jpg'
+import seniorManNursingHome from '../../assets/services/senior-man-nursing-home-with-doing-physical-therapy-with-help-from-nurse-using-dumbbells.jpg'
+import sideViewPregnantWomanMidwife from '../../assets/services/side-view-pregnant-woman-midwife-home-woman-casual-clothes-sitting-bed-asian-doula-holding-hand-pregnancy-medicine-home-birth-concept.jpg'
+import youngWomanChiropractorOsteopath from '../../assets/services/young-woman-doctor-chiropractor-osteopath-fixing-lying-womans-back-with-hands-movements-visit-manual-therapy-clinic-professional-chiropractor-work.jpg'
+import youngWomanWithBackProblems from '../../assets/services/young-woman-with-back-problems-doing-physiotherapy-treatment.jpg'
 
-	const services = [
+	type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
+	
+		const services = [
 	  {
 	    id: 'physiotherapy',
 	    name: 'Physiotherapy',
@@ -41,13 +53,58 @@ type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
 	    id: 'home-physiotherapy',
 	    name: 'Physiotherapy at Home',
 	  },
-	  {
-	    id: 'antenatal-education',
-	    name: 'Antenatal / Childbirth Education',
-	  },
-	] as const
+			{
+				id: 'antenatal-education',
+				name: 'Antenatal / Childbirth Education',
+			},
+		] as const
 
-	const marqueeServices = [...services, ...services]
+		type ServiceId = (typeof services)[number]['id']
+
+					const serviceImages: Record<ServiceId, { src: string; alt: string }> = {
+						physiotherapy: {
+							src: physioDoingLegExercises,
+							alt: 'Physiotherapist helping a patient with exercises in the clinic',
+						},
+						osteopathy: {
+							src: youngWomanChiropractorOsteopath,
+							alt: 'Osteopath providing gentle cranial or visceral treatment',
+						},
+						chiropractic: {
+							src: youngWomanWithBackProblems,
+							alt: "Chiropractor adjusting a patient's spine",
+						},
+						'exercise-therapy': {
+							src: doctorHelpingPatientRehabilitation,
+							alt: 'Patient performing guided exercise therapy with a physiotherapist',
+						},
+						'manual-therapy': {
+							src: professionalTherapistsStretching,
+							alt: 'Manual physical therapy with hands-on treatment',
+						},
+						'womens-health': {
+							src: pexelsKarola,
+							alt: "Women's health physiotherapy session",
+						},
+						'pelvic-floor': {
+							src: pexelsFunkcinesTerapijos,
+							alt: 'Pelvic floor rehabilitation exercises',
+						},
+						'falls-prevention': {
+							src: seniorManNursingHome,
+							alt: 'Senior person doing balance exercises for falls prevention',
+						},
+						'home-physiotherapy': {
+							src: frontViewYoungMaleBrokenFoot,
+							alt: 'Physiotherapist visiting a patient at home',
+						},
+						'antenatal-education': {
+							src: sideViewPregnantWomanMidwife,
+							alt: 'Couple attending antenatal or childbirth education session',
+						},
+					}
+
+		const marqueeServices = [...services, ...services]
 
 type ServicesSectionProps = {
   onNavigate?: (page: PageLabel) => void
@@ -149,20 +206,27 @@ type ServicesSectionProps = {
 	        </div>
 
 	        {/* MOBILE: auto-scrolling marquee of cards (infinite loop) */}
-	        <div className="sm:hidden">
-	          <div className="services-carousel services-marquee-viewport-mobile pb-4 pt-1">
-	            <div className="services-marquee-track-mobile">
-			              {marqueeServices.map((service, index) => (
-	                <button
-	                  key={`${service.id}-mobile-${index}`}
-	                  type="button"
-	                  onClick={() => handleNavigateToService(service.id)}
-		                  className="services-card service-card group flex h-[280px] w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-4 text-left text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-		                >
-		                  <div className="mb-3 h-24 w-full rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950" />
-	                  <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-	                    {service.name}
-	                  </p>
+		        <div className="sm:hidden">
+		          <div className="services-carousel services-marquee-viewport-mobile pb-4 pt-1">
+		            <div className="services-marquee-track-mobile">
+				              {marqueeServices.map((service, index) => (
+		                <button
+		                  key={`${service.id}-mobile-${index}`}
+		                  type="button"
+		                  onClick={() => handleNavigateToService(service.id)}
+				                  className="services-card service-card group flex h-[280px] w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-4 text-left text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
+				                >
+				                  <div className="mb-3 h-24 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950">
+				                    <img
+				                      src={serviceImages[service.id].src}
+				                      alt={serviceImages[service.id].alt}
+				                      loading="lazy"
+				                      className="h-full w-full object-cover object-top"
+				                    />
+				                  </div>
+			                  <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+			                    {service.name}
+			                  </p>
 	                  <p className="line-clamp-2 text-[0.72rem] leading-relaxed text-slate-600 dark:text-slate-400">
 	                    Evidence-based care tailored to your specific condition, with a focus on safer, faster
 	                    recovery and long-term function.
@@ -184,22 +248,29 @@ type ServicesSectionProps = {
 	        onMouseEnter={() => setIsPaused(true)}
 	        onMouseLeave={() => setIsPaused(false)}
 	      >
-	        <div className="services-carousel services-marquee-viewport overflow-hidden px-4 pb-8 sm:px-8 lg:px-16">
-	          <div
-	            className="services-marquee-track flex gap-5"
-	            style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
-	          >
-			            {marqueeServices.map((service, index) => (
-                <button
-                  key={`${service.id}-${index}`}
-                  type="button"
-                  onClick={() => handleNavigateToService(service.id)}
-                  className="services-card service-card group flex h-[290px] w-60 flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-5 text-left text-sm transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-950/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-		                >
-		                <div className="mb-4 h-28 w-full rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950" />
-	                <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-	                  {service.name}
-	                </p>
+			      <div className="services-carousel services-marquee-viewport overflow-hidden px-4 pb-8 sm:px-8 lg:px-16">
+			          <div
+			            className="services-marquee-track flex gap-5"
+			            style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
+			          >
+			            			    {marqueeServices.map((service, index) => (
+			                <button
+			                  key={`${service.id}-${index}`}
+			                  type="button"
+			                  onClick={() => handleNavigateToService(service.id)}
+			                  className="services-card service-card group flex h-[290px] w-60 flex-shrink-0 flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-5 text-left text-sm transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/80 dark:border-slate-800/80 dark:bg-slate-950/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
+				                >
+				                <div className="mb-4 h-28 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-sky-50 via-sky-100 to-slate-50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950">
+				                  <img
+				                    src={serviceImages[service.id].src}
+				                    alt={serviceImages[service.id].alt}
+				                    loading="lazy"
+				                    className="h-full w-full object-cover object-top"
+				                  />
+				                </div>
+			                <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+			                  {service.name}
+			                </p>
 	                <p className="mb-3 line-clamp-2 text-[0.72rem] leading-relaxed text-slate-600 dark:text-slate-400">
 	                  Evidence-based care tailored to your specific condition, with a focus on safer, faster
 	                  recovery and long-term function.
