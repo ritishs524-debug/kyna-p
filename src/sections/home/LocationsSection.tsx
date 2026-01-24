@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
 import kynaLogo from '../../assets/logo/kyna_withoutbg-01.PNG'
+import branchesVideo from '../../assets/videos/branches.mp4'
 
 type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
 
@@ -209,8 +210,22 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
 	      ref={sectionRef}
 	      className="relative overflow-hidden bg-slate-900 text-slate-50 dark:bg-black"
 	    >
-	      {/* Dark radial overlay */}
-	      <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.9),_transparent_70%)]" />
+		      {/* Background: branches video behind the KYNA branches tree */}
+		      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+		        <video
+		          className="h-full w-full object-cover"
+		          src={branchesVideo}
+		          autoPlay
+		          muted
+		          loop
+		          playsInline
+		          preload="metadata"
+		        />
+		        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/80 to-slate-900/90" />
+		      </div>
+
+		      {/* Dark radial overlay on top of video */}
+		      <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.9),_transparent_70%)]" />
 
 	      <div className="relative z-20">
 	        {/* Cinematic hero: Big KYNA logo with branching clinics emerging like a tree */}
