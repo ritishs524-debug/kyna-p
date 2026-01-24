@@ -1,5 +1,5 @@
 type FooterProps = {
-  onNavigate: (page: 'home' | 'about' | 'services' | 'team' | 'contact') => void
+	onNavigate: (page: 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact') => void
 }
 
 const serviceLinks = [

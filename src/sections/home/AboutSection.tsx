@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
+import kynaLogoSecondary from '../../assets/logo/kyna_withoutbg-04.PNG'
 
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -67,13 +68,13 @@ export function AboutSection() {
           <div className="relative flex items-center gap-5 overflow-hidden rounded-[2.4rem] border border-slate-200/80 bg-gradient-to-r from-[#e6f3ff] via-white to-[#e6f3ff] px-8 py-7 text-sm shadow-[0_26px_80px_rgba(15,23,42,0.18)] dark:border-slate-700/80 dark:bg-gradient-to-r dark:from-slate-900/90 dark:via-slate-950 dark:to-slate-900/90 dark:shadow-[0_26px_80px_rgba(15,23,42,0.9)]">
             <div className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-sky-400 to-sky-600 opacity-90 blur-[1px]" />
-              <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_16px_40px_rgba(15,23,42,0.28)]">
-                <img
-                  src="/src/assets/logo/kyna_withoutbg-04.PNG"
-                  alt="Kyna logo"
-                  className="h-7 w-7 object-contain"
-                />
-              </div>
+            <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_16px_40px_rgba(15,23,42,0.28)]">
+              <img
+                src={kynaLogoSecondary}
+                alt="Kyna logo"
+                className="h-7 w-7 object-contain"
+              />
+            </div>
             </div>
             <div className="space-y-1.5">
               <p className="text-[0.72rem] font-semibold uppercase tracking-[0.36em] text-sky-500">

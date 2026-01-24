@@ -50,7 +50,12 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
 	        window.matchMedia &&
 	        window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-	      if (!prefersReducedMotion) {
+	      const canUsePinnedHero =
+	        typeof window !== 'undefined' &&
+	        window.matchMedia &&
+	        window.matchMedia('(min-width: 1024px)').matches
+
+	      if (!prefersReducedMotion && canUsePinnedHero) {
 	        const tl = gsap.timeline({
 	          scrollTrigger: {
 	            trigger: '.locations-cinematic',

@@ -2,14 +2,15 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../../lib/gsap'
 import kynaLogo from '../../assets/logo/kyna_withoutbg-01.PNG'
 
-const navItems = ['Home', 'About Us', 'Services', 'Our Team', 'Contact'] as const
+const navItems = ['Home', 'About Us', 'Services', 'Reviews', 'Our Team', 'Contact'] as const
 
-type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
+type PageLabel = 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact'
 
 const labelToPage: Record<(typeof navItems)[number], PageLabel> = {
   Home: 'home',
   'About Us': 'about',
   Services: 'services',
+  Reviews: 'reviews',
   'Our Team': 'team',
   Contact: 'contact',
 }

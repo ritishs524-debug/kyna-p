@@ -7,15 +7,17 @@ import { ChatbotWidget } from './components/common/ChatbotWidget'
 
 type Theme = 'light' | 'dark'
 
-type Page = 'home' | 'about' | 'services' | 'team' | 'contact'
+type Page = 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact'
 
-const Home = lazy(() => import('./pages/Home.tsx').then((m) => ({ default: m.Home })))
-	const AboutUs = lazy(() => import('./pages/AboutUs.tsx').then((m) => ({ default: m.AboutUs })))
-const Services = lazy(() => import('./pages/Services.tsx').then((m) => ({ default: m.Services })))
-const Team = lazy(() => import('./pages/Team.tsx').then((m) => ({ default: m.Team })))
-const Contact = lazy(() => import('./pages/Contact.tsx').then((m) => ({ default: m.Contact })))
+	const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
+		const AboutUs = lazy(() => import('./pages/AboutUs').then((m) => ({ default: m.AboutUs })))
+	const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m.Services })))
+	const Team = lazy(() => import('./pages/Team').then((m) => ({ default: m.Team })))
+	const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })))
+		const Reviews = lazy(() => import('./pages/Reviews').then((m) => ({ default: m.Reviews })))
 
 function getInitialTheme(): Theme {
+	
   if (typeof window === 'undefined') return 'dark'
 
   const stored = window.localStorage.getItem('theme') as Theme | null
@@ -48,7 +50,14 @@ function App() {
 	    if (typeof window === 'undefined') return 'home'
 
 	    const stored = window.localStorage.getItem('currentPage') as Page | null
-	    if (stored === 'home' || stored === 'about' || stored === 'services' || stored === 'team' || stored === 'contact') {
+		    if (
+		      stored === 'home' ||
+		      stored === 'about' ||
+		      stored === 'services' ||
+		      stored === 'reviews' ||
+		      stored === 'team' ||
+		      stored === 'contact'
+		    ) {
 	      return stored
 	    }
 
@@ -73,6 +82,7 @@ function App() {
           {currentPage === 'home' && <Home onNavigate={setCurrentPage} />}
 			          {currentPage === 'about' && <AboutUs onNavigate={setCurrentPage} />}
 			          {currentPage === 'services' && <Services />}
+				          {currentPage === 'reviews' && <Reviews />}
 			          {currentPage === 'team' && <Team />}
 			          {currentPage === 'contact' && <Contact />}
 			        </Suspense>

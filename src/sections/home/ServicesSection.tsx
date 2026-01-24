@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../../lib/gsap'
+import servicesBg from '../../assets/images/services-section.jpg'
 
 type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
 
@@ -45,6 +46,8 @@ type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
 	    name: 'Antenatal / Childbirth Education',
 	  },
 	] as const
+
+	const marqueeServices = [...services, ...services]
 
 type ServicesSectionProps = {
   onNavigate?: (page: PageLabel) => void
@@ -115,7 +118,7 @@ type ServicesSectionProps = {
       ref={sectionRef}
       className="relative overflow-hidden text-slate-900 dark:text-slate-50"
       style={{
-        backgroundImage: 'url(/src/assets/images/services-section.jpg)',
+		        backgroundImage: `url(${servicesBg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -143,7 +146,7 @@ type ServicesSectionProps = {
 	        <div className="sm:hidden">
 	          <div className="services-carousel services-marquee-viewport-mobile pb-4 pt-1">
 	            <div className="services-marquee-track-mobile">
-	              {[...services, ...services].map((service, index) => (
+			              {marqueeServices.map((service, index) => (
 	                <button
 	                  key={`${service.id}-mobile-${index}`}
 	                  type="button"
@@ -180,7 +183,7 @@ type ServicesSectionProps = {
 	            className="services-marquee-track flex gap-5"
 	            style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
 	          >
-              {[...services, ...services].map((service, index) => (
+			            {marqueeServices.map((service, index) => (
                 <button
                   key={`${service.id}-${index}`}
                   type="button"

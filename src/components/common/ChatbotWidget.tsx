@@ -9,8 +9,8 @@ type ChatMessage = {
   text: string
 }
 
-export function ChatbotWidget() {
-	  const [isOpen, setIsOpen] = useState(true)
+	export function ChatbotWidget() {
+		  const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 1,
@@ -67,37 +67,52 @@ export function ChatbotWidget() {
 	    })
 	  }
 
-	  useLayoutEffect(() => {
-	    if (isOpen && panelRef.current) {
-	      gsap.killTweensOf(panelRef.current)
-	      gsap.fromTo(
-	        panelRef.current,
-	        { autoAlpha: 0, y: 18, scale: 0.96 },
-	        {
-	          autoAlpha: 1,
-	          y: 0,
-	          scale: 1,
-	          duration: 0.4,
-	          ease: 'power3.out',
-	        },
-	      )
-	    }
+		  useLayoutEffect(() => {
+		    if (panelRef.current) {
+		      gsap.killTweensOf(panelRef.current)
+		    }
+		    if (bubbleRef.current) {
+		      gsap.killTweensOf(bubbleRef.current)
+		    }
 
-	    if (!isOpen && bubbleRef.current) {
-	      gsap.killTweensOf(bubbleRef.current)
-	      gsap.fromTo(
-	        bubbleRef.current,
-	        { autoAlpha: 0, y: 8 },
-	        {
-	          autoAlpha: 1,
-	          y: 0,
-	          duration: 0.3,
-	          ease: 'power2.out',
-	          delay: 0.05,
-	        },
-	      )
-	    }
-	  }, [isOpen])
+		    if (isOpen && panelRef.current) {
+		      gsap.fromTo(
+		        panelRef.current,
+		        { autoAlpha: 0, y: 18, scale: 0.96 },
+		        {
+		          autoAlpha: 1,
+		          y: 0,
+		          scale: 1,
+		          duration: 0.4,
+		          ease: 'power3.out',
+		        },
+		      )
+		    }
+
+		    if (!isOpen && bubbleRef.current) {
+		      gsap.fromTo(
+		        bubbleRef.current,
+		        { autoAlpha: 0, y: 8, scale: 0.96 },
+		        {
+		          autoAlpha: 1,
+		          y: 0,
+		          scale: 1,
+		          duration: 0.35,
+		          ease: 'power2.out',
+		        },
+		      )
+
+		      gsap.to(bubbleRef.current, {
+		        y: -4,
+		        scale: 1.03,
+		        duration: 0.8,
+		        ease: 'sine.inOut',
+		        repeat: -1,
+		        yoyo: true,
+		        delay: 0.6,
+		      })
+		    }
+		  }, [isOpen])
 
 	  useLayoutEffect(() => {
 	    if (!messagesRef.current) return
@@ -156,14 +171,13 @@ export function ChatbotWidget() {
 
       {/* Expanded chat panel */}
       {isOpen && (
-        <div
-	          ref={panelRef}
-	          className="pointer-events-auto w-[min(24rem,100vw-3rem)] overflow-hidden
-	            rounded-[2rem] border border-slate-200/90 bg-gradient-to-b from-slate-50
-	            via-sky-50/70 to-slate-100/95 p-4 text-[0.78rem] text-slate-900 shadow-[0_30px_90px_rgba(15,23,42,0.8)]
-	            backdrop-blur-xl dark:border-slate-800/80 dark:bg-gradient-to-b
-	            dark:from-slate-900 dark:via-slate-950/95 dark:to-slate-950"
-        >
+		        <div
+			          ref={panelRef}
+				          className="pointer-events-auto w-[min(24rem,100vw-3rem)] overflow-hidden
+				            rounded-[2rem] border border-slate-200/90 bg-white/95 p-4
+				            text-[0.78rem] text-slate-900 shadow-[0_30px_90px_rgba(15,23,42,0.8)]
+				            dark:border-slate-800/80 dark:bg-slate-900"
+		        >
           {/* Header */}
 	          <div className="mb-3 flex items-center gap-3">
 	            <div
@@ -185,27 +199,26 @@ export function ChatbotWidget() {
                 Usually replies in a few moments
               </span>
             </div>
-            <button
-              type="button"
-	              onClick={handleClose}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-full
-                border border-slate-200/80 bg-white/60 text-[0.7rem]
-                text-slate-500 shadow-sm transition hover:bg-slate-100
-                dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-400
-                dark:hover:bg-slate-800"
-              aria-label="Close chat"
-            >
-              ×
-            </button>
+		            <button
+		              type="button"
+			              onClick={handleClose}
+		              className="inline-flex h-7 w-7 items-center justify-center rounded-full
+		                border border-red-200/80 bg-red-50 text-[0.7rem]
+		                text-red-500 shadow-sm transition hover:bg-red-100
+		                dark:border-red-500/50 dark:bg-red-500/20 dark:text-red-200
+		                dark:hover:bg-red-500/30"
+		              aria-label="Close chat"
+		            >
+		              ×
+		            </button>
           </div>
 
           {/* Messages area */}
           <div
 	            ref={messagesRef}
-	            className="mb-3 max-h-64 space-y-2 overflow-y-auto rounded-[1.6rem]
-	              bg-gradient-to-b from-white via-sky-50 to-white p-3 pr-2
-	              text-[0.8rem] leading-relaxed text-slate-900 shadow-inner
-	              dark:bg-slate-950/40 dark:text-slate-100"
+		            className="mb-3 max-h-64 space-y-2 overflow-y-auto rounded-[1.6rem]
+		              bg-white p-3 pr-2 text-[0.8rem] leading-relaxed text-slate-900
+		              shadow-inner dark:bg-slate-900 dark:text-slate-100"
           >
             {messages.map((message) => (
               <div
@@ -229,13 +242,15 @@ export function ChatbotWidget() {
 	                    />
                   </div>
                 )}
-                <div
-                  className={
-                    message.sender === 'assistant'
-	                      ? 'max-w-[82%] rounded-3xl bg-white px-4 py-2.5 text-slate-900 shadow-sm dark:bg-slate-900/80 dark:text-slate-100'
+	                <div
+	                  className={
+	                    message.sender === 'assistant'
+	                      ? message.id === 1
+	                        ? 'max-w-[82%] rounded-3xl bg-gradient-to-r from-sky-500 to-indigo-500 px-4 py-2.5 text-white shadow-md dark:from-sky-400 dark:to-indigo-400'
+	                        : 'max-w-[82%] rounded-3xl bg-white px-4 py-2.5 text-slate-900 shadow-sm dark:bg-slate-900/80 dark:text-slate-100'
 	                      : 'max-w-[82%] rounded-3xl bg-slate-900 px-4 py-2.5 text-slate-50 shadow-sm dark:bg-sky-500/90'
-                  }
-                >
+	                  }
+	                >
                   {message.text}
                 </div>
               </div>
