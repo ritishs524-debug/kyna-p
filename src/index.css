@@ -106,3 +106,23 @@
 	    transform: translateX(0);
 	  }
 }
+
+/* Highlight animation for targeted service card after navigation */
+.service-card--highlight {
+	animation: service-card-highlight 1.3s ease-in-out 2;
+}
+
+@keyframes service-card-highlight {
+	0%,
+	100% {
+		outline: 0 solid rgba(56, 189, 248, 0);
+		outline-offset: 0;
+		transform: translateY(0) scale(1);
+	}
+	25%,
+	75% {
+		outline: 3px solid rgba(56, 189, 248, 0.9);
+		outline-offset: 4px;
+		transform: translateY(-4px) scale(1.02);
+	}
+}

@@ -27,7 +27,13 @@ export function Footer({ onNavigate }: FooterProps) {
       const rect = element.getBoundingClientRect()
       const offsetTop = rect.top + window.scrollY - headerOffset
 
-      window.scrollTo({ top: offsetTop, behavior: 'smooth' })
+	      window.scrollTo({ top: offsetTop, behavior: 'smooth' })
+
+	      // Briefly highlight the target card so the user sees which one they selected
+	      element.classList.add('service-card--highlight')
+	      setTimeout(() => {
+	        element.classList.remove('service-card--highlight')
+	      }, 2600)
     }, 0)
   }
 
