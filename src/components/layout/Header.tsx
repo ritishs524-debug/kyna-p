@@ -62,18 +62,18 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-4 lg:px-6">
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => onNavigate('home')}
-            aria-label="Go to home page"
-            className="relative flex h-[3.5rem] w-[8rem] items-center focus:outline-none"
-          >
-            <img
-	              src={kynaLogo}
-              alt="KYNA Physiotherapy — Intelligent Rehab Clinics"
-              className="absolute left-0 top-1/2 h-[10rem] w-auto -translate-y-1/2 object-contain"
-            />
-          </button>
+		          <button
+	            type="button"
+	            onClick={() => onNavigate('home')}
+	            aria-label="Go to home page"
+	            className="relative flex h-[3.5rem] w-[8rem] items-center focus:outline-none"
+			          >
+			            <img
+					              src={kynaLogo}
+			              alt="KYNA Physiotherapy — Intelligent Rehab Clinics"
+			              className="absolute left-0 top-1/2 h-[10rem] w-auto -translate-y-1/2 object-contain"
+			            />
+		          </button>
           <div className="hidden sm:block"></div>
         </div>
 

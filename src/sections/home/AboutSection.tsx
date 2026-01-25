@@ -72,7 +72,8 @@ export function AboutSection() {
               <img
                 src={kynaLogoSecondary}
                 alt="Kyna logo"
-                className="h-7 w-7 object-contain"
+	                loading="lazy"
+	                className="h-7 w-7 object-contain"
               />
             </div>
             </div>

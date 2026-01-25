@@ -1,5 +1,12 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
+import imgNeedle from '../../assets/about/close-up-therapist-holding-acupuncture-needle (1) (1).jpg'
+import imgDoctorHelp from '../../assets/about/doctor-helping-patient-rehabilitation (1) (1).jpg'
+import imgShoulderSupport from '../../assets/about/female-therapist-rehabilitation-center-putting-shoulder-support-man (1) (1).jpg'
+import imgKneeTape from '../../assets/about/physiotherapist-applies-knee-tape-woman-closeup-taping-application (1) (1).jpg'
+import imgCupping from '../../assets/about/top-view-suction-cup-process (1) (1).jpg'
+import imgGymnastics from '../../assets/about/woman-doing-gymnastics-with-help-his-young-physical-therapist (1) (1).jpg'
+import imgRehabCenter from '../../assets/about/woman-rehabilitation-center-getting-treatment (1) (1).jpg'
 
 // NOTE: The video collage on the About hero is temporarily disabled to avoid
 // missing-asset build errors and to keep the page lighter. All original
@@ -25,6 +32,18 @@ import { gsap } from '../../lib/gsap'
 //   { src: homePageVideo },
 // ]
 // const mediaSpanPattern = ['row-span-2', 'row-span-3', 'row-span-2', 'row-span-4']
+
+const aboutImages = [
+  { src: imgNeedle, alt: 'Close-up of therapist holding acupuncture needle' },
+  { src: imgDoctorHelp, alt: 'Doctor helping patient with rehabilitation exercises' },
+  { src: imgShoulderSupport, alt: 'Therapist putting shoulder support on patient' },
+  { src: imgKneeTape, alt: 'Physiotherapist applying knee tape to patient' },
+  { src: imgCupping, alt: 'Top view of suction cup therapy in progress' },
+  { src: imgGymnastics, alt: 'Woman doing gymnastics with physical therapist assistance' },
+  { src: imgRehabCenter, alt: 'Woman getting treatment at rehabilitation center' },
+] as const
+
+const mediaSpanPattern = ['row-span-2', 'row-span-3', 'row-span-2', 'row-span-4'] as const
 
 export function AboutHeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -170,12 +189,19 @@ export function AboutHeroSection() {
 	              )
 	            })}
 	            */}
-	            <div className="row-span-2 bg-gradient-to-br from-sky-500/60 via-sky-400/30 to-slate-900" />
-	            <div className="row-span-3 bg-gradient-to-br from-sky-400/40 via-sky-300/10 to-slate-900" />
-	            <div className="row-span-2 bg-gradient-to-br from-sky-500/50 via-sky-400/20 to-slate-900" />
-	            <div className="row-span-4 bg-gradient-to-br from-sky-500/70 via-sky-400/40 to-slate-900" />
-	            <div className="row-span-2 bg-gradient-to-br from-sky-400/35 via-sky-300/15 to-slate-900" />
-	            <div className="row-span-3 bg-gradient-to-br from-sky-500/50 via-sky-400/20 to-slate-900" />
+	            {aboutImages.map((image, index) => {
+	              const spanClass = mediaSpanPattern[index % mediaSpanPattern.length]
+	              return (
+	                <div key={image.src} className={`relative overflow-hidden ${spanClass}`}>
+	                  <img
+	                    src={image.src}
+	                    alt={image.alt}
+	                    loading="lazy"
+	                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+	                  />
+	                </div>
+	              )
+	            })}
 	          </div>
 	        </div>
       </div>

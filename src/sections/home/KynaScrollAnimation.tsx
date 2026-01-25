@@ -96,7 +96,8 @@ export function KynaScrollAnimation() {
           <img
             src={kynaLogo}
             alt="KYNA logo"
-            className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-90"
+	            loading="lazy"
+	            className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-90"
           />
 
           {/* Masked words emerging from inside logo */}

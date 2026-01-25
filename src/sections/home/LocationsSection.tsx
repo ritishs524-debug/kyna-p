@@ -219,7 +219,7 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
 		          muted
 		          loop
 		          playsInline
-		          preload="metadata"
+		          preload="none"
 		        />
 		        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/80 to-slate-900/90" />
 		      </div>
@@ -236,7 +236,8 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
 	              <img
 	                src={kynaLogo}
 	                alt="KYNA Physiotherapy logo"
-		                className="locations-hero-logo pointer-events-none w-auto max-w-sm opacity-100 drop-shadow-[0_0_40px_rgba(56,189,248,0.85)] sm:max-w-md md:max-w-lg"
+			                loading="lazy"
+			                className="locations-hero-logo pointer-events-none w-auto max-w-sm opacity-100 drop-shadow-[0_0_40px_rgba(56,189,248,0.85)] sm:max-w-md md:max-w-lg"
 	              />
 
 		              {/* Branch / roots tree coming out from the logo */}

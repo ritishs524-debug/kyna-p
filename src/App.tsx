@@ -3,18 +3,20 @@ import { Suspense, lazy, useEffect, useState } from 'react'
 import { Header } from './components/layout/Header'
 import { Footer } from './components/layout/Footer'
 import { PageLoader } from './components/common/PageLoader'
-import { ChatbotWidget } from './components/common/ChatbotWidget'
 
 type Theme = 'light' | 'dark'
 
 type Page = 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact'
 
-	const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
-		const AboutUs = lazy(() => import('./pages/AboutUs').then((m) => ({ default: m.AboutUs })))
-	const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m.Services })))
-	const Team = lazy(() => import('./pages/Team').then((m) => ({ default: m.Team })))
-	const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })))
-		const Reviews = lazy(() => import('./pages/Reviews').then((m) => ({ default: m.Reviews })))
+		const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
+			const AboutUs = lazy(() => import('./pages/AboutUs').then((m) => ({ default: m.AboutUs })))
+		const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m.Services })))
+		const Team = lazy(() => import('./pages/Team').then((m) => ({ default: m.Team })))
+		const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })))
+			const Reviews = lazy(() => import('./pages/Reviews').then((m) => ({ default: m.Reviews })))
+		const ChatbotWidget = lazy(() =>
+		  import('./components/common/ChatbotWidget').then((m) => ({ default: m.ChatbotWidget })),
+		)
 
 function getInitialTheme(): Theme {
 	
@@ -69,28 +71,30 @@ function App() {
 	    window.localStorage.setItem('currentPage', currentPage)
 	  }, [currentPage])
 
-	  return (
-	    <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-50">
-      <Header
-        theme={theme}
-        onToggleTheme={toggleTheme}
-        currentPage={currentPage}
-        onNavigate={setCurrentPage}
-      />
-			      <main className="pt-18">
-			        <Suspense fallback={<PageLoader />}>
-          {currentPage === 'home' && <Home onNavigate={setCurrentPage} />}
-			          {currentPage === 'about' && <AboutUs onNavigate={setCurrentPage} />}
-			          {currentPage === 'services' && <Services />}
-				          {currentPage === 'reviews' && <Reviews />}
-			          {currentPage === 'team' && <Team />}
-			          {currentPage === 'contact' && <Contact />}
-			        </Suspense>
-			      </main>
-	      <Footer onNavigate={setCurrentPage} />
-	      <ChatbotWidget />
-    </div>
-  )
+		  return (
+		    <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-50">
+	      <Header
+	        theme={theme}
+	        onToggleTheme={toggleTheme}
+	        currentPage={currentPage}
+	        onNavigate={setCurrentPage}
+	      />
+				      <main className="pt-18">
+				        <Suspense fallback={<PageLoader />}>
+	        {currentPage === 'home' && <Home onNavigate={setCurrentPage} />}
+					          {currentPage === 'about' && <AboutUs onNavigate={setCurrentPage} />}
+					          {currentPage === 'services' && <Services />}
+						          {currentPage === 'reviews' && <Reviews />}
+					          {currentPage === 'team' && <Team />}
+					          {currentPage === 'contact' && <Contact />}
+				        </Suspense>
+				      </main>
+		      <Footer onNavigate={setCurrentPage} />
+		      <Suspense fallback={null}>
+		        <ChatbotWidget />
+		      </Suspense>
+		    </div>
+		  )
 }
 
 export default App

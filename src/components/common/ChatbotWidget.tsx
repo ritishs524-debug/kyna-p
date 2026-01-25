@@ -200,7 +200,12 @@ export function ChatbotWidget() {
 	  }
 
 	  const handleClose = () => {
-	    if (!panelRef.current) {
+	    const prefersReducedMotion =
+	      typeof window !== 'undefined' &&
+	      window.matchMedia &&
+	      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+	    if (prefersReducedMotion || !panelRef.current) {
 	      setIsOpen(false)
 	      return
 	    }
@@ -221,6 +226,21 @@ export function ChatbotWidget() {
 		    }
 		    if (bubbleRef.current) {
 		      gsap.killTweensOf(bubbleRef.current)
+		    }
+
+		    const prefersReducedMotion =
+		      typeof window !== 'undefined' &&
+		      window.matchMedia &&
+		      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+		    if (prefersReducedMotion) {
+		      if (isOpen && panelRef.current) {
+		        gsap.set(panelRef.current, { autoAlpha: 1, y: 0, scale: 1 })
+		      }
+		      if (!isOpen && bubbleRef.current) {
+		        gsap.set(bubbleRef.current, { autoAlpha: 1, y: 0, scale: 1 })
+		      }
+		      return
 		    }
 
 		    if (isOpen && panelRef.current) {
@@ -261,29 +281,39 @@ export function ChatbotWidget() {
 		      })
 		    }
 		  }, [isOpen])
+	
+		  useLayoutEffect(() => {
+		    if (!messagesRef.current) return
 
-	  useLayoutEffect(() => {
-	    if (!messagesRef.current) return
+		    const prefersReducedMotion =
+		      typeof window !== 'undefined' &&
+		      window.matchMedia &&
+		      window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-	    const items = messagesRef.current.querySelectorAll('.kyna-chat-message')
-	    const last = items[items.length - 1] as HTMLElement | undefined
-	    if (!last) return
+		    if (prefersReducedMotion) {
+		      messagesRef.current.scrollTop = messagesRef.current.scrollHeight
+		      return
+		    }
 
-	    gsap.killTweensOf(last)
-	    gsap.from(last, {
-	      opacity: 0,
-	      y: 10,
-	      duration: 0.25,
-	      ease: 'power2.out',
-	    })
+		    const items = messagesRef.current.querySelectorAll('.kyna-chat-message')
+		    const last = items[items.length - 1] as HTMLElement | undefined
+		    if (!last) return
 
-	    gsap.killTweensOf(messagesRef.current)
-	    gsap.to(messagesRef.current, {
-	      scrollTop: messagesRef.current.scrollHeight,
-	      duration: 0.3,
-	      ease: 'power2.out',
-	    })
-	  }, [messages.length])
+		    gsap.killTweensOf(last)
+		    gsap.from(last, {
+		      opacity: 0,
+		      y: 10,
+		      duration: 0.25,
+		      ease: 'power2.out',
+		    })
+
+		    gsap.killTweensOf(messagesRef.current)
+		    gsap.to(messagesRef.current, {
+		      scrollTop: messagesRef.current.scrollHeight,
+		      duration: 0.3,
+		      ease: 'power2.out',
+		    })
+		  }, [messages.length])
 
   return (
 	    <div className="pointer-events-none fixed bottom-5 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-10 sm:right-8">
@@ -336,7 +366,8 @@ export function ChatbotWidget() {
 	              <img
 	                src={kynaMark}
 	                alt="KYNA logo"
-	                className="h-8 w-auto object-contain"
+		                loading="lazy"
+		                className="h-8 w-auto object-contain"
 	              />
 	            </div>
             <div className="flex flex-1 flex-col">
@@ -386,7 +417,8 @@ export function ChatbotWidget() {
 	                    <img
 	                      src={kynaMark}
 	                      alt="KYNA logo"
-	                      className="h-6 w-6 object-contain"
+					                      loading="lazy"
+					                      className="h-6 w-6 object-contain"
 	                    />
                   </div>
                 )}
