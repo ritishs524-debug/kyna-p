@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
+import { ImageWithLoader } from '../../components/common/ImageWithLoader'
 import imgNeedle from '../../assets/about/close-up-therapist-holding-acupuncture-needle (1) (1).jpg'
 import imgDoctorHelp from '../../assets/about/doctor-helping-patient-rehabilitation (1) (1).jpg'
 import imgShoulderSupport from '../../assets/about/female-therapist-rehabilitation-center-putting-shoulder-support-man (1) (1).jpg'
@@ -136,8 +137,8 @@ export function AboutHeroSection() {
           </div>
         </div>
 
-	        <div className="about-hero-media mt-4 w-full flex-1 lg:mt-0">
-	          <div className="grid h-full grid-flow-row-dense auto-rows-[82px] grid-cols-3 overflow-hidden rounded-3xl border border-slate-200/70 bg-slate-900/90 shadow-[0_22px_70px_rgba(15,23,42,0.7)] dark:border-slate-800/80 dark:bg-slate-950/90">
+        <div className="about-hero-media mt-4 w-full flex-1 lg:mt-0">
+          <div className="grid h-full grid-flow-row-dense auto-rows-[82px] grid-cols-3 overflow-hidden rounded-3xl border border-slate-200/70 bg-slate-900/90 shadow-[0_22px_70px_rgba(15,23,42,0.7)] dark:border-slate-800/80 dark:bg-slate-950/90">
 	            {/* Original video collage (disabled for now to prevent build errors)
 	            {aboutMedia.map((item, index) => {
 	              const spanClass = mediaSpanPattern[index % mediaSpanPattern.length]
@@ -189,21 +190,22 @@ export function AboutHeroSection() {
 	              )
 	            })}
 	            */}
-	            {aboutImages.map((image, index) => {
-	              const spanClass = mediaSpanPattern[index % mediaSpanPattern.length]
-	              return (
-	                <div key={image.src} className={`relative overflow-hidden ${spanClass}`}>
-	                  <img
-	                    src={image.src}
-	                    alt={image.alt}
-	                    loading="lazy"
-	                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-	                  />
-	                </div>
-	              )
-	            })}
-	          </div>
-	        </div>
+            {aboutImages.map((image, index) => {
+              const spanClass = mediaSpanPattern[index % mediaSpanPattern.length]
+              return (
+                <ImageWithLoader
+                  key={image.src}
+                  src={image.src}
+                  alt={image.alt}
+                  loading="lazy"
+                  containerClassName={`overflow-hidden ${spanClass}`}
+                  imageClassName="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  spinnerSize={32}
+                />
+              )
+            })}
+          </div>
+        </div>
       </div>
     </section>
   )

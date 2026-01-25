@@ -48,7 +48,7 @@ function App() {
 	    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
 	  }
 
-	  const [currentPage, setCurrentPage] = useState<Page>(() => {
+		  const [currentPage, setCurrentPage] = useState<Page>(() => {
 	    if (typeof window === 'undefined') return 'home'
 
 	    const stored = window.localStorage.getItem('currentPage') as Page | null
@@ -66,30 +66,37 @@ function App() {
 	    return 'home'
 	  })
 
-	  useEffect(() => {
+		  const handleNavigate = (page: Page) => {
+		    setCurrentPage(page)
+		    if (typeof window !== 'undefined') {
+		      window.scrollTo({ top: 0, behavior: 'smooth' })
+		    }
+		  }
+
+		  useEffect(() => {
 	    if (typeof window === 'undefined') return
 	    window.localStorage.setItem('currentPage', currentPage)
 	  }, [currentPage])
 
 		  return (
 		    <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-50">
-	      <Header
-	        theme={theme}
-	        onToggleTheme={toggleTheme}
-	        currentPage={currentPage}
-	        onNavigate={setCurrentPage}
-	      />
+		      <Header
+		        theme={theme}
+		        onToggleTheme={toggleTheme}
+		        currentPage={currentPage}
+		        onNavigate={handleNavigate}
+		      />
 				      <main className="pt-18">
 				        <Suspense fallback={<PageLoader />}>
-	        {currentPage === 'home' && <Home onNavigate={setCurrentPage} />}
-					          {currentPage === 'about' && <AboutUs onNavigate={setCurrentPage} />}
+		        {currentPage === 'home' && <Home onNavigate={handleNavigate} />}
+					          {currentPage === 'about' && <AboutUs onNavigate={handleNavigate} />}
 					          {currentPage === 'services' && <Services />}
 						          {currentPage === 'reviews' && <Reviews />}
 					          {currentPage === 'team' && <Team />}
 					          {currentPage === 'contact' && <Contact />}
 				        </Suspense>
 				      </main>
-		      <Footer onNavigate={setCurrentPage} />
+		      <Footer onNavigate={handleNavigate} />
 		      <Suspense fallback={null}>
 		        <ChatbotWidget />
 		      </Suspense>
