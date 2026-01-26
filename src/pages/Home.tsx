@@ -6,7 +6,7 @@ import { TeamPreviewSection } from '../sections/home/TeamPreviewSection'
 import { LocationsSection } from '../sections/home/LocationsSection'
 import { FinalCtaSection } from '../sections/home/FinalCtaSection'
 
-type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
+type PageLabel = 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact'
 
 type HomeProps = {
   onNavigate?: (page: PageLabel) => void
@@ -15,13 +15,13 @@ type HomeProps = {
 export function Home({ onNavigate }: HomeProps) {
   return (
     <div className="flex flex-col gap-0 pb-0 lg:pb-0">
-      <HeroSection />
+      <HeroSection onNavigate={onNavigate} />
       <TrustSection />
       <AboutSection />
       <ServicesSection onNavigate={onNavigate} />
       <TeamPreviewSection />
       <LocationsSection onNavigate={onNavigate} />
-      <FinalCtaSection />
+      <FinalCtaSection onNavigate={onNavigate} />
     </div>
   )
 }

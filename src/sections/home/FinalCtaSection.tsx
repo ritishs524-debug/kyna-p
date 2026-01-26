@@ -1,7 +1,11 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
 
-export function FinalCtaSection() {
+interface FinalCtaSectionProps {
+  onNavigate?: (page: 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact') => void
+}
+
+export function FinalCtaSection({ onNavigate }: FinalCtaSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
@@ -39,6 +43,7 @@ export function FinalCtaSection() {
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <button
                 type="button"
+                onClick={() => onNavigate?.('contact')}
                 className="rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-10 py-3 text-xs font-semibold uppercase tracking-[0.32em] text-white shadow-[0_18px_45px_rgba(56,189,248,0.55)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_rgba(56,189,248,0.75)]"
               >
                 Book Free Consultation
