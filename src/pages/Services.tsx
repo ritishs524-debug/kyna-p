@@ -183,44 +183,38 @@ export function Services() {
           </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 md:gap-10">
-          {services.map((service) => (
-            <article
-              id={'service-' + service.id}
-              key={service.id}
-              className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl bg-gradient-to-b from-slate-100 via-white to-white shadow-[0_8px_40px_rgba(15,23,42,0.08)] transition-all duration-500 hover:shadow-[0_16px_60px_rgba(15,23,42,0.15)] dark:from-slate-800 dark:via-slate-900 dark:to-slate-900"
-            >
-              {/* Image Section with Gradient Fade */}
-              <div className="relative h-64 md:h-72 w-full overflow-hidden">
-                <ImageWithLoader
-                  src={serviceImages[service.id].src}
-                  alt={serviceImages[service.id].alt}
-                  loading="lazy"
-                  containerClassName="h-full w-full"
-                  imageClassName="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                />
-                {/* Gradient fade to white at bottom */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-slate-900 dark:via-slate-900/60" />
-
-                {/* Badge at bottom of image */}
-                <div className="absolute inset-x-0 bottom-6 flex items-center justify-center">
-                  <span className="inline-block rounded-full bg-sky-500/90 px-5 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white shadow-lg backdrop-blur-sm">
-                    {service.badge}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content Section - White Background */}
-              <div className="flex flex-1 flex-col px-8 pb-8 pt-2 text-center">
-                <h2 className="text-xl font-bold text-slate-900 sm:text-2xl dark:text-white">
-                  {service.title}
-                </h2>
-                <p className="mt-4 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                  {service.description}
-                </p>
-              </div>
-            </article>
-          ))}
+		        <div className="grid gap-8 md:grid-cols-2 md:gap-10">
+	          {services.map((service) => (
+			          <article
+			            id={'service-' + service.id}
+			            key={service.id}
+			            className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
+			          >
+			            <div className="relative h-52 md:h-60 w-full overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 dark:from-slate-800 dark:to-slate-900">
+			                <ImageWithLoader
+			                  src={serviceImages[service.id].src}
+			                  alt={serviceImages[service.id].alt}
+			                  loading="lazy"
+			                  containerClassName="h-full w-full"
+			                />
+			                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
+	                <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
+	                  <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
+	                    <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">
+	                      {service.badge}
+	                    </span>
+	                  </span>
+	                </div>
+	              </div>
+	
+	              <div className="flex-1 px-6 pb-6 pt-5 text-center text-xs sm:text-[0.8rem]">
+	                <h2 className="text-base font-semibold sm:text-lg">{service.title}</h2>
+	                <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
+	                  {service.description}
+	                </p>
+	              </div>
+	            </article>
+	          ))}
         </div>
       </div>
     </section>
