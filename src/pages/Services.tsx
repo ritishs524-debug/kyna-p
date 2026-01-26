@@ -218,19 +218,6 @@ export function Services() {
                 <p className="mt-4 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                   {service.description}
                 </p>
-
-                {/* Explore Button */}
-                <div className="mt-6 flex justify-center">
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-2 rounded-full bg-sky-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:bg-sky-600 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2"
-                  >
-                    Explore
-                    <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </button>
-                </div>
               </div>
             </article>
           ))}
