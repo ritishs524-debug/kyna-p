@@ -316,7 +316,7 @@ export function ChatbotWidget() {
 		  }, [messages.length])
 
   return (
-	    <div className="pointer-events-none fixed bottom-5 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-10 sm:right-8">
+	    <div className="pointer-events-none fixed bottom-20 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-24 sm:right-8">
       {/* Collapsed bubble button */}
       {!isOpen && (
         <button

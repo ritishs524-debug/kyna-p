@@ -28,29 +28,48 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
+    // Check for reduced motion preference
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+    if (prefersReducedMotion) {
+      // Set elements to final state without animation
+      gsap.set('.hero-overlay', { opacity: 1 })
+      gsap.set('.hero-badge', { opacity: 1, y: 0 })
+      gsap.set('.hero-heading', { opacity: 1, y: 0 })
+      gsap.set('.hero-copy', { opacity: 1, y: 0 })
+      gsap.set('.hero-actions', { opacity: 1, y: 0 })
+      gsap.set('.hero-highlight-card', { opacity: 1, y: 0, scale: 1 })
+      return
+    }
+
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+      // Small delay to ensure DOM is ready (helps on mobile)
+      const tl = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+        delay: 0.1
+      })
 
       tl.from('.hero-overlay', {
         opacity: 0,
-        duration: 0.6,
+        duration: 0.5,
       })
         .from(
           '.hero-badge',
           {
             opacity: 0,
-            y: -20,
-            duration: 0.6,
+            y: -15,
+            duration: 0.5,
           },
-          '-=0.3',
+          '-=0.2',
         )
         .from(
           '.hero-heading',
           {
             opacity: 0,
-            y: 32,
-            duration: 0.8,
-            filter: 'blur(8px)',
+            y: 20,
+            duration: 0.6,
           },
           '-=0.2',
         )
@@ -58,28 +77,28 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
           '.hero-copy',
           {
             opacity: 0,
-            y: 24,
-            duration: 0.7,
+            y: 15,
+            duration: 0.5,
           },
-          '-=0.4',
+          '-=0.3',
         )
         .from(
           '.hero-actions',
           {
             opacity: 0,
-            y: 20,
-            duration: 0.6,
+            y: 15,
+            duration: 0.5,
           },
-          '-=0.4',
+          '-=0.3',
         )
         .from(
           '.hero-highlight-card',
           {
             opacity: 0,
-            y: 28,
-            scale: 0.96,
-            duration: 0.7,
-            stagger: 0.15,
+            y: 20,
+            scale: 0.98,
+            duration: 0.5,
+            stagger: 0.1,
             clearProps: 'all',
           },
           '-=0.2',
