@@ -114,7 +114,7 @@ export function Footer({ onNavigate }: FooterProps) {
             © {new Date().getFullYear()} KYNA Physiotherapy. All rights reserved.
           </span>
           <span className="text-slate-500">
-            Privacy Policy • Website made by Ritish Sharma —
+            Privacy Policy • Designed and developed by Ritish —{' '}
             <a
               href="https://portfolio-app-frontend.onrender.com/"
               target="_blank"
