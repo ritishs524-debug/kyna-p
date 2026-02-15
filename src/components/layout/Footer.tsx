@@ -116,9 +116,7 @@ export function Footer({ onNavigate }: FooterProps) {
           <span className="text-slate-500">
             Privacy Policy • Designed and developed by Ritish —{' '}
             <a
-              href="https://portfolio-app-frontend.onrender.com/"
-              target="_blank"
-              rel="noreferrer"
+              href="tel:7681909401"
               className="underline underline-offset-2 hover:text-slate-300"
             >
               Contact
