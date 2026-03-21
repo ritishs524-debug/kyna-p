@@ -1,6 +1,7 @@
-			import { useLayoutEffect, useRef } from 'react'
+			import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 			import { gsap } from '../lib/gsap'
 			import { ImageWithLoader } from '../components/common/ImageWithLoader'
+		import { getServices, type ServiceData } from '../lib/api'
 		
 			// Service images – use the actual filenames from src/assets/services
 		import doctorHelpingPatientRehabilitation from '../assets/services/doctor-helping-patient-rehabilitation.jpg'
@@ -134,8 +135,21 @@
 
 export function Services() {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const [dbServices, setDbServices] = useState<ServiceData[]>([])
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    getServices()
+      .then((data) => { if (data.length > 0) setDbServices(data) })
+      .catch(() => {})
+      .finally(() => setLoaded(true))
+  }, [])
+
+  // Use DB data if available, otherwise fall back to hardcoded
+  const useDb = dbServices.length > 0
 
   useLayoutEffect(() => {
+    if (!loaded) return
     const ctx = gsap.context(() => {
       gsap.from('.services-hero', {
         opacity: 0,
@@ -159,7 +173,7 @@ export function Services() {
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [loaded, dbServices])
 
   return (
     <section
@@ -184,37 +198,51 @@ export function Services() {
         </div>
 
 		        <div className="grid gap-8 md:grid-cols-2 md:gap-10">
-	          {services.map((service) => (
-			          <article
-			            id={'service-' + service.id}
-			            key={service.id}
-			            className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-			          >
-			            <div className="relative h-52 md:h-60 w-full overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 dark:from-slate-800 dark:to-slate-900">
-			                <ImageWithLoader
-			                  src={serviceImages[service.id].src}
-			                  alt={serviceImages[service.id].alt}
-			                  loading="lazy"
-			                  containerClassName="h-full w-full"
-			                />
-			                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
-	                <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
-	                  <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
-	                    <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">
-	                      {service.badge}
-	                    </span>
-	                  </span>
-	                </div>
-	              </div>
-	
-	              <div className="flex-1 px-6 pb-6 pt-5 text-center text-xs sm:text-[0.8rem]">
-	                <h2 className="text-base font-semibold sm:text-lg">{service.title}</h2>
-	                <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
-	                  {service.description}
-	                </p>
-	              </div>
-	            </article>
-	          ))}
+	          {useDb
+	            ? dbServices.map((service) => (
+	                <article
+	                  key={service.id}
+	                  className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
+	                >
+	                  <div className="relative h-52 md:h-60 w-full overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 dark:from-slate-800 dark:to-slate-900">
+	                    {service.image && (
+	                      <ImageWithLoader src={service.image} alt={service.imageAlt || service.title} loading="lazy" containerClassName="h-full w-full" />
+	                    )}
+	                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
+	                    <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
+	                      <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
+	                        <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">{service.badge}</span>
+	                      </span>
+	                    </div>
+	                  </div>
+	                  <div className="flex-1 px-6 pb-6 pt-5 text-center text-xs sm:text-[0.8rem]">
+	                    <h2 className="text-base font-semibold sm:text-lg">{service.title}</h2>
+	                    <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">{service.description}</p>
+	                  </div>
+	                </article>
+	              ))
+	            : services.map((service) => (
+	                <article
+	                  id={'service-' + service.id}
+	                  key={service.id}
+	                  className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
+	                >
+	                  <div className="relative h-52 md:h-60 w-full overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 dark:from-slate-800 dark:to-slate-900">
+	                    <ImageWithLoader src={serviceImages[service.id].src} alt={serviceImages[service.id].alt} loading="lazy" containerClassName="h-full w-full" />
+	                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
+	                    <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
+	                      <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
+	                        <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">{service.badge}</span>
+	                      </span>
+	                    </div>
+	                  </div>
+	                  <div className="flex-1 px-6 pb-6 pt-5 text-center text-xs sm:text-[0.8rem]">
+	                    <h2 className="text-base font-semibold sm:text-lg">{service.title}</h2>
+	                    <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">{service.description}</p>
+	                  </div>
+	                </article>
+	              ))
+	          }
         </div>
       </div>
     </section>

@@ -1,5 +1,6 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { gsap } from '../lib/gsap'
+import { getTeamMembers, type TeamMemberData } from '../lib/api'
 
 const teamMembers = [
   {
@@ -96,8 +97,20 @@ const teamMembers = [
 
 export function Team() {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const [dbTeam, setDbTeam] = useState<TeamMemberData[]>([])
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    getTeamMembers()
+      .then((data) => { if (data.length > 0) setDbTeam(data) })
+      .catch(() => {})
+      .finally(() => setLoaded(true))
+  }, [])
+
+  const useDb = dbTeam.length > 0
 
   useLayoutEffect(() => {
+    if (!loaded) return
     const ctx = gsap.context(() => {
       gsap.from('.team-hero', {
         opacity: 0,
@@ -121,7 +134,7 @@ export function Team() {
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [loaded, dbTeam])
 
   return (
     <section
@@ -146,15 +159,12 @@ export function Team() {
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {teamMembers.map((member) => {
-            const isPrimaryMember =
-              member.id === 'sorabh-sharma' ||
-              member.id === 'pradeep-kumar' ||
-              member.id === 'angadjot-singh'
+          {(useDb ? dbTeam : teamMembers).map((member, idx) => {
+            const isPrimaryMember = idx < 3
 
             return (
               <article
-                key={member.id}
+                key={member.id ?? member.name}
                 className={`team-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_28px_80px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 ${
                   isPrimaryMember ? 'border-sky-200/80 dark:border-sky-500/70' : ''
                 }`}
@@ -164,12 +174,18 @@ export function Team() {
                     isPrimaryMember ? 'h-36' : 'h-32'
                   }`}
                 >
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(255,255,255,0.25),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(15,23,42,0.7),transparent_55%)] mix-blend-screen opacity-80" />
-                  <div className="relative z-10 flex h-full items-center justify-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-950/70 text-lg font-semibold uppercase tracking-wide text-slate-50 shadow-xl shadow-sky-900/40">
-                      {member.initials}
-                    </div>
-                  </div>
+                  {useDb && (member as TeamMemberData).image ? (
+                    <img src={(member as TeamMemberData).image} alt={member.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(255,255,255,0.25),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(15,23,42,0.7),transparent_55%)] mix-blend-screen opacity-80" />
+                      <div className="relative z-10 flex h-full items-center justify-center">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-950/70 text-lg font-semibold uppercase tracking-wide text-slate-50 shadow-xl shadow-sky-900/40">
+                          {member.initials}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div

@@ -15,6 +15,7 @@ const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m
 const Team = lazy(() => import('./pages/Team').then((m) => ({ default: m.Team })))
 const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })))
 const Reviews = lazy(() => import('./pages/Reviews').then((m) => ({ default: m.Reviews })))
+const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin })))
 const ChatbotWidget = lazy(() =>
   import('./components/common/ChatbotWidget').then((m) => ({ default: m.ChatbotWidget })),
 )
@@ -101,6 +102,7 @@ function App() {
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/team" element={<Team />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={<Admin />} />
             {/* Fallback route - redirect to home */}
             <Route path="*" element={<Home onNavigate={handleNavigate} />} />
           </Routes>
