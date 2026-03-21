@@ -1,199 +1,187 @@
-import { useLayoutEffect, useRef } from 'react'
-import { gsap } from '../../lib/gsap'
-import homeHeroVideo from '../../assets/videos/home-page2.mp4'
+import { useRef, useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import drSorabhImg from '../../assets/logo/drsorabh.png'
+import { BackgroundCells } from '../../components/ui/background-ripple-effect'
 
 interface HeroSectionProps {
   onNavigate?: (page: 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact') => void
 }
 
-const heroHighlights = [
-  {
-    label: 'Expert Physiotherapy Service',
-    title: 'Revealing, restoring, and enhancing muscles',
-    description: 'with extra care and attention.',
-  },
-  {
-    label: 'Holistic Approach to Rehabilitation',
-    title: 'Integrative therapies for whole-body wellness',
-    description: 'with an emphasis on injury prevention.',
-  },
-  {
-    label: 'Personalized Treatment Plans',
-    title: 'Tailored programmes for each patient',
-    description: 'with progress monitoring and adjustments.',
-  },
-]
+const T = {
+  slate950: '#020617', slate900: '#0f172a',
+  slate700: '#334155', slate500: '#64748b', slate400: '#94a3b8',
+  slate300: '#cbd5e1', slate50: '#f8fafc',
+  sky400: '#38bdf8', sky500: '#0ea5e9', sky300: '#7dd3fc',
+  indigo: '#4b55ad',
+  fontD: "'Playfair Display', Georgia, serif",
+  fontB: "'DM Sans', system-ui, sans-serif",
+} as const
 
+const KF_ID = 'kyna-hero-kf'
+function injectKF() {
+  if (typeof document === 'undefined' || document.getElementById(KF_ID)) return
+  const s = document.createElement('style')
+  s.id = KF_ID
+  s.textContent = `
+@keyframes kf-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes kf-glow{0%,100%{transform:scale(1);opacity:.45}50%{transform:scale(1.06);opacity:.8}}
+@keyframes kf-sweep{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+@keyframes kf-border{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes kf-pulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,.35)}50%{box-shadow:0 0 0 14px rgba(56,189,248,0)}}
+  `
+  document.head.appendChild(s)
+}
+
+
+/* ─── Framer Motion Variants ─── */
+const headlineWords = 'Where Recovery Meets Expertise'.split(' ')
+const wordContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.8 } } }
+const wordChild = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } } }
+
+const doctorSpring = { type: 'spring' as const, stiffness: 120, damping: 14 }
+
+/* ─── Main Component ─── */
 export function HeroSection({ onNavigate }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const [, setReady] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
-  useLayoutEffect(() => {
-    // Check for reduced motion preference
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-
-    if (prefersReducedMotion) {
-      // Set elements to final state without animation
-      gsap.set('.hero-overlay', { opacity: 1 })
-      gsap.set('.hero-badge', { opacity: 1, y: 0 })
-      gsap.set('.hero-heading', { opacity: 1, y: 0 })
-      gsap.set('.hero-copy', { opacity: 1, y: 0 })
-      gsap.set('.hero-actions', { opacity: 1, y: 0 })
-      gsap.set('.hero-highlight-card', { opacity: 1, y: 0, scale: 1 })
-      return
-    }
-
-    const ctx = gsap.context(() => {
-      // Small delay to ensure DOM is ready (helps on mobile)
-      const tl = gsap.timeline({
-        defaults: { ease: 'power3.out' },
-        delay: 0.1
-      })
-
-      tl.from('.hero-overlay', {
-        opacity: 0,
-        duration: 0.5,
-      })
-        .from(
-          '.hero-badge',
-          {
-            opacity: 0,
-            y: -15,
-            duration: 0.5,
-          },
-          '-=0.2',
-        )
-        .from(
-          '.hero-heading',
-          {
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-          },
-          '-=0.2',
-        )
-        .from(
-          '.hero-copy',
-          {
-            opacity: 0,
-            y: 15,
-            duration: 0.5,
-          },
-          '-=0.3',
-        )
-        .from(
-          '.hero-actions',
-          {
-            opacity: 0,
-            y: 15,
-            duration: 0.5,
-          },
-          '-=0.3',
-        )
-        .from(
-          '.hero-highlight-card',
-          {
-            opacity: 0,
-            y: 20,
-            scale: 0.98,
-            duration: 0.5,
-            stagger: 0.1,
-            clearProps: 'all',
-          },
-          '-=0.2',
-        )
-    }, sectionRef)
-
-    return () => ctx.revert()
+  useEffect(() => {
+    injectKF(); setReady(true)
+    const mq = window.matchMedia('(max-width: 768px)')
+    setIsMobile(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
   }, [])
 
-	  return (
-	    <section
-	      ref={sectionRef}
-	      className="relative min-h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50"
-	    >
-		      {/* Background: hero video + softer overlay so movement is visible */}
-		      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-		        <video
-		          className="h-full w-full object-cover"
-		          src={homeHeroVideo}
-		          autoPlay
-		          muted
-		          loop
-		          playsInline
-		          preload="metadata"
-		        />
-		        <div className="absolute inset-0 bg-gradient-to-br from-sky-200/35 via-sky-100/30 to-slate-100/40 dark:from-slate-950/80 dark:via-slate-950/85 dark:to-slate-900/85" />
-		      </div>
-		
-	      <div className="pointer-events-none hero-overlay absolute inset-0 z-10 bg-slate-100/5 dark:bg-slate-950/40" />
+  const floatWrap = (delay: number): React.CSSProperties => ({
+    animation: `kf-float 3.2s ease-in-out ${delay}s infinite`,
+  })
 
-      <div className="relative z-20 mx-auto flex max-w-6xl flex-col gap-12 px-4 pb-20 pt-28 lg:flex-row lg:items-center lg:gap-16 lg:px-6 lg:pb-28 lg:pt-32">
-	        <div className="max-w-xl space-y-6">
-	          <div className="hero-badge inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-sky-700 shadow-sm dark:bg-slate-900/80 dark:text-sky-300">
-	            Intelligent Rehab at KYNA
-	          </div>
+  const s = {
+    section: {
+      minHeight: '100vh', position: 'relative' as const,
+      overflow: 'hidden', fontFamily: T.fontB, color: T.slate50,
+      display: 'flex', flexDirection: 'column' as const,
+    },
+    content: {
+      position: 'relative' as const, zIndex: 50, display: 'flex',
+      alignItems: 'center', justifyContent: 'space-between', flex: 1,
+      padding: isMobile ? '70px 20px 20px' : '10px 24px 40px',
+      maxWidth: 1100, margin: '0 auto', width: '100%',
+      pointerEvents: 'none' as const,
+      gap: isMobile ? 20 : 40,
+      flexWrap: 'wrap' as const,
+      flexDirection: isMobile ? 'column' as const : 'row' as const,
+    },
+    leftCol: {
+      flex: isMobile ? '1 1 auto' : '1 1 480px', display: 'flex', flexDirection: 'column' as const,
+      alignItems: isMobile ? 'center' as const : 'flex-start' as const,
+      justifyContent: 'center',
+    },
+    rightCol: {
+      flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      ...(isMobile ? { width: '100%' } : {}),
+    },
+    headline: {
+      fontFamily: T.fontD, fontSize: isMobile ? 'clamp(26px, 7vw, 38px)' : 'clamp(28px, 5vw, 56px)', fontWeight: 600,
+      lineHeight: 1.15, textAlign: isMobile ? 'center' as const : 'left' as const, marginBottom: isMobile ? 12 : 16,
+      color: T.slate50, display: 'flex', flexWrap: 'wrap' as const,
+      justifyContent: isMobile ? 'center' : 'flex-start', gap: '0 10px',
+    },
+    subtext: {
+      fontFamily: T.fontB, fontSize: isMobile ? 14 : 16, lineHeight: 1.7,
+      color: T.slate400, textAlign: isMobile ? 'center' as const : 'left' as const, maxWidth: 520, marginBottom: isMobile ? 24 : 36,
+    },
+  }
 
-          <div className="space-y-4">
-            <h1 className="hero-heading text-balance text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl dark:text-slate-50">
-              Expert Physiotherapy &amp; Holistic Rehab for a New You.
-            </h1>
-            <p className="hero-copy max-w-lg text-base leading-relaxed text-slate-800 sm:text-lg dark:text-slate-300">
-              KYNA Physiotherapy operates advanced physiotherapy clinics in Patiala and Samana,
-              delivering intelligent, evidence-based rehabilitation with a focus on whole body
-              wellbeing and long-term recovery.
-            </p>
+  return (
+    <section ref={sectionRef} style={s.section} aria-label="KYNA Physiotherapy Hero">
+      {/* Background Cell Animation */}
+      <BackgroundCells className="bg-slate-950">
+        <div style={s.content}>
+          {/* LEFT — Text content */}
+          <div style={s.leftCol}>
+            {/* Headline word by word */}
+            <motion.h1 style={s.headline} variants={wordContainer} initial="hidden" animate="visible">
+              {headlineWords.map((word, i) => (
+                <motion.span key={i} variants={wordChild} style={word === 'Expertise' ? { color: T.sky400 } : {}}>
+                  {word}
+                </motion.span>
+              ))}
+            </motion.h1>
+
+            {/* Subtext */}
+            <motion.p style={s.subtext}
+              initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 1.4, ease: 'easeOut' }}>
+              Expert physiotherapy led by <span style={{ color: T.sky300, fontWeight: 600 }}>Dr. Sorabh</span> &amp; his dedicated team — helping you move better, heal faster, and live stronger.
+            </motion.p>
+
+            {/* CTA buttons */}
+            <motion.div style={{ display: 'flex', gap: isMobile ? 12 : 16, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start', pointerEvents: 'auto', width: isMobile ? '100%' : 'auto' }}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.8 }}>
+              <button type="button" aria-label="Book a session with KYNA Physiotherapy"
+                onClick={() => onNavigate?.('contact')}
+                style={{
+                  position: 'relative', padding: isMobile ? '12px 28px' : '14px 36px', borderRadius: 999,
+                  background: `linear-gradient(135deg, ${T.indigo}, ${T.sky500})`,
+                  color: 'white', fontFamily: T.fontB, fontSize: isMobile ? 13 : 14, fontWeight: 700,
+                  letterSpacing: '0.16em', textTransform: 'uppercase',
+                  border: 'none', cursor: 'pointer',
+                  boxShadow: `0 12px 40px rgba(56,189,248,0.45)`,
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = `0 18px 55px rgba(56,189,248,0.65)` }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = `0 12px 40px rgba(56,189,248,0.45)` }}>
+                Book a Session →
+              </button>
+              <button type="button" aria-label="Meet the KYNA physiotherapy team"
+                onClick={() => onNavigate?.('team')}
+                style={{
+                  padding: isMobile ? '12px 28px' : '14px 36px', borderRadius: 999,
+                  background: 'transparent',
+                  color: T.slate300, fontFamily: T.fontB, fontSize: isMobile ? 13 : 14, fontWeight: 600,
+                  letterSpacing: '0.14em', textTransform: 'uppercase',
+                  border: `1.5px solid ${T.slate700}`, cursor: 'pointer',
+                  transition: 'border-color 0.2s, color 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = T.sky400; e.currentTarget.style.color = T.sky300 }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = T.slate700; e.currentTarget.style.color = T.slate300 }}>
+                Meet the Team
+              </button>
+            </motion.div>
+
+            {/* Locations tag */}
+            <motion.p style={{ fontFamily: T.fontB, fontSize: isMobile ? 10 : 11, fontWeight: 500, letterSpacing: '0.35em', color: T.slate500, textTransform: 'uppercase', marginTop: isMobile ? 20 : 32, textAlign: isMobile ? 'center' as const : 'left' as const }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2 }}>
+              Patiala · Samana · Sangrur · Nabha
+            </motion.p>
           </div>
 
-          <div className="hero-actions flex flex-wrap items-center gap-4 pt-2">
-            <button
-              type="button"
-              onClick={() => onNavigate?.('contact')}
-              className="rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-10 py-3 text-xs font-semibold uppercase tracking-[0.32em] text-white shadow-[0_18px_45px_rgba(56,189,248,0.55)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_rgba(56,189,248,0.75)]"
-            >
-              Book Free Consultation
-            </button>
-            <a
-              href="tel:9878182115"
-              className="rounded-full border border-slate-200/80 bg-white/90 px-9 py-2.5 text-xs font-semibold uppercase tracking-[0.32em] text-slate-900 shadow-[0_10px_30px_rgba(15,23,42,0.12)] backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-300/80 hover:text-slate-900/90 dark:border-slate-700/80 dark:bg-slate-900/60 dark:text-slate-50 dark:hover:border-sky-400/80"
-            >
-              Call 98781 82115
-            </a>
+          {/* RIGHT — Dr. Sorabh logo */}
+          <div style={s.rightCol}>
+            <motion.div style={{ zIndex: 3, position: 'relative', ...floatWrap(0) }}
+              initial={{ opacity: 0, x: 80 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ ...doctorSpring, delay: 0.3 }}>
+              <img
+                src={drSorabhImg}
+                alt="Dr. Sorabh"
+                style={{
+                  width: isMobile ? 200 : 280,
+                  height: 'auto',
+                  objectFit: 'contain',
+                  position: 'relative',
+                  zIndex: 1,
+                  filter: `drop-shadow(0 0 30px rgba(56,189,248,0.35))`,
+                }}
+              />
+            </motion.div>
           </div>
-
-          <p className="text-xs font-medium uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">
-            Patiala • Samana • Sangrur • Nabha
-          </p>
         </div>
-
-        <div className="relative flex-1">
-          <div className="grid gap-4 sm:grid-cols-1">
-            {heroHighlights.map((item) => (
-              <div
-                key={item.label}
-                className="hero-highlight-card relative flex items-start gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-4 text-sm shadow-[0_18px_50px_rgba(15,23,42,0.18)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(15,23,42,0.28)] dark:border-slate-800/80 dark:bg-slate-900/90"
-              >
-                <div className="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#4b55ad] to-sky-500 text-[0.8rem] font-bold text-white shadow-[0_10px_28px_rgba(56,189,248,0.55)]">
-                  ☆
-                </div>
-                <div className="space-y-1">
-                  <div className="text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-sky-500/80">
-                    {item.label}
-                  </div>
-                  <div className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-                    {item.title}
-                  </div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400">
-                    {item.description}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      </BackgroundCells>
     </section>
   )
 }
-
