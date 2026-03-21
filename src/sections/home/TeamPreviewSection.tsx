@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getTeamMembers, type TeamMemberData } from '../../lib/api'
+import { getTeamMembers } from '../../lib/api'
 
 interface SimpleTeamMember {
   name: string
