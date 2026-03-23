@@ -201,6 +201,7 @@ export function Services() {
 	          {useDb
 	            ? dbServices.map((service) => (
 	                <article
+	                  id={'service-' + service.id}
 	                  key={service.id}
 	                  className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
 	                >

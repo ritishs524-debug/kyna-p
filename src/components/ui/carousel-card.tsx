@@ -6,15 +6,17 @@ interface CardData {
   id: number;
   imgUrl: string;
   content: string;
+  serviceId?: string;
 }
 
 interface CardProps {
   data: CardData[];
   showCarousel?: boolean;
   cardsPerView?: number;
+  onCardClick?: (card: CardData) => void;
 }
 
-const Card = ({ data, showCarousel = true, cardsPerView: desktopCardsPerView = 3 }: CardProps) => {
+const Card = ({ data, showCarousel = true, cardsPerView: desktopCardsPerView = 3, onCardClick }: CardProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSingleCard, setIsSingleCard] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -151,7 +153,10 @@ const Card = ({ data, showCarousel = true, cardsPerView: desktopCardsPerView = 3
                 }}
                 className="px-2"
               >
-                <div className="relative overflow-hidden rounded-lg shadow-md group h-full">
+                <div
+                  className={`relative overflow-hidden rounded-lg shadow-md group h-full${onCardClick ? ' cursor-pointer' : ''}`}
+                  onClick={() => onCardClick?.(card)}
+                >
                   <div className="w-full h-56 sm:h-64">
                     <img
                       src={card.imgUrl}
@@ -159,8 +164,9 @@ const Card = ({ data, showCarousel = true, cardsPerView: desktopCardsPerView = 3
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
-                  <div className="absolute inset-0 bg-black/80 text-white p-4 transition-transform duration-300 transform translate-y-full group-hover:translate-y-0 overflow-y-auto">
-                    <p className="text-sm">{card.content}</p>
+                  {/* Hover overlay — gradient bottom with service name */}
+                  <div className="pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <p className="w-full px-4 pb-4 text-center text-sm font-semibold text-white drop-shadow-lg">{card.content}</p>
                   </div>
                 </div>
               </div>

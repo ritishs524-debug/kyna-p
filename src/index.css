@@ -2,6 +2,33 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Aurora animation ── */
+@theme {
+  --animate-aurora: aurora 60s linear infinite;
+}
+
+@keyframes aurora {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+
+/* ── Color CSS variables required by aurora-background component ── */
+:root {
+  --white: #fff;
+  --black: #000;
+  --transparent: transparent;
+
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --indigo-300: #a5b4fc;
+  --violet-200: #ddd6fe;
+}
+
 @layer base {
   body {
 	    @apply bg-white text-slate-900 antialiased font-sans dark:bg-slate-950 dark:text-slate-50;

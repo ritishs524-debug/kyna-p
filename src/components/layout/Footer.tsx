@@ -1,39 +1,38 @@
+import { useState, useEffect } from 'react'
+import { getServices, type ServiceData } from '../../lib/api'
+
 type FooterProps = {
 	onNavigate: (page: 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact') => void
 }
 
-const serviceLinks = [
-  { label: 'Physiotherapy Offers', targetId: 'physiotherapy' },
-  { label: 'Osteopathy (Cranial and Visceral)', targetId: 'osteopathy' },
-  { label: 'Chiropractic', targetId: 'chiropractic' },
-  { label: 'Exercise Therapy', targetId: 'exercise-therapy' },
-  { label: 'Manual Physical Therapy', targetId: 'manual-therapy' },
-  { label: "Women's Health Physiotherapy", targetId: 'womens-health' },
-  { label: 'Pelvic Floor Rehabilitation', targetId: 'pelvic-floor' },
-  { label: 'Evidence-Based Falls Prevention', targetId: 'falls-prevention' },
-  { label: 'Physiotherapy at Home', targetId: 'home-physiotherapy' },
-  { label: 'Antenatal / Childbirth Education', targetId: 'antenatal-education' },
-] as const
+const fallbackServiceLinks = [
+  'Physiotherapy Offers',
+  'Osteopathy (Cranial and Visceral)',
+  'Chiropractic',
+  'Exercise Therapy',
+  'Manual Physical Therapy',
+  "Women's Health Physiotherapy",
+  'Pelvic Floor Rehabilitation',
+  'Evidence-Based Falls Prevention',
+  'Physiotherapy at Home',
+  'Antenatal / Childbirth Education',
+]
 
 export function Footer({ onNavigate }: FooterProps) {
-  const handleServiceClick = (serviceId: (typeof serviceLinks)[number]['targetId']) => {
+  const [dbServices, setDbServices] = useState<ServiceData[]>([])
+
+  useEffect(() => {
+    getServices().then(setDbServices).catch(() => {/* fallback to hardcoded */})
+  }, [])
+
+  const serviceNames = dbServices.length > 0
+    ? dbServices.map((s) => s.title)
+    : fallbackServiceLinks
+
+  const handleServiceClick = () => {
     onNavigate('services')
-
     setTimeout(() => {
-      const element = document.getElementById('service-' + serviceId)
-      if (!element) return
-
-      const headerOffset = 96
-      const rect = element.getBoundingClientRect()
-      const offsetTop = rect.top + window.scrollY - headerOffset
-
-	      window.scrollTo({ top: offsetTop, behavior: 'smooth' })
-
-	      // Briefly highlight the target card so the user sees which one they selected
-	      element.classList.add('service-card--highlight')
-	      setTimeout(() => {
-	        element.classList.remove('service-card--highlight')
-	      }, 2600)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }, 0)
   }
 
@@ -68,14 +67,14 @@ export function Footer({ onNavigate }: FooterProps) {
               Services
             </h3>
             <ul className="space-y-1 text-xs">
-              {serviceLinks.map((item) => (
-                <li key={item.targetId}>
+              {serviceNames.map((name) => (
+                <li key={name}>
                   <button
                     type="button"
-                    onClick={() => handleServiceClick(item.targetId)}
+                    onClick={handleServiceClick}
                     className="text-left text-slate-700 underline-offset-2 hover:text-sky-700 hover:underline dark:text-slate-300 dark:hover:text-sky-300"
                   >
-                    {item.label}
+                    {name}
                   </button>
                 </li>
               ))}

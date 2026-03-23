@@ -85,6 +85,19 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [location.pathname])
 
+  const isAdmin = location.pathname.startsWith('/admin')
+
+  // Admin gets its own standalone layout — no header, footer, or chatbot
+  if (isAdmin) {
+    return (
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/admin" element={<Admin />} />
+        </Routes>
+      </Suspense>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-50">
       <Header
@@ -102,7 +115,6 @@ function App() {
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/team" element={<Team />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/admin" element={<Admin />} />
             {/* Fallback route - redirect to home */}
             <Route path="*" element={<Home onNavigate={handleNavigate} />} />
           </Routes>

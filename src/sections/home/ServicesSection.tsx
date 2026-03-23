@@ -1,9 +1,10 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { gsap } from '../../lib/gsap'
 import servicesBg from '../../assets/images/services-section.jpg'
 import Card from '../../components/ui/carousel-card'
+import { getServices, type ServiceData } from '../../lib/api'
 
-// Service card images – use the actual filenames from src/assets/services
+// Fallback service card images
 import doctorHelpingPatientRehabilitation from '../../assets/services/doctor-helping-patient-rehabilitation.jpg'
 import frontViewYoungMaleBrokenFoot from '../../assets/services/front-view-young-male-sitting-with-broken-foot-crutches-grey-wall-pain-accident-broken-twist-foot-leg.jpg'
 import pexelsFunkcinesTerapijos from '../../assets/services/pexels-funkcines-terapijos-centras-927573878-20860591.jpg'
@@ -15,25 +16,57 @@ import sideViewPregnantWomanMidwife from '../../assets/services/side-view-pregna
 import youngWomanChiropractorOsteopath from '../../assets/services/young-woman-doctor-chiropractor-osteopath-fixing-lying-womans-back-with-hands-movements-visit-manual-therapy-clinic-professional-chiropractor-work.jpg'
 import youngWomanWithBackProblems from '../../assets/services/young-woman-with-back-problems-doing-physiotherapy-treatment.jpg'
 
-const CARD_DATA = [
-  { id: 1, imgUrl: physioDoingLegExercises, content: 'Physiotherapy — Expert physiotherapy treatment for pain relief and rehabilitation. Our team uses evidence-based techniques to help you recover faster and move better.' },
-  { id: 2, imgUrl: youngWomanChiropractorOsteopath, content: 'Osteopathy (Cranial and Visceral) — Gentle cranial and visceral techniques for whole-body healing. A holistic approach to restore balance and wellness.' },
-  { id: 3, imgUrl: youngWomanWithBackProblems, content: 'Chiropractic — Spinal adjustments and manual therapy for better movement. Precise corrections to improve alignment and reduce discomfort.' },
-  { id: 4, imgUrl: doctorHelpingPatientRehabilitation, content: 'Exercise Therapy — Guided exercise programs for strength and recovery. Personalized routines designed to rebuild strength and prevent re-injury.' },
-  { id: 5, imgUrl: professionalTherapistsStretching, content: 'Manual Physical Therapy — Hands-on techniques to restore mobility and reduce pain. Skilled manual interventions for faster functional recovery.' },
-  { id: 6, imgUrl: pexelsKarola, content: "Women's Health Physiotherapy — Specialized care for women at every stage of life. From prenatal to postnatal and beyond, tailored treatments for your needs." },
-  { id: 7, imgUrl: pexelsFunkcinesTerapijos, content: 'Pelvic Floor Rehabilitation — Targeted therapy for pelvic floor strength and function. Restore control and confidence with expert-guided rehabilitation.' },
-  { id: 8, imgUrl: seniorManNursingHome, content: 'Evidence-Based Falls Prevention — Balance training and exercises to prevent falls. Stay steady and independent with our proven prevention programs.' },
-  { id: 9, imgUrl: frontViewYoungMaleBrokenFoot, content: 'Physiotherapy at Home — Professional physiotherapy delivered to your doorstep. Convenient, personalized care in the comfort of your home.' },
-  { id: 10, imgUrl: sideViewPregnantWomanMidwife, content: 'Antenatal / Childbirth Education — Comprehensive preparation for pregnancy and childbirth. Expert guidance to help you feel confident and prepared.' },
+const FALLBACK_CARD_DATA = [
+  { id: 1, imgUrl: physioDoingLegExercises, content: 'Physiotherapy', serviceId: 'physiotherapy' },
+  { id: 2, imgUrl: youngWomanChiropractorOsteopath, content: 'Osteopathy (Cranial and Visceral)', serviceId: 'osteopathy' },
+  { id: 3, imgUrl: youngWomanWithBackProblems, content: 'Chiropractic', serviceId: 'chiropractic' },
+  { id: 4, imgUrl: doctorHelpingPatientRehabilitation, content: 'Exercise Therapy', serviceId: 'exercise-therapy' },
+  { id: 5, imgUrl: professionalTherapistsStretching, content: 'Manual Physical Therapy', serviceId: 'manual-therapy' },
+  { id: 6, imgUrl: pexelsKarola, content: "Women's Health Physiotherapy", serviceId: 'womens-health' },
+  { id: 7, imgUrl: pexelsFunkcinesTerapijos, content: 'Pelvic Floor Rehabilitation', serviceId: 'pelvic-floor' },
+  { id: 8, imgUrl: seniorManNursingHome, content: 'Evidence-Based Falls Prevention', serviceId: 'falls-prevention' },
+  { id: 9, imgUrl: frontViewYoungMaleBrokenFoot, content: 'Physiotherapy at Home', serviceId: 'home-physiotherapy' },
+  { id: 10, imgUrl: sideViewPregnantWomanMidwife, content: 'Antenatal / Childbirth Education', serviceId: 'antenatal-education' },
 ]
+
+function dbToCardData(services: ServiceData[]) {
+  return services.map((s, i) => ({
+    id: i + 1,
+    imgUrl: s.image,
+    content: s.title,
+    serviceId: s.id,
+  }))
+}
 
 type ServicesSectionProps = {
   onNavigate?: (page: 'home' | 'about' | 'services' | 'team' | 'contact') => void
 }
 
-export function ServicesSection({ onNavigate: _onNavigate }: ServicesSectionProps) {
+export function ServicesSection({ onNavigate }: ServicesSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const [dbServices, setDbServices] = useState<ServiceData[]>([])
+
+  useEffect(() => {
+    getServices().then(setDbServices).catch(() => {/* fallback */})
+  }, [])
+
+  // Use DB services (with images) if available, otherwise show fallback cards
+  const dbWithImages = dbServices.filter((s) => !!s.image)
+  const cardData = dbWithImages.length > 0 ? dbToCardData(dbWithImages) : FALLBACK_CARD_DATA
+
+  const handleCardClick = (card: { serviceId?: string }) => {
+    if (!onNavigate || !card.serviceId) return
+    onNavigate('services')
+    setTimeout(() => {
+      const el = document.getElementById('service-' + card.serviceId)
+      if (!el) return
+      const headerOffset = 96
+      const top = el.getBoundingClientRect().top + window.scrollY - headerOffset
+      window.scrollTo({ top, behavior: 'smooth' })
+      el.classList.add('service-card--highlight')
+      setTimeout(() => el.classList.remove('service-card--highlight'), 2600)
+    }, 300)
+  }
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -81,7 +114,7 @@ export function ServicesSection({ onNavigate: _onNavigate }: ServicesSectionProp
         </div>
 
         {/* Carousel Card Component */}
-        <Card data={CARD_DATA} showCarousel={true} cardsPerView={3} />
+        <Card data={cardData} showCarousel={true} cardsPerView={3} onCardClick={handleCardClick} />
       </div>
     </section>
   )

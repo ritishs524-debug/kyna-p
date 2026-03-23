@@ -1,6 +1,8 @@
 import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { gsap } from '../lib/gsap'
 import { getTeamMembers, type TeamMemberData } from '../lib/api'
+import { ShootingStars } from '../components/ui/shooting-stars'
+import { StarsBackground } from '../components/ui/stars-background'
 
 const teamMembers = [
   {
@@ -143,7 +145,67 @@ export function Team() {
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.22),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(148,163,184,0.22),_transparent_70%)]" />
 
-	      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 lg:px-6">
+      {/* Static twinkling stars background */}
+      <StarsBackground
+        starDensity={0.0004}
+        allStarsTwinkle
+        twinkleProbability={0.7}
+        minTwinkleSpeed={0.5}
+        maxTwinkleSpeed={1}
+        className="pointer-events-none z-[1]"
+      />
+
+      {/* Shooting stars — light mode: black, dark mode: white */}
+      <div className="block dark:hidden">
+        <ShootingStars
+          starColor="#1e293b"
+          trailColor="#64748b"
+          minSpeed={15}
+          maxSpeed={35}
+          minDelay={1000}
+          maxDelay={3000}
+          starWidth={14}
+          starHeight={2}
+          className="pointer-events-none z-[1]"
+        />
+        <ShootingStars
+          starColor="#0f172a"
+          trailColor="#94a3b8"
+          minSpeed={10}
+          maxSpeed={25}
+          minDelay={2000}
+          maxDelay={4000}
+          starWidth={14}
+          starHeight={2}
+          className="pointer-events-none z-[1]"
+        />
+      </div>
+      <div className="hidden dark:block">
+        <ShootingStars
+          starColor="#ffffff"
+          trailColor="#94a3b8"
+          minSpeed={15}
+          maxSpeed={35}
+          minDelay={1000}
+          maxDelay={3000}
+          starWidth={14}
+          starHeight={2}
+          className="pointer-events-none z-[1]"
+        />
+        <ShootingStars
+          starColor="#e2e8f0"
+          trailColor="#64748b"
+          minSpeed={10}
+          maxSpeed={25}
+          minDelay={2000}
+          maxDelay={4000}
+          starWidth={14}
+          starHeight={2}
+          className="pointer-events-none z-[1]"
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 lg:px-6">
 	        <div className="team-hero mb-12 space-y-4 text-center">
 	          <p className="inline-flex items-center justify-center gap-2 rounded-full bg-white/90 px-5 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-sky-700 shadow-sm dark:bg-slate-900/80 dark:text-sky-300">
 	            Our Team
