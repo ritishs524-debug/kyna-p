@@ -1,7 +1,6 @@
 import { useRef } from 'react'
 import { motion } from 'framer-motion'
 import kynaLogo from '../../assets/logo/kyna_withoutbg-01.PNG'
-import branchesVideo from '../../assets/videos/branches.mp4'
 import BranchCards from '../../components/ui/branch-cards'
 
 type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
@@ -34,12 +33,12 @@ const locations = [
 ] as const
 
 const branches = [
-  { name: 'KYNA Physiotherapy Patiala', subtitle: 'Flagship Clinic · DLF Colony' },
-  { name: 'KYNA Physiotherapy Sangrur', subtitle: 'Full-service Rehab Centre' },
-  { name: 'KYNA Physiotherapy Samana', subtitle: 'Community Clinic' },
-  { name: 'Anamiva Physiotherapy', subtitle: 'Malwa Colony · Patiala' },
-  { name: 'Good Life Physiotherapy', subtitle: 'Wellness & Recovery' },
-  { name: "Women's Care Physiotherapy", subtitle: 'Specialised Women\u2019s Health' },
+  { num: '01', name: 'Kyna Physiotherapy Patiala', sub: 'Flagship Clinic · DLF Colony', href: '/patiala' },
+  { num: '02', name: 'Kyna Physiotherapy Sangrur', sub: 'Full-service Rehab Centre', href: '/sangrur' },
+  { num: '03', name: 'Kyna Physiotherapy Samana', sub: 'Community Clinic', href: '/samana' },
+  { num: '04', name: 'Anamiva Physiotherapy', sub: 'Malwa Colony · Patiala', href: '/anamiva' },
+  { num: '05', name: 'Good Life Physiotherapy', sub: 'Wellness & Recovery', href: '/goodlife' },
+  { num: '06', name: "Women's Care Physiotherapy", sub: 'Specialised Women\u2019s Health', href: '/womenscare' },
 ] as const
 
 const CINEMATIC_EASE = [0.16, 1, 0.3, 1] as const
@@ -59,28 +58,20 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-slate-900 text-slate-50 dark:bg-black"
+      className="locations-section relative overflow-hidden bg-slate-950 text-slate-50"
     >
-      {/* Background: branches video */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <video
-          className="h-full w-full object-cover"
-          src={branchesVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="none"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/80 to-slate-900/90" />
+      {/* Slow-moving mesh gradient bg */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="locations-gradient-bg absolute inset-0" />
+        <div className="absolute inset-0 bg-slate-950/60" />
       </div>
 
-      {/* Dark radial overlay */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.9),_transparent_70%)]" />
+      {/* Radial glow overlay */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.15),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.95),_transparent_70%)]" />
 
       <div className="relative z-20">
         {/* Hero: Logo + BranchCards */}
-        <div className="flex min-h-[520px] flex-col items-center justify-center px-4 py-16 sm:min-h-screen sm:py-0">
+        <div className="flex flex-col items-center px-6 pb-4 pt-6">
           {/* Logo reveal */}
           <motion.img
             src={kynaLogo}
@@ -90,23 +81,23 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
             whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             transition={{ duration: 1, ease: CINEMATIC_EASE }}
             viewport={{ once: true }}
-            className="pointer-events-none mb-4 w-auto max-w-xs drop-shadow-[0_0_40px_rgba(56,189,248,0.85)] sm:max-w-sm md:max-w-md"
+            className="pointer-events-none -mb-2 w-auto max-w-[180px] drop-shadow-[0_0_40px_rgba(56,189,248,0.85)] sm:max-w-[240px] md:max-w-[280px]"
           />
 
-          {/* Trunk line */}
+          {/* Trunk line — 40px */}
           <motion.div
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
             transition={{ duration: 0.8, ease: CINEMATIC_EASE, delay: 0.3 }}
             viewport={{ once: true }}
-            className="mb-2 h-20 w-px origin-top bg-sky-400/70 shadow-[0_0_40px_rgba(56,189,248,0.85)]"
+            className="h-20 w-px origin-top bg-sky-400/70 shadow-[0_0_40px_rgba(56,189,248,0.85)]"
           />
           <motion.div
             initial={{ scale: 0 }}
             whileInView={{ scale: 1 }}
             transition={{ duration: 0.4, ease: CINEMATIC_EASE, delay: 0.9 }}
             viewport={{ once: true }}
-            className="mb-10 h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_30px_rgba(56,189,248,0.9)]"
+            className="mb-8 h-1.5 w-1.5 rounded-full bg-sky-300 shadow-[0_0_30px_rgba(56,189,248,0.9)]"
           />
 
           {/* Branch cards grid */}

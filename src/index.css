@@ -134,6 +134,28 @@
 	  }
 }
 
+/* Locations section — slow drifting gradient */
+.locations-gradient-bg {
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #0c4a6e 25%,
+    #164e63 50%,
+    #1e1b4b 75%,
+    #0f172a 100%
+  );
+  background-size: 400% 400%;
+  animation: locations-drift 20s ease infinite;
+}
+
+@keyframes locations-drift {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 100% 25%; }
+  50% { background-position: 100% 75%; }
+  75% { background-position: 0% 100%; }
+  100% { background-position: 0% 50%; }
+}
+
 /* Highlight animation for targeted service card after navigation */
 .service-card--highlight {
 	animation: service-card-highlight 1.3s ease-in-out 2;
