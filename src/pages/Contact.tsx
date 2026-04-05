@@ -23,15 +23,77 @@ const locations = [
 const inputCls =
   'h-12 w-full rounded-full border border-slate-200/80 bg-slate-50/60 px-4 text-sm text-slate-900 outline-none ring-0 transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-200 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-50 dark:focus:border-sky-400'
 
+const inputErrorCls =
+  'h-12 w-full rounded-full border border-red-400 bg-red-50/30 px-4 text-sm text-slate-900 outline-none ring-0 transition focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-200 dark:border-red-500/60 dark:bg-red-900/10 dark:text-slate-50 dark:focus:border-red-400'
+
+interface FormErrors {
+  name?: string
+  email?: string
+  phone?: string
+  message?: string
+}
+
+function validateForm(name: string, email: string, phone: string, message: string): FormErrors {
+  const errors: FormErrors = {}
+
+  // Name: min 2 chars, only letters & spaces
+  const trimmedName = name.trim()
+  if (!trimmedName) {
+    errors.name = 'Name is required'
+  } else if (trimmedName.length < 2) {
+    errors.name = 'Name must be at least 2 characters'
+  } else if (!/^[a-zA-Z\s.'-]+$/.test(trimmedName)) {
+    errors.name = 'Name can only contain letters and spaces'
+  }
+
+  // Email
+  const trimmedEmail = email.trim()
+  if (!trimmedEmail) {
+    errors.email = 'Email is required'
+  } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
+    errors.email = 'Please enter a valid email address'
+  }
+
+  // Phone: 10 digits (with optional +91 prefix)
+  const digitsOnly = phone.replace(/[\s\-+()]/g, '')
+  if (!phone.trim()) {
+    errors.phone = 'Phone number is required'
+  } else if (digitsOnly.startsWith('91') && digitsOnly.length === 12) {
+    // Valid: +91 followed by 10 digits
+  } else if (/^[0-9]{10}$/.test(digitsOnly)) {
+    // Valid: 10 digits
+  } else {
+    errors.phone = 'Please enter a valid 10-digit phone number'
+  }
+
+  // Message: min 10 chars
+  const trimmedMessage = message.trim()
+  if (!trimmedMessage) {
+    errors.message = 'Message is required'
+  } else if (trimmedMessage.length < 10) {
+    errors.message = 'Message must be at least 10 characters'
+  }
+
+  return errors
+}
+
 export function Contact() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [message, setMessage] = useState('')
+
+  // Validate on blur
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    setErrors(validateForm(name, email, phone, message))
+  }
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -68,15 +130,32 @@ export function Contact() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
+
+    // Mark all fields as touched
+    setTouched({ name: true, email: true, phone: true, message: true })
+
+    // Validate
+    const validationErrors = validateForm(name, email, phone, message)
+    setErrors(validationErrors)
+
+    if (Object.keys(validationErrors).length > 0) return
+
     setIsSubmitting(true)
     setSubmitStatus('idle')
     try {
-      await submitContactForm({ name, email, phone, message })
+      await submitContactForm({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        message: message.trim(),
+      })
       setSubmitStatus('success')
       setName('')
       setEmail('')
       setPhone('')
       setMessage('')
+      setTouched({})
+      setErrors({})
     } catch {
       setSubmitStatus('error')
     } finally {
@@ -108,7 +187,7 @@ export function Contact() {
         {/* Contact form — moved to top */}
         <div className="contact-form-card mx-auto mb-16 max-w-4xl rounded-[2.5rem] bg-gradient-to-br from-[#020617] via-[#0f172a] to-sky-500/90 p-[1px] shadow-[0_32px_95px_rgba(15,23,42,0.7)]">
           <div className="rounded-[2.4rem] bg-white/98 px-6 py-7 shadow-[0_12px_40px_rgba(15,23,42,0.18)] backdrop-blur-sm sm:px-8 sm:py-8 dark:bg-slate-950/95">
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -116,12 +195,15 @@ export function Contact() {
                   </label>
                   <input
                     type="text"
-                    required
                     placeholder="Your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className={inputCls}
+                    onBlur={() => handleBlur('name')}
+                    className={touched.name && errors.name ? inputErrorCls : inputCls}
                   />
+                  {touched.name && errors.name && (
+                    <p className="mt-1.5 text-xs font-medium text-red-500 dark:text-red-400">{errors.name}</p>
+                  )}
                 </div>
                 <div>
                   <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -129,12 +211,15 @@ export function Contact() {
                   </label>
                   <input
                     type="email"
-                    required
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={inputCls}
+                    onBlur={() => handleBlur('email')}
+                    className={touched.email && errors.email ? inputErrorCls : inputCls}
                   />
+                  {touched.email && errors.email && (
+                    <p className="mt-1.5 text-xs font-medium text-red-500 dark:text-red-400">{errors.email}</p>
+                  )}
                 </div>
               </div>
 
@@ -144,12 +229,15 @@ export function Contact() {
                 </label>
                 <input
                   type="tel"
-                  required
                   placeholder="+91 98781 82115"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className={inputCls}
+                  onBlur={() => handleBlur('phone')}
+                  className={touched.phone && errors.phone ? inputErrorCls : inputCls}
                 />
+                {touched.phone && errors.phone && (
+                  <p className="mt-1.5 text-xs font-medium text-red-500 dark:text-red-400">{errors.phone}</p>
+                )}
               </div>
 
               <div>
@@ -157,13 +245,20 @@ export function Contact() {
                   Your message*
                 </label>
                 <textarea
-                  required
                   rows={5}
                   placeholder="Share your concern, pain area or goal..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full rounded-3xl border border-slate-200/80 bg-slate-50/60 px-4 py-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-200 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-50 dark:focus:border-sky-400"
+                  onBlur={() => handleBlur('message')}
+                  className={`w-full rounded-3xl px-4 py-3 text-sm outline-none ring-0 transition ${
+                    touched.message && errors.message
+                      ? 'border border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:border-red-500/60 dark:bg-red-900/10 dark:text-slate-50 dark:focus:border-red-400'
+                      : 'border border-slate-200/80 bg-slate-50/60 text-slate-900 focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-200 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-50 dark:focus:border-sky-400'
+                  }`}
                 />
+                {touched.message && errors.message && (
+                  <p className="mt-1.5 text-xs font-medium text-red-500 dark:text-red-400">{errors.message}</p>
+                )}
               </div>
 
               {submitStatus === 'success' && (
