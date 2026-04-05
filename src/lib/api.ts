@@ -83,6 +83,32 @@ export async function deleteTeamMember(id: string): Promise<void> {
   await request(`/team/${id}`, { method: 'DELETE' })
 }
 
+// ── Contact Message types ──
+export interface ContactMessage {
+  id?: string
+  name: string
+  email: string
+  phone: string
+  message: string
+  createdAt?: string
+}
+
+// ── Contact Messages ──
+export async function submitContactForm(data: Omit<ContactMessage, 'id' | 'createdAt'>): Promise<ContactMessage> {
+  return request<ContactMessage>('/contact', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
+export async function getContactMessages(): Promise<ContactMessage[]> {
+  return request<ContactMessage[]>('/contact')
+}
+
+export async function deleteContactMessage(id: string): Promise<void> {
+  await request(`/contact/${id}`, { method: 'DELETE' })
+}
+
 // ── Image Upload ──
 export async function uploadImage(file: File): Promise<string> {
   const formData = new FormData()

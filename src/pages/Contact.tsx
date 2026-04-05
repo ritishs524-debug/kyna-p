@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from '../lib/gsap'
+import { submitContactForm } from '../lib/api'
 
 const locations = [
   {
@@ -19,9 +20,18 @@ const locations = [
   },
 ] as const
 
+const inputCls =
+  'h-12 w-full rounded-full border border-slate-200/80 bg-slate-50/60 px-4 text-sm text-slate-900 outline-none ring-0 transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-200 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-50 dark:focus:border-sky-400'
+
 export function Contact() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [message, setMessage] = useState('')
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -32,6 +42,14 @@ export function Contact() {
         ease: 'power3.out',
       })
 
+      gsap.from('.contact-form-card', {
+        opacity: 0,
+        y: 40,
+        duration: 0.9,
+        delay: 0.15,
+        ease: 'power3.out',
+      })
+
       gsap.from('.contact-location-card', {
         opacity: 0,
         y: 32,
@@ -39,18 +57,7 @@ export function Contact() {
         ease: 'power3.out',
         stagger: 0.14,
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 75%',
-        },
-      })
-
-      gsap.from('.contact-form-card', {
-        opacity: 0,
-        y: 40,
-        duration: 0.9,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.contact-form-card',
+          trigger: '.contact-locations',
           start: 'top 80%',
         },
       })
@@ -59,13 +66,22 @@ export function Contact() {
     return () => ctx.revert()
   }, [])
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     setIsSubmitting(true)
-    // For now, just fake a short delay and reset. Later this can be wired to backend / email.
-    setTimeout(() => {
+    setSubmitStatus('idle')
+    try {
+      await submitContactForm({ name, email, phone, message })
+      setSubmitStatus('success')
+      setName('')
+      setEmail('')
+      setPhone('')
+      setMessage('')
+    } catch {
+      setSubmitStatus('error')
+    } finally {
       setIsSubmitting(false)
-    }, 800)
+    }
   }
 
   return (
@@ -75,10 +91,10 @@ export function Contact() {
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(148,163,184,0.18),_transparent_70%)]" />
 
-	      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 lg:px-6">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 lg:px-6">
         {/* Top intro */}
-        <div className="contact-hero mb-12 space-y-4 text-center">
-          <p className="inline-flex items-center justify-center gap-2 rounded-full bg-[#4b55ad] px-5 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-sky-50 shadow-sm shadow-[0_10px_26px_rgba(15,23,42,0.45)] dark:bg-[#4b55ad] dark:text-sky-50">
+        <div className="contact-hero mb-10 space-y-4 text-center">
+          <p className="inline-flex items-center justify-center gap-2 rounded-full bg-[#4b55ad] px-5 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-sky-50 shadow-sm shadow-[0_10px_26px_rgba(15,23,42,0.45)]">
             Contact Us
           </p>
           <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -89,89 +105,118 @@ export function Contact() {
           </p>
         </div>
 
-	        {/* Locations row */}
-	        <div className="mb-12 grid gap-6 md:grid-cols-3">
-	          {locations.map((loc) => (
-	            <article
-	              key={loc.name}
-	              className="contact-location-card flex h-full flex-col justify-between rounded-3xl border border-slate-200/80 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-5 text-sm text-slate-900 shadow-[0_20px_60px_rgba(15,23,42,0.18)] dark:border-slate-800/80 dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 dark:text-slate-50"
-	            >
-	              <div className="space-y-2">
-	                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-sky-700 dark:text-sky-300">
-	                  {loc.name}
-	                </p>
-	                <p className="text-slate-600 dark:text-slate-200/90">{loc.address}</p>
-	              </div>
-	
-	              <div className="mt-4 flex flex-wrap gap-2 text-[0.7rem]">
-	                <a
-	                  href="tel:9878182115"
-	                  className="rounded-full border border-sky-500/60 bg-white/80 px-3 py-1.5 font-semibold uppercase tracking-[0.24em] text-sky-700 shadow-[0_14px_35px_rgba(15,23,42,0.22)] transition hover:-translate-y-0.5 hover:border-sky-500 hover:bg-gradient-to-r hover:from-[#4b55ad] hover:to-sky-500 hover:text-white dark:border-sky-400/70 dark:bg-slate-900/80 dark:text-sky-100 dark:hover:border-sky-300 dark:hover:bg-gradient-to-r dark:hover:from-[#4b55ad] dark:hover:to-sky-500"
-	                >
-	                  Call Clinic
-	                </a>
-	              </div>
-	            </article>
-	          ))}
-	        </div>
-	
-	        {/* Contact form */}
-	        <div className="contact-form-card mx-auto max-w-4xl rounded-[2.5rem] bg-gradient-to-br from-[#020617] via-[#0f172a] to-sky-500/90 p-[1px] shadow-[0_32px_95px_rgba(15,23,42,0.7)]">
-	          <div className="rounded-[2.4rem] bg-white/98 px-6 py-7 shadow-[0_12px_40px_rgba(15,23,42,0.18)] backdrop-blur-sm sm:px-8 sm:py-8 dark:bg-slate-950/95">
-	            <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2">
+        {/* Contact form — moved to top */}
+        <div className="contact-form-card mx-auto mb-16 max-w-4xl rounded-[2.5rem] bg-gradient-to-br from-[#020617] via-[#0f172a] to-sky-500/90 p-[1px] shadow-[0_32px_95px_rgba(15,23,42,0.7)]">
+          <div className="rounded-[2.4rem] bg-white/98 px-6 py-7 shadow-[0_12px_40px_rgba(15,23,42,0.18)] backdrop-blur-sm sm:px-8 sm:py-8 dark:bg-slate-950/95">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    Your name*
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    Your e-mail*
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  Your name*
+                  Phone number*
                 </label>
                 <input
-                  type="text"
+                  type="tel"
                   required
-                  placeholder="Your name"
-                  className="h-12 w-full rounded-full border border-slate-200/80 bg-slate-50/60 px-4 text-sm text-slate-900 outline-none ring-0 transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-200 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-50 dark:focus:border-sky-400"
+                  placeholder="+91 98781 82115"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className={inputCls}
                 />
               </div>
 
               <div>
                 <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  Your e-mail*
+                  Your message*
                 </label>
-                <input
-                  type="email"
+                <textarea
                   required
-                  placeholder="you@example.com"
-                  className="h-12 w-full rounded-full border border-slate-200/80 bg-slate-50/60 px-4 text-sm text-slate-900 outline-none ring-0 transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-200 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-50 dark:focus:border-sky-400"
+                  rows={5}
+                  placeholder="Share your concern, pain area or goal..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full rounded-3xl border border-slate-200/80 bg-slate-50/60 px-4 py-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-200 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-50 dark:focus:border-sky-400"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                Your message*
-              </label>
-              <textarea
-                required
-                rows={5}
-                placeholder="Share your concern, pain area or goal..."
-                className="w-full rounded-3xl border border-slate-200/80 bg-slate-50/60 px-4 py-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-200 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-50 dark:focus:border-sky-400"
-              />
-            </div>
+              {submitStatus === 'success' && (
+                <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
+                  ✅ Message sent successfully! We'll get back to you soon.
+                </p>
+              )}
+              {submitStatus === 'error' && (
+                <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 dark:bg-red-500/10 dark:text-red-400">
+                  ❌ Failed to send message. Please try again.
+                </p>
+              )}
 
-	            <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
-	              <p className="text-[0.7rem] text-slate-500 dark:text-slate-400">
-                We typically respond within the same working day.
-              </p>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_18px_45px_rgba(56,189,248,0.55)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_rgba(56,189,248,0.75)] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-	                {isSubmitting ? 'Sending...' : 'Send Message'}
-	              </button>
-	            </div>
-	          </form>
-	          </div>
-	        </div>
+              <div className="flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row">
+                <p className="text-[0.7rem] text-slate-500 dark:text-slate-400">
+                  We typically respond within the same working day.
+                </p>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_18px_45px_rgba(56,189,248,0.55)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_rgba(56,189,248,0.75)] disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Locations row — below form */}
+        <div className="contact-locations grid gap-6 md:grid-cols-3">
+          {locations.map((loc) => (
+            <article
+              key={loc.name}
+              className="contact-location-card flex h-full flex-col justify-between rounded-3xl border border-slate-200/80 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 p-5 text-sm text-slate-900 shadow-[0_20px_60px_rgba(15,23,42,0.18)] dark:border-slate-800/80 dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 dark:text-slate-50"
+            >
+              <div className="space-y-2">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-sky-700 dark:text-sky-300">
+                  {loc.name}
+                </p>
+                <p className="text-slate-600 dark:text-slate-200/90">{loc.address}</p>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2 text-[0.7rem]">
+                <a
+                  href="tel:9878182115"
+                  className="rounded-full border border-sky-500/60 bg-white/80 px-3 py-1.5 font-semibold uppercase tracking-[0.24em] text-sky-700 shadow-[0_14px_35px_rgba(15,23,42,0.22)] transition hover:-translate-y-0.5 hover:border-sky-500 hover:bg-gradient-to-r hover:from-[#4b55ad] hover:to-sky-500 hover:text-white dark:border-sky-400/70 dark:bg-slate-900/80 dark:text-sky-100 dark:hover:border-sky-300 dark:hover:bg-gradient-to-r dark:hover:from-[#4b55ad] dark:hover:to-sky-500"
+                >
+                  Call Clinic
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   )

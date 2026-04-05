@@ -9,13 +9,16 @@ import {
   updateTeamMember,
   deleteTeamMember,
   uploadImage,
+  getContactMessages,
+  deleteContactMessage,
   type ServiceData,
   type TeamMemberData,
+  type ContactMessage,
 } from '../lib/api'
 
 const ADMIN_PASSWORD = 'kyna@admin2024'
 
-type Tab = 'services' | 'team'
+type Tab = 'services' | 'team' | 'messages'
 
 /* ──── shared input classes ──── */
 const inputCls =
@@ -243,6 +246,44 @@ function TeamForm({
   )
 }
 
+/* ──────────────────── Confirm Dialog ──────────────────── */
+function ConfirmDialog({
+  open,
+  title,
+  description,
+  onConfirm,
+  onCancel,
+}: {
+  open: boolean
+  title: string
+  description: string
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  if (!open) return null
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-slate-700/50 bg-[#12163a] p-6 shadow-2xl shadow-purple-900/30">
+        <div className="mb-1 flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500/15">
+            <svg className="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-white">{title}</h3>
+        </div>
+        <p className="mb-6 ml-[52px] text-sm text-slate-400">{description}</p>
+        <div className="flex justify-end gap-3">
+          <button onClick={onCancel} className={btnOutline}>Cancel</button>
+          <button onClick={onConfirm} className="rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-900/30 transition hover:bg-red-500">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ──────────────────── MAIN ADMIN COMPONENT ──────────────────── */
 export function Admin() {
   const [authed, setAuthed] = useState(() => sessionStorage.getItem('admin_auth') === '1')
@@ -258,14 +299,31 @@ export function Admin() {
   const [editingMember, setEditingMember] = useState<TeamMemberData | null>(null)
   const [showTeamForm, setShowTeamForm] = useState(false)
 
+  // Messages state
+  const [messages, setMessages] = useState<ContactMessage[]>([])
+
+  // Confirm dialog state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean
+    title: string
+    description: string
+    onConfirm: () => void
+  }>({ open: false, title: '', description: '', onConfirm: () => {} })
+
+  const openConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirmDialog({ open: true, title, description, onConfirm })
+  }
+  const closeConfirm = () => setConfirmDialog((prev) => ({ ...prev, open: false }))
+
   const [loading, setLoading] = useState(true)
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
     try {
-      const [s, t] = await Promise.all([getServices(), getTeamMembers()])
+      const [s, t, m] = await Promise.all([getServices(), getTeamMembers(), getContactMessages()])
       setServices(s)
       setTeam(t)
+      setMessages(m)
     } catch (err) {
       console.error('Fetch error:', err)
     } finally {
@@ -290,10 +348,12 @@ export function Admin() {
     await fetchAll()
   }
 
-  const handleDeleteService = async (id: string) => {
-    if (!confirm('Delete this service?')) return
-    await deleteService(id)
-    await fetchAll()
+  const handleDeleteService = (id: string) => {
+    openConfirm('Delete Service', 'Are you sure you want to delete this service? This action cannot be undone.', async () => {
+      closeConfirm()
+      await deleteService(id)
+      await fetchAll()
+    })
   }
 
   const handleSaveMember = async (data: Omit<TeamMemberData, 'id'>) => {
@@ -307,10 +367,12 @@ export function Admin() {
     await fetchAll()
   }
 
-  const handleDeleteMember = async (id: string) => {
-    if (!confirm('Delete this team member?')) return
-    await deleteTeamMember(id)
-    await fetchAll()
+  const handleDeleteMember = (id: string) => {
+    openConfirm('Delete Team Member', 'Are you sure you want to delete this team member? This action cannot be undone.', async () => {
+      closeConfirm()
+      await deleteTeamMember(id)
+      await fetchAll()
+    })
   }
 
   const handleToggleShowOnHome = async (member: TeamMemberData) => {
@@ -327,6 +389,14 @@ export function Admin() {
     await fetchAll()
   }
 
+  const handleDeleteMessage = (id: string) => {
+    openConfirm('Delete Message', 'Are you sure you want to delete this message? This action cannot be undone.', async () => {
+      closeConfirm()
+      await deleteContactMessage(id)
+      await fetchAll()
+    })
+  }
+
   const sidebarItems: { tab: Tab; icon: React.ReactNode; label: string }[] = [
     {
       tab: 'services',
@@ -338,10 +408,22 @@ export function Admin() {
       label: 'Team',
       icon: <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>,
     },
+    {
+      tab: 'messages',
+      label: 'Messages',
+      icon: <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>,
+    },
   ]
 
   return (
     <div className="flex h-screen bg-[#0a0e27] text-slate-100">
+      <ConfirmDialog
+        open={confirmDialog.open}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        onConfirm={confirmDialog.onConfirm}
+        onCancel={closeConfirm}
+      />
       {/* ──── Sidebar ──── */}
       <aside className="flex w-64 shrink-0 flex-col border-r border-slate-700/40 bg-[#0d1130]">
         {/* Brand */}
@@ -394,13 +476,13 @@ export function Admin() {
         {/* Top Bar */}
         <header className="flex items-center justify-between border-b border-slate-700/40 bg-[#0d1130]/60 px-8 py-4 backdrop-blur">
           <div>
-            <h2 className="text-xl font-bold text-white capitalize">{tab === 'services' ? '🏥 Services' : '👥 Team Members'}</h2>
+            <h2 className="text-xl font-bold text-white capitalize">{tab === 'services' ? '🏥 Services' : tab === 'team' ? '👥 Team Members' : '📩 Contact Messages'}</h2>
             <p className="text-xs text-slate-400">Manage your {tab} from here</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-400">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              {tab === 'services' ? `${services.length} Services` : `${team.length} Members`}
+              {tab === 'services' ? `${services.length} Services` : tab === 'team' ? `${team.length} Members` : `${messages.length} Messages`}
             </div>
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-xs font-bold text-white">
               A
@@ -462,7 +544,7 @@ export function Admin() {
                 )}
               </div>
             </div>
-          ) : (
+          ) : tab === 'team' ? (
             <div className="space-y-6">
               {/* Stats cards */}
               <div className="grid grid-cols-3 gap-4">
@@ -515,6 +597,66 @@ export function Admin() {
                 {team.length === 0 && (
                   <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-700/60 py-16 text-center">
                     <p className="text-sm text-slate-500">No team members yet. Click "Add Team Member" to get started.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* ──── Messages Tab ──── */
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-xl border border-slate-700/40 bg-gradient-to-br from-purple-600/20 to-purple-900/10 p-5">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Total Messages</p>
+                  <p className="mt-1 text-3xl font-bold text-white">{messages.length}</p>
+                </div>
+                <div className="rounded-xl border border-slate-700/40 bg-gradient-to-br from-sky-600/20 to-sky-900/10 p-5">
+                  <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Today</p>
+                  <p className="mt-1 text-3xl font-bold text-white">
+                    {messages.filter((m) => {
+                      const d = new Date(m.createdAt ?? '')
+                      const now = new Date()
+                      return d.toDateString() === now.toDateString()
+                    }).length}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {messages.map((msg) => (
+                  <div key={msg.id} className="group rounded-xl border border-slate-700/40 bg-[#12163a]/60 p-5 transition hover:border-purple-500/30 hover:bg-[#14184a]/80">
+                    <div className="mb-3 flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 text-sm font-bold text-white">
+                          {msg.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-white">{msg.name}</h4>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
+                            <span>📧 {msg.email}</span>
+                            <span>📞 {msg.phone}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="text-[11px] text-slate-500">
+                          {msg.createdAt ? new Date(msg.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : ''}
+                        </span>
+                        <button
+                          onClick={() => handleDeleteMessage(msg.id!)}
+                          className="rounded-lg bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-400 opacity-70 transition hover:bg-red-500/25 group-hover:opacity-100"
+                        >
+                          🗑️ Delete
+                        </button>
+                      </div>
+                    </div>
+                    <p className="whitespace-pre-wrap rounded-lg bg-slate-800/40 px-4 py-3 text-sm leading-relaxed text-slate-200">
+                      {msg.message}
+                    </p>
+                  </div>
+                ))}
+                {messages.length === 0 && (
+                  <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-700/60 py-16 text-center">
+                    <p className="text-sm text-slate-500">No messages yet. Messages from the contact form will appear here.</p>
                   </div>
                 )}
               </div>
