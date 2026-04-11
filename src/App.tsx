@@ -4,6 +4,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { Header } from './components/layout/Header'
 import { Footer } from './components/layout/Footer'
 import { PageLoader } from './components/common/PageLoader'
+import { useSEO, pageSEO } from './lib/seo'
 
 type Theme = 'light' | 'dark'
 
@@ -79,6 +80,10 @@ function App() {
     navigate(route)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+
+  // Dynamic per-page SEO (title, meta description, canonical, OG tags)
+  const seoConfig = pageSEO[currentPage] || pageSEO.home
+  useSEO(seoConfig)
 
   // Scroll to top on route change
   useEffect(() => {

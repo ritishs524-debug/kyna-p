@@ -146,45 +146,53 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
         </div>
       </div>
 
-      {/* Mobile menu panel */}
+      {/* Mobile menu overlay + panel */}
       {mobileOpen && (
-        <div className="md:hidden absolute inset-x-0 top-full border-t border-slate-800/60 bg-gradient-to-b from-[#0b1220]/98 via-[#10223b]/98 to-[#0b1220]/98 px-4 py-5 lg:px-6 shadow-[0_18px_55px_rgba(2,6,23,0.85)]">
-          <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">
-            {navItems.map((label) => {
-              const page = labelToPage[label]
-              const isActive = currentPage === page
-              return (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={() => {
-                    onNavigate(page)
-                    setMobileOpen(false)
-                  }}
-                  className={`w-full rounded-lg border px-3 py-2 text-left transition hover:border-sky-500/60 hover:text-sky-300 ${
-                    isActive ? 'border-sky-500/80 text-sky-300' : 'border-slate-700/70'
-                  }`}
-                >
-                  {label}
-                </button>
-              )
-            })}
-          </nav>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <a
-              href="tel:9878182115"
-              className="flex-1 rounded-full border border-slate-700/70 px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300"
-            >
-              Call 98781 82115
-            </a>
-            <button
-              type="button"
-              className="flex-1 rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-white shadow-lg shadow-sky-500/30"
-            >
-              Free Consultation
-            </button>
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+          {/* Panel */}
+          <div className="fixed inset-x-0 top-[72px] z-50 mx-3 max-h-[calc(100vh-90px)] overflow-y-auto rounded-2xl border border-slate-700/60 bg-[#0b1220] px-5 py-6 shadow-[0_24px_80px_rgba(2,6,23,0.95)] md:hidden">
+            <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">
+              {navItems.map((label) => {
+                const page = labelToPage[label]
+                const isActive = currentPage === page
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => {
+                      onNavigate(page)
+                      setMobileOpen(false)
+                    }}
+                    className={`w-full rounded-xl border px-4 py-3 text-left transition hover:border-sky-500/60 hover:text-sky-300 ${
+                      isActive ? 'border-sky-500/80 bg-sky-500/10 text-sky-300' : 'border-slate-700/70'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </nav>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <a
+                href="tel:9878182115"
+                className="flex-1 rounded-full border border-slate-700/70 px-4 py-2.5 text-center text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300"
+              >
+                Call 98781 82115
+              </a>
+              <button
+                type="button"
+                className="flex-1 rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-4 py-2.5 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-white shadow-lg shadow-sky-500/30"
+              >
+                Free Consultation
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
     </header>

@@ -1,0 +1,11 @@
+# KYNA Physiotherapy — robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://kynaphysiotherapy.com/sitemap.xml
+
+# Crawl-delay (optional, for polite bots)
+Crawl-delay: 1
