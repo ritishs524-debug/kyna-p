@@ -56,106 +56,113 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
   }, [])
 
   return (
-    <header
-      ref={headerRef}
-      className="fixed inset-x-0 top-0 z-50 border-b border-slate-900/50 bg-gradient-to-r from-[#0b1220]/95 via-[#0e1c34]/95 to-[#0b1220]/95 text-slate-50 shadow-[0_18px_55px_rgba(2,6,23,0.7)] backdrop-blur-md"
-    >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-4 lg:px-6">
-        <div className="flex items-center gap-3">
-		          <button
-	            type="button"
-	            onClick={() => onNavigate('home')}
-	            aria-label="Go to home page"
-	            className="relative flex h-[3.5rem] w-[8rem] items-center focus:outline-none"
-			          >
-			            <img
-					              src={kynaLogo}
-			              alt="KYNA Physiotherapy — Intelligent Rehab Clinics"
-			              className="absolute left-0 top-1/2 h-[10rem] w-auto -translate-y-1/2 object-contain"
-			            />
-		          </button>
-          <div className="hidden sm:block"></div>
-        </div>
+    <>
+      <header
+        ref={headerRef}
+        className="fixed inset-x-0 top-0 z-50 border-b border-slate-900/50 bg-gradient-to-r from-[#0b1220]/95 via-[#0e1c34]/95 to-[#0b1220]/95 text-slate-50 shadow-[0_18px_55px_rgba(2,6,23,0.7)] backdrop-blur-md"
+      >
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-4 lg:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => onNavigate('home')}
+              aria-label="Go to home page"
+              className="relative flex h-[3.5rem] w-[8rem] items-center focus:outline-none"
+            >
+              <img
+                src={kynaLogo}
+                alt="KYNA Physiotherapy — Intelligent Rehab Clinics"
+                className="absolute left-0 top-1/2 h-[10rem] w-auto -translate-y-1/2 object-contain"
+              />
+            </button>
+          </div>
 
-        <nav className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200 md:flex">
-          {navItems.map((label) => {
-            const page = labelToPage[label]
-            const isActive = currentPage === page
-            return (
-              <button
-                key={label}
-                type="button"
-                data-nav-item
-                onClick={() => onNavigate(page)}
-                className={`relative transition-colors ${
-                  isActive ? 'text-sky-300' : 'hover:text-sky-300'
+          <nav className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200 md:flex">
+            {navItems.map((label) => {
+              const page = labelToPage[label]
+              const isActive = currentPage === page
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  data-nav-item
+                  onClick={() => onNavigate(page)}
+                  className={`relative transition-colors ${
+                    isActive ? 'text-sky-300' : 'hover:text-sky-300'
+                  }`}
+                >
+                  {label}
+                  {isActive && (
+                    <span className="pointer-events-none absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-400" />
+                  )}
+                </button>
+              )
+            })}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="relative flex h-8 w-16 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 px-1 text-[0.6rem] font-semibold tracking-[0.18em] text-slate-400 shadow-sm transition hover:border-sky-400 hover:text-sky-200"
+            >
+              <span
+                className={`absolute left-1 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-900 shadow-md ring-1 ring-white/10 transition-transform duration-300 ${
+                  theme === 'dark' ? 'translate-x-7' : 'translate-x-0'
                 }`}
               >
-                {label}
-                {isActive && (
-                  <span className="pointer-events-none absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-400" />
+                {theme === 'dark' ? (
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5" fill="currentColor" />
+                    <path
+                      d="M12 3v2.5M12 18.5V21M4.22 4.22l1.77 1.77M17.9 17.9l1.88 1.88M3 12h2.5M18.5 12H21M4.22 19.78l1.77-1.77M17.9 6.1l1.88-1.88"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden="true">
+                    <path
+                      d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79 9.05 9.05 0 0121 12.79z"
+                      fill="currentColor"
+                    />
+                  </svg>
                 )}
-              </button>
-            )
-          })}
-        </nav>
+              </span>
+            </button>
 
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onToggleTheme}
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="relative flex h-8 w-16 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 px-1 text-[0.6rem] font-semibold tracking-[0.18em] text-slate-400 shadow-sm transition hover:border-sky-400 hover:text-sky-200"
-          >
-            <span
-              className={`absolute left-1 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-900 shadow-md ring-1 ring-white/10 transition-transform duration-300 ${
-                theme === 'dark' ? 'translate-x-7' : 'translate-x-0'
-              }`}
+            <button
+              type="button"
+              onClick={() => setMobileOpen((v) => !v)}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              className="relative z-[60] inline-flex flex-col items-center justify-center gap-1 rounded-lg border border-slate-700/70 p-2 text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300 md:hidden"
             >
-              {theme === 'dark' ? (
-                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden="true">
-                  <circle cx="12" cy="12" r="5" fill="currentColor" />
-                  <path
-                    d="M12 3v2.5M12 18.5V21M4.22 4.22l1.77 1.77M17.9 17.9l1.88 1.88M3 12h2.5M18.5 12H21M4.22 19.78l1.77-1.77M17.9 6.1l1.88-1.88"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                  />
+              {mobileOpen ? (
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               ) : (
-                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden="true">
-                  <path
-                    d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79 9.05 9.05 0 0121 12.79z"
-                    fill="currentColor"
-                  />
-                </svg>
+                <>
+                  <span className="block h-[2px] w-5 bg-current" />
+                  <span className="block h-[2px] w-5 bg-current" />
+                  <span className="block h-[2px] w-5 bg-current" />
+                </>
               )}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMobileOpen((v) => !v)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            className="inline-flex flex-col items-center justify-center gap-1 rounded-lg border border-slate-700/70 p-2 text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300 md:hidden"
-          >
-            <span className="block h-[2px] w-5 bg-current"></span>
-            <span className="block h-[2px] w-5 bg-current"></span>
-            <span className="block h-[2px] w-5 bg-current"></span>
-          </button>
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile menu overlay + panel */}
+      {/* Mobile menu — rendered outside header to avoid z-index conflicts */}
       {mobileOpen && (
         <>
-          {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-[55] bg-black/60 md:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          {/* Panel */}
-          <div className="fixed inset-x-0 top-[72px] z-50 mx-3 max-h-[calc(100vh-90px)] overflow-y-auto rounded-2xl border border-slate-700/60 bg-[#0b1220] px-5 py-6 shadow-[0_24px_80px_rgba(2,6,23,0.95)] md:hidden">
+          <div className="fixed inset-x-0 top-[72px] bottom-0 z-[56] overflow-y-auto bg-[#0b1220] px-5 py-6 md:hidden">
             <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">
               {navItems.map((label) => {
                 const page = labelToPage[label]
@@ -168,8 +175,10 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
                       onNavigate(page)
                       setMobileOpen(false)
                     }}
-                    className={`w-full rounded-xl border px-4 py-3 text-left transition hover:border-sky-500/60 hover:text-sky-300 ${
-                      isActive ? 'border-sky-500/80 bg-sky-500/10 text-sky-300' : 'border-slate-700/70'
+                    className={`w-full rounded-xl border px-4 py-3.5 text-left transition ${
+                      isActive
+                        ? 'border-sky-500/80 bg-sky-500/10 text-sky-300'
+                        : 'border-slate-700/70 hover:border-sky-500/60 hover:text-sky-300'
                     }`}
                   >
                     {label}
@@ -177,16 +186,20 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
                 )
               })}
             </nav>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-col gap-3">
               <a
                 href="tel:9878182115"
-                className="flex-1 rounded-full border border-slate-700/70 px-4 py-2.5 text-center text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300"
+                className="rounded-full border border-slate-700/70 px-4 py-3 text-center text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300"
               >
-                Call 98781 82115
+                📞 Call 98781 82115
               </a>
               <button
                 type="button"
-                className="flex-1 rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-4 py-2.5 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-white shadow-lg shadow-sky-500/30"
+                onClick={() => {
+                  onNavigate('contact')
+                  setMobileOpen(false)
+                }}
+                className="rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-4 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-white shadow-lg shadow-sky-500/30"
               >
                 Free Consultation
               </button>
@@ -194,8 +207,7 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
           </div>
         </>
       )}
-
-    </header>
+    </>
   )
 }
 
