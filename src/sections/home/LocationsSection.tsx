@@ -1,6 +1,5 @@
 import { useRef } from 'react'
 import { motion } from 'framer-motion'
-import kynaLogo from '../../assets/logo/kyna_withoutbg-01.PNG'
 import BranchCards from '../../components/ui/branch-cards'
 
 type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
@@ -41,7 +40,7 @@ const branches = [
   { num: '06', name: "Women's Care Physiotherapy", sub: 'Specialised Women\u2019s Health', href: '/womenscare' },
 ] as const
 
-const CINEMATIC_EASE = [0.16, 1, 0.3, 1] as const
+const EASE = [0.22, 1, 0.36, 1] as const
 
 export function LocationsSection({ onNavigate }: LocationsSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -60,91 +59,67 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
       ref={sectionRef}
       className="locations-section relative overflow-hidden bg-slate-950 text-slate-50"
     >
-      {/* Slow-moving mesh gradient bg */}
+      {/* Subtle gradient background */}
       <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="locations-gradient-bg absolute inset-0" />
-        <div className="absolute inset-0 bg-slate-950/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950" />
       </div>
 
-      {/* Radial glow overlay */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.15),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.95),_transparent_70%)]" />
+      <div className="relative z-20 mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: EASE }}
+          viewport={{ once: true, margin: '-80px' }}
+          className="mb-12 text-center"
+        >
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-sky-400">
+            Our Network
+          </p>
+          <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
+            Branches Across Punjab
+          </h2>
+          <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-400">
+            A growing network of KYNA Physiotherapy clinics offering intelligent rehab in Patiala,
+            Samana, Sangrur and beyond.
+          </p>
+        </motion.div>
 
-      <div className="relative z-20">
-        {/* Hero: Logo + BranchCards */}
-        <div className="flex flex-col items-center px-6 pb-4 pt-6">
-          {/* Logo reveal */}
-          <motion.img
-            src={kynaLogo}
-            alt="KYNA Physiotherapy logo"
-            loading="lazy"
-            initial={{ opacity: 0, scale: 0.85, filter: 'blur(14px)' }}
-            whileInView={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            transition={{ duration: 1, ease: CINEMATIC_EASE }}
-            viewport={{ once: true }}
-            className="pointer-events-none -mb-2 w-auto max-w-[180px] drop-shadow-[0_0_40px_rgba(56,189,248,0.85)] sm:max-w-[240px] md:max-w-[280px]"
-          />
-
-          {/* Trunk line — 40px */}
-          <motion.div
-            initial={{ scaleY: 0 }}
-            whileInView={{ scaleY: 1 }}
-            transition={{ duration: 0.8, ease: CINEMATIC_EASE, delay: 0.3 }}
-            viewport={{ once: true }}
-            className="h-20 w-px origin-top bg-sky-400/70 shadow-[0_0_40px_rgba(56,189,248,0.85)]"
-          />
-          <motion.div
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            transition={{ duration: 0.4, ease: CINEMATIC_EASE, delay: 0.9 }}
-            viewport={{ once: true }}
-            className="mb-8 h-1.5 w-1.5 rounded-full bg-sky-300 shadow-[0_0_30px_rgba(56,189,248,0.9)]"
-          />
-
-          {/* Branch cards grid */}
-          <div className="w-full max-w-4xl">
-            <BranchCards branches={branches} />
-          </div>
+        {/* Branch cards */}
+        <div className="mx-auto max-w-5xl">
+          <BranchCards branches={branches} />
         </div>
 
-        {/* Clinic details section */}
-        <div className="mx-auto max-w-6xl px-4 pb-20 pt-10 lg:px-6 lg:pt-16">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: CINEMATIC_EASE }}
-            viewport={{ once: true, margin: '-80px' }}
-            className="mb-8 space-y-3 text-center"
+        {/* Clinic details */}
+        <div className="mt-16">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6, ease: EASE }}
+            viewport={{ once: true }}
+            className="mb-8 text-center text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-300">
-              Our Clinics
-            </p>
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
-              Locations Across Punjab
-            </h2>
-            <p className="mx-auto max-w-xl text-sm text-slate-300/90">
-              A growing network of KYNA Physiotherapy clinics offering intelligent rehab in Patiala,
-              Samana and beyond.
-            </p>
-          </motion.div>
+            Clinic Locations
+          </motion.p>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-3">
             {locations.map((loc, i) => (
               <motion.div
                 key={loc.name}
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: CINEMATIC_EASE, delay: i * 0.12 }}
+                transition={{ duration: 0.6, ease: EASE, delay: i * 0.1 }}
                 viewport={{ once: true, margin: '-60px' }}
-                className="location-card flex flex-col justify-between overflow-hidden rounded-3xl border border-sky-200/80 bg-slate-50/95 p-5 text-sm shadow-[0_22px_60px_rgba(15,23,42,0.85)]"
+                className="flex flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 text-sm backdrop-blur-sm transition-all duration-300 hover:border-white/[0.12] hover:bg-white/[0.05]"
               >
                 <div className="space-y-2">
-                  <div className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-800">
+                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">
                     {loc.name}
                   </div>
-                  <p className="text-slate-700">{loc.address}</p>
+                  <p className="text-[13px] leading-relaxed text-slate-400">{loc.address}</p>
                 </div>
 
-                <div className="mt-4 h-40 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+                <div className="mt-4 h-36 overflow-hidden rounded-xl border border-white/[0.06]">
                   <iframe
                     title={`${loc.name} map`}
                     src={loc.mapEmbedSrc}
@@ -155,34 +130,38 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
                   />
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-2 text-[0.7rem]">
+                <div className="mt-4">
                   <a
                     href="tel:9878182115"
-                    className="rounded-full border border-slate-900/80 bg-slate-900 px-3 py-1.5 font-semibold uppercase tracking-[0.24em] text-slate-50 shadow-[0_10px_30px_rgba(15,23,42,0.55)] transition hover:bg-slate-800 hover:border-slate-900"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.05] px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-slate-300 transition-all duration-300 hover:border-sky-500/30 hover:text-sky-300"
                   >
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                    </svg>
                     Call Clinic
                   </a>
                 </div>
               </motion.div>
             ))}
           </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: CINEMATIC_EASE }}
-            viewport={{ once: true }}
-            className="mt-10 flex justify-center"
-          >
-            <button
-              type="button"
-              onClick={handleViewAllBranches}
-              className="rounded-full border border-sky-400/80 bg-slate-950/80 px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.26em] text-sky-200 shadow-[0_18px_60px_rgba(15,23,42,0.85)] transition hover:border-sky-300 hover:bg-sky-500/10 hover:text-sky-50"
-            >
-              View all branches
-            </button>
-          </motion.div>
         </div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: EASE }}
+          viewport={{ once: true }}
+          className="mt-12 flex justify-center"
+        >
+          <button
+            type="button"
+            onClick={handleViewAllBranches}
+            className="rounded-full border border-white/[0.1] bg-white/[0.04] px-7 py-2.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-300 transition-all duration-300 hover:border-sky-500/30 hover:bg-sky-500/5 hover:text-sky-300"
+          >
+            View all branches
+          </button>
+        </motion.div>
       </div>
     </section>
   )

@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import drSorabhImg from '../../assets/logo/drsorabh.png'
-import { BackgroundCells } from '../../components/ui/background-ripple-effect'
+import { GridGlowBackground } from '../../components/ui/grid-glow-background'
 
 interface HeroSectionProps {
   onNavigate?: (page: 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact') => void
@@ -66,10 +66,11 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
       display: 'flex', flexDirection: 'column' as const,
     },
     content: {
-      position: 'relative' as const, zIndex: 50, display: 'flex',
-      alignItems: 'center', justifyContent: 'space-between', flex: 1,
-      padding: isMobile ? '70px 20px 20px' : '10px 24px 40px',
+      position: 'relative' as const, zIndex: 10, display: 'flex',
+      alignItems: 'center', justifyContent: 'space-between',
+      padding: isMobile ? '70px 20px 20px' : '0 24px 0',
       maxWidth: 1100, margin: '0 auto', width: '100%',
+      height: '100%',
       pointerEvents: 'none' as const,
       gap: isMobile ? 20 : 40,
       flexWrap: 'wrap' as const,
@@ -98,8 +99,13 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
 
   return (
     <section ref={sectionRef} style={s.section} aria-label="KYNA Physiotherapy Hero">
-      {/* Background Cell Animation */}
-      <BackgroundCells className="bg-slate-950">
+      {/* Grid Glow Background */}
+      <GridGlowBackground
+        backgroundColor={T.slate950}
+        gridColor="rgba(255, 255, 255, 0.03)"
+        glowColors={[T.indigo, T.sky500, '#4b55ad']}
+        glowCount={8}
+      >
         <div style={s.content}>
           {/* LEFT — Text content */}
           <div style={s.leftCol}>
@@ -181,7 +187,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
             </motion.div>
           </div>
         </div>
-      </BackgroundCells>
+      </GridGlowBackground>
     </section>
   )
 }
