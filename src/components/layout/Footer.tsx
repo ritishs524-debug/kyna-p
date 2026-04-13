@@ -113,7 +113,7 @@ export function Footer({ onNavigate }: FooterProps) {
             © {new Date().getFullYear()} KYNA Physiotherapy. All rights reserved.
           </span>
           <span className="text-slate-500">
-            Privacy Policy • Designed and developed by Ritish —{' '}
+            Privacy Policy • Designed and developed by Refract Labs —{' '}
             <a
               href="tel:7681909401"
               className="underline underline-offset-2 hover:text-slate-300"
