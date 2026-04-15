@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import drSorabhImg from '../../assets/logo/drsorabh.jpg'
+import drSorabhImg from '../../assets/logo/drsorabh.png'
 import { GridGlowBackground } from '../../components/ui/grid-glow-background'
 
 interface HeroSectionProps {
