@@ -72,7 +72,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
       maxWidth: 1100, margin: '0 auto', width: '100%',
       height: '100%',
       pointerEvents: 'none' as const,
-      gap: isMobile ? 20 : 40,
+      gap: isMobile ? 8 : 40,
       flexWrap: 'wrap' as const,
       flexDirection: isMobile ? 'column' as const : 'row' as const,
     },
@@ -83,7 +83,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
     },
     rightCol: {
       flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      ...(isMobile ? { width: '100%' } : {}),
+      ...(isMobile ? { width: '100%', marginTop: -10 } : {}),
     },
     headline: {
       fontFamily: T.fontD, fontSize: isMobile ? 'clamp(26px, 7vw, 38px)' : 'clamp(28px, 5vw, 56px)', fontWeight: 600,
@@ -122,7 +122,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
             <motion.p style={s.subtext}
               initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 1.4, ease: 'easeOut' }}>
-              Expert physiotherapy led by <span style={{ color: T.sky300, fontWeight: 600 }}>Dr. Sorabh</span> &amp; his dedicated team — helping you move better, heal faster, and live stronger.
+              Expert physiotherapy led by <span style={{ color: T.sky300, fontWeight: 600 }}>Dr. Sorabh</span> &amp; <span style={{ color: T.sky300, fontWeight: 600 }}>Dr. Angad</span> &amp; their dedicated team — helping you move better, heal faster, and live stronger.
             </motion.p>
 
             {/* CTA buttons */}
@@ -176,7 +176,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
                 src={drSorabhImg}
                 alt="Dr. Sorabh"
                 style={{
-                  width: isMobile ? 200 : 280,
+                  width: isMobile ? 340 : 450,
                   height: 'auto',
                   objectFit: 'contain',
                   position: 'relative',

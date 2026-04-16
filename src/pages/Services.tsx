@@ -1,6 +1,5 @@
 			import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 			import { gsap } from '../lib/gsap'
-			import { ImageWithLoader } from '../components/common/ImageWithLoader'
 		import { getServices, type ServiceData } from '../lib/api'
 		
 			// Service images – use the actual filenames from src/assets/services
@@ -197,53 +196,45 @@ export function Services() {
           </p>
         </div>
 
-		        <div className="grid gap-8 md:grid-cols-2 md:gap-10">
-	          {useDb
-	            ? dbServices.map((service) => (
-	                <article
-	                  id={'service-' + service.id}
-	                  key={service.id}
-	                  className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-	                >
-	                  <div className="relative h-52 md:h-60 w-full overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 dark:from-slate-800 dark:to-slate-900">
-	                    {service.image && (
-	                      <ImageWithLoader src={service.image} alt={service.imageAlt || service.title} loading="lazy" containerClassName="h-full w-full" />
-	                    )}
-	                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
-	                    <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
-	                      <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
-	                        <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">{service.badge}</span>
-	                      </span>
-	                    </div>
-	                  </div>
-	                  <div className="flex-1 px-6 pb-6 pt-5 text-center text-xs sm:text-[0.8rem]">
-	                    <h2 className="text-base font-semibold sm:text-lg">{service.title}</h2>
-	                    <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">{service.description}</p>
-	                  </div>
-	                </article>
-	              ))
-	            : services.map((service) => (
-	                <article
-	                  id={'service-' + service.id}
-	                  key={service.id}
-	                  className="service-card group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 bg-gradient-to-b from-white via-sky-50/70 to-sky-100/80 shadow-[0_22px_70px_rgba(15,23,42,0.12)] transition-shadow duration-500 hover:shadow-[0_32px_95px_rgba(15,23,42,0.2)] dark:border-slate-800/80 dark:bg-slate-900/90 dark:from-slate-900 dark:via-slate-950 dark:to-slate-950"
-	                >
-	                  <div className="relative h-52 md:h-60 w-full overflow-hidden bg-gradient-to-br from-sky-100 to-sky-200 dark:from-slate-800 dark:to-slate-900">
-	                    <ImageWithLoader src={serviceImages[service.id].src} alt={serviceImages[service.id].alt} loading="lazy" containerClassName="h-full w-full" />
-	                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent" />
-	                    <div className="absolute inset-x-0 bottom-4 flex items-center justify-center">
-	                      <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-2 text-[0.7rem] font-medium text-slate-50 shadow-[0_16px_45px_rgba(15,23,42,0.7)] backdrop-blur-sm">
-	                        <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-sky-300">{service.badge}</span>
-	                      </span>
-	                    </div>
-	                  </div>
-	                  <div className="flex-1 px-6 pb-6 pt-5 text-center text-xs sm:text-[0.8rem]">
-	                    <h2 className="text-base font-semibold sm:text-lg">{service.title}</h2>
-	                    <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">{service.description}</p>
-	                  </div>
-	                </article>
-	              ))
-	          }
+		        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+	          {(useDb
+	            ? dbServices.map(s => ({ id: s.id || '', title: s.title, badge: s.badge, description: s.description, imgSrc: s.image || '', imgAlt: s.imageAlt || s.title }))
+	            : services.map(s => ({ id: s.id, title: s.title, badge: s.badge, description: s.description, imgSrc: serviceImages[s.id].src, imgAlt: serviceImages[s.id].alt }))
+	          ).map((service) => (
+	            <article
+	              key={service.id}
+	              id={'service-' + service.id}
+	              className="service-card group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/60 transition-shadow duration-300 hover:shadow-md dark:bg-slate-900 dark:ring-slate-800"
+	            >
+	              {/* Badge */}
+	              <div className="px-5 pt-4 pb-3">
+	                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-600 dark:text-sky-400">
+	                  <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
+	                  {service.badge}
+	                </span>
+	              </div>
+
+	              {/* Image */}
+	              <div className="relative mx-3 overflow-hidden rounded-xl">
+	                <img
+	                  src={service.imgSrc}
+	                  alt={service.imgAlt}
+	                  loading="lazy"
+	                  className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+	                />
+	              </div>
+
+	              {/* Content */}
+	              <div className="px-5 pt-4 pb-5">
+	                <h2 className="text-base font-semibold leading-snug text-slate-900 dark:text-white">
+	                  {service.title}
+	                </h2>
+	                <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+	                  {service.description}
+	                </p>
+	              </div>
+	            </article>
+	          ))}
         </div>
       </div>
     </section>
