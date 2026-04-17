@@ -6,6 +6,7 @@ interface SEOConfig {
   canonical?: string
   ogTitle?: string
   ogDescription?: string
+  ogImage?: string
 }
 
 const BASE_URL = 'https://kynaphysiotherapy.com'
@@ -30,20 +31,24 @@ function setCanonical(href: string) {
   el.setAttribute('href', href)
 }
 
-export function useSEO({ title, description, canonical, ogTitle, ogDescription }: SEOConfig) {
+const DEFAULT_OG_IMAGE = `${BASE_URL}/main-outside.png`
+
+export function useSEO({ title, description, canonical, ogTitle, ogDescription, ogImage }: SEOConfig) {
   useEffect(() => {
     document.title = title
 
     setMeta('description', description)
     setMeta('og:title', ogTitle || title, 'property')
     setMeta('og:description', ogDescription || description, 'property')
+    setMeta('og:image', ogImage || DEFAULT_OG_IMAGE, 'property')
     setMeta('twitter:title', ogTitle || title)
     setMeta('twitter:description', ogDescription || description)
+    setMeta('twitter:image', ogImage || DEFAULT_OG_IMAGE)
 
     const canonicalUrl = canonical || `${BASE_URL}${window.location.pathname}`
     setCanonical(canonicalUrl)
     setMeta('og:url', canonicalUrl, 'property')
-  }, [title, description, canonical, ogTitle, ogDescription])
+  }, [title, description, canonical, ogTitle, ogDescription, ogImage])
 }
 
 // ── Page-specific SEO configs ──
