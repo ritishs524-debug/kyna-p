@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { gsap } from '../../lib/gsap'
+import { smoothScrollTo } from '../../lib/useSmoothScroll'
 import servicesBg from '../../assets/images/services-section.jpg'
 import Card from '../../components/ui/carousel-card'
 import { getServices, type ServiceData } from '../../lib/api'
@@ -60,9 +61,7 @@ export function ServicesSection({ onNavigate }: ServicesSectionProps) {
     setTimeout(() => {
       const el = document.getElementById('service-' + card.serviceId)
       if (!el) return
-      const headerOffset = 96
-      const top = el.getBoundingClientRect().top + window.scrollY - headerOffset
-      window.scrollTo({ top, behavior: 'smooth' })
+      smoothScrollTo(el, -96)
       el.classList.add('service-card--highlight')
       setTimeout(() => el.classList.remove('service-card--highlight'), 2600)
     }, 300)

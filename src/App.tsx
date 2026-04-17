@@ -5,6 +5,7 @@ import { Header } from './components/layout/Header'
 import { Footer } from './components/layout/Footer'
 import { PageLoader } from './components/common/PageLoader'
 import { useSEO, pageSEO } from './lib/seo'
+import { useSmoothScroll, smoothScrollTo } from './lib/useSmoothScroll'
 
 type Theme = 'light' | 'dark'
 
@@ -78,19 +79,22 @@ function App() {
   const handleNavigate = (page: Page) => {
     const route = pageToRoute[page]
     navigate(route)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    smoothScrollTo(0)
   }
 
   // Dynamic per-page SEO (title, meta description, canonical, OG tags)
   const seoConfig = pageSEO[currentPage] || pageSEO.home
   useSEO(seoConfig)
 
+  const isAdmin = location.pathname.startsWith('/admin')
+
+  // Enable Lenis smooth scroll on all non-admin pages
+  useSmoothScroll(!isAdmin)
+
   // Scroll to top on route change
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    smoothScrollTo(0)
   }, [location.pathname])
-
-  const isAdmin = location.pathname.startsWith('/admin')
 
   // Admin gets its own standalone layout — no header, footer, or chatbot
   if (isAdmin) {

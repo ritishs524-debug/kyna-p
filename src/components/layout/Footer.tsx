@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getServices, type ServiceData } from '../../lib/api'
+import { smoothScrollTo } from '../../lib/useSmoothScroll'
 
 type FooterProps = {
 	onNavigate: (page: 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact') => void
@@ -32,7 +33,7 @@ export function Footer({ onNavigate }: FooterProps) {
   const handleServiceClick = () => {
     onNavigate('services')
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      smoothScrollTo(0)
     }, 0)
   }
 

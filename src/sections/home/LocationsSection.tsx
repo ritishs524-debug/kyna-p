@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { motion } from 'framer-motion'
 import BranchCards from '../../components/ui/branch-cards'
+import { smoothScrollTo } from '../../lib/useSmoothScroll'
 
 type PageLabel = 'home' | 'about' | 'services' | 'team' | 'contact'
 
@@ -50,7 +51,7 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
     onNavigate('contact')
     setTimeout(() => {
       if (typeof window === 'undefined') return
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      smoothScrollTo(0)
     }, 0)
   }
 
