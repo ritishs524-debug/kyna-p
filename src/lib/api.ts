@@ -1,4 +1,6 @@
-const API_BASE = '/api'
+// Fallback API base for static deployment
+// Uses environment variable if available, otherwise falls back to a default production URL
+const API_BASE = import.meta.env.VITE_API_URL || 'https://kyna-backend.onrender.com/api'
 
 // ── Service types ──
 export interface ServiceData {
