@@ -39,7 +39,7 @@ export function TeamPreviewSection() {
 
   return (
     <section className="bg-slate-50 dark:bg-slate-950">
-      <div className="mx-auto max-w-6xl px-4 py-16 lg:px-6">
+      <div className="mx-auto max-w-[1160px] px-6 py-16 lg:px-8 lg:py-20">
         {/* Header */}
         <div className="mb-10 space-y-3 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sky-500 dark:text-sky-300">

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   getServices,
   addService,
@@ -8,13 +8,17 @@ import {
   addTeamMember,
   updateTeamMember,
   deleteTeamMember,
-  uploadImage,
   getContactMessages,
   deleteContactMessage,
   type ServiceData,
   type TeamMemberData,
   type ContactMessage,
 } from '../lib/api'
+import {
+  ACCEPT_ATTR,
+  cloudinaryConfigError,
+  uploadToCloudinary,
+} from '../lib/cloudinary'
 
 const ADMIN_PASSWORD = 'kyna@admin2024'
 
@@ -29,43 +33,143 @@ const btnOutline =
   'rounded-lg border border-slate-600 px-6 py-2.5 text-sm font-medium text-slate-300 transition hover:border-slate-400 hover:text-white'
 
 /* ──────────────────── Image Upload Helper ──────────────────── */
+type UploadState =
+  | { kind: 'idle' }
+  | { kind: 'uploading'; percent: number }
+  | { kind: 'done'; url: string }
+  | { kind: 'error'; message: string }
+
+/**
+ * Uploads a picture straight to Cloudinary, with a real progress bar
+ * (XMLHttpRequest — fetch still cannot report upload progress) and
+ * client-side validation so a bad file never leaves the browser.
+ */
 function ImageUpload({
   currentUrl,
   onUpload,
+  folder,
+  label = '📁 Choose Image',
 }: {
   currentUrl: string
   onUpload: (url: string) => void
+  /** Cloudinary folder this image belongs to, e.g. `kyna/services`. */
+  folder: string
+  label?: string
 }) {
-  const [uploading, setUploading] = useState(false)
+  const [state, setState] = useState<UploadState>({ kind: 'idle' })
+  const [preview, setPreview] = useState<string | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  // Surface a configuration problem before the user picks a file.
+  const configError = cloudinaryConfigError()
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setUploading(true)
+
+    // Instant local preview so the admin sees what they picked
+    setPreview((old) => {
+      if (old) URL.revokeObjectURL(old)
+      return URL.createObjectURL(file)
+    })
+
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    setState({ kind: 'uploading', percent: 0 })
+
     try {
-      const url = await uploadImage(file)
-      onUpload(url)
+      const result = await uploadToCloudinary(file, {
+        folder,
+        signal: controller.signal,
+        onProgress: (percent) => setState({ kind: 'uploading', percent }),
+      })
+      onUpload(result.url)
+      setState({ kind: 'done', url: result.url })
     } catch (err) {
-      alert('Image upload failed: ' + (err as Error).message)
+      const message = err instanceof Error ? err.message : 'Upload failed.'
+      setState({ kind: 'error', message })
     } finally {
-      setUploading(false)
+      abortRef.current = null
+      // Allow re-picking the same file straight after
+      if (inputRef.current) inputRef.current.value = ''
     }
   }
 
+  const cancel = () => {
+    abortRef.current?.abort()
+    setState({ kind: 'idle' })
+  }
+
+  const shown = preview ?? currentUrl
+
   return (
     <div className="space-y-2">
-      {currentUrl && (
-        <img src={currentUrl} alt="preview" className="h-28 w-40 rounded-lg object-cover border border-slate-700" />
+      {shown && (
+        <div className="relative w-fit">
+          <img
+            src={shown}
+            alt="preview"
+            className="h-28 w-40 rounded-lg border border-slate-700 object-cover"
+          />
+          {state.kind === 'uploading' && (
+            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-slate-950/70 text-xs font-semibold text-white">
+              {state.percent}%
+            </div>
+          )}
+        </div>
       )}
-      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-500">
-        {uploading ? (
-          <span className="flex items-center gap-2">
-            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-            Uploading…
-          </span>
-        ) : '📁 Choose Image'}
-        <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
-      </label>
+
+      {configError ? (
+        <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs leading-relaxed text-amber-300">
+          ⚠️ {configError}
+        </p>
+      ) : state.kind === 'uploading' ? (
+        <div className="space-y-2">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-700">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-[width] duration-200"
+              style={{ width: `${state.percent}%` }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={cancel}
+            className="text-xs font-medium text-slate-400 transition hover:text-slate-200"
+          >
+            Cancel upload
+          </button>
+        </div>
+      ) : (
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-500">
+          {label}
+          <input
+            ref={inputRef}
+            type="file"
+            accept={ACCEPT_ATTR}
+            className="hidden"
+            onChange={handleFile}
+          />
+        </label>
+      )}
+
+      {state.kind === 'error' && (
+        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs leading-relaxed text-red-300">
+          ❌ {state.message}
+        </p>
+      )}
+
+      {state.kind === 'done' && (
+        <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs leading-relaxed break-all text-emerald-300">
+          ✅ Saved to Cloudinary — {state.url}
+        </p>
+      )}
+
+      <p className="text-[11px] text-slate-500">
+        JPG, PNG, WebP, AVIF or GIF · max 10 MB · stored in{' '}
+        <code className="text-slate-400">/{folder}</code>
+      </p>
     </div>
   )
 }
@@ -180,7 +284,7 @@ function ServiceForm({
       <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required className={inputCls} />
       <input placeholder="Badge" value={badge} onChange={(e) => setBadge(e.target.value)} required className={inputCls} />
       <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required rows={4} className={inputCls} />
-      <ImageUpload currentUrl={image} onUpload={setImage} />
+      <ImageUpload currentUrl={image} onUpload={setImage} folder="kyna/services" />
       <input placeholder="Image Alt Text" value={imageAlt} onChange={(e) => setImageAlt(e.target.value)} className={inputCls} />
       <input type="number" placeholder="Order" value={order} onChange={(e) => setOrder(Number(e.target.value))} className={inputCls} />
       <div className="flex gap-3">
@@ -236,7 +340,7 @@ function TeamForm({
       <input placeholder="Tags (comma separated)" value={tagsStr} onChange={(e) => setTagsStr(e.target.value)} className={inputCls} />
       <textarea placeholder="Focus / Short Bio" value={focus} onChange={(e) => setFocus(e.target.value)} required rows={3} className={inputCls} />
       <input placeholder="Initials (e.g. SS)" value={initials} onChange={(e) => setInitials(e.target.value)} required className={inputCls} />
-      <ImageUpload currentUrl={image} onUpload={setImage} />
+      <ImageUpload currentUrl={image} onUpload={setImage} folder="kyna/team" label="📷 Choose Photo" />
       <input type="number" placeholder="Order" value={order} onChange={(e) => setOrder(Number(e.target.value))} className={inputCls} />
       <div className="flex gap-3">
         <button type="submit" disabled={saving} className={btnPrimary}>{saving ? 'Saving…' : '💾 Save'}</button>

@@ -51,15 +51,15 @@ export function Footer({ onNavigate }: FooterProps) {
             to provide an unforgettable experience of wellbeing by addressing problems
             related to all the systems of the human body and emphasising general wellbeing.
           </p>
-          <div className="text-xs text-slate-500 dark:text-slate-400">
-            Phone:{' '}
-            <a
-              href="tel:9878182115"
-              className="font-semibold text-slate-900 hover:text-sky-700 dark:text-slate-200 dark:hover:text-sky-300"
-            >
+          <a
+            href="tel:9878182115"
+            className="-mx-2 flex min-h-11 w-fit items-center gap-2 rounded-lg px-2 text-xs text-slate-500 transition-colors hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#087CF0] dark:text-slate-400 dark:hover:bg-slate-800"
+          >
+            <span>Phone:</span>
+            <span className="font-semibold text-slate-900 hover:text-sky-700 dark:text-slate-200 dark:hover:text-sky-300">
               98781 82115
-            </a>
-          </div>
+            </span>
+          </a>
         </div>
 
         <div className="flex flex-1 flex-col gap-8 text-sm text-slate-700 lg:flex-row lg:justify-end dark:text-slate-300">
@@ -67,13 +67,13 @@ export function Footer({ onNavigate }: FooterProps) {
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
               Services
             </h3>
-            <ul className="space-y-1 text-xs">
+            <ul className="space-y-0.5 text-xs">
               {serviceNames.map((name) => (
                 <li key={name}>
                   <button
                     type="button"
                     onClick={handleServiceClick}
-                    className="text-left text-slate-700 underline-offset-2 hover:text-sky-700 hover:underline dark:text-slate-300 dark:hover:text-sky-300"
+                    className="-mx-2 flex min-h-11 w-[calc(100%+1rem)] items-center rounded-lg px-2 text-left text-slate-700 underline-offset-2 transition-colors hover:bg-slate-100 hover:text-sky-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#087CF0] dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-sky-300"
                   >
                     {name}
                   </button>
@@ -86,7 +86,7 @@ export function Footer({ onNavigate }: FooterProps) {
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
               Our Branches
             </h3>
-            <div className="space-y-3 text-xs">
+            <div className="space-y-4 text-xs">
               <div>
                 <div className="font-semibold text-slate-900 dark:text-slate-200">Patiala</div>
                 <p className="text-slate-600 dark:text-slate-400">SCF-34, DLF Colony, Patiala</p>
@@ -117,7 +117,7 @@ export function Footer({ onNavigate }: FooterProps) {
             Privacy Policy • Designed and developed by Refract Labs —{' '}
             <a
               href="tel:7681909401"
-              className="underline underline-offset-2 hover:text-slate-300"
+              className="-my-2.5 inline-flex min-h-11 items-center rounded px-1 underline underline-offset-2 hover:text-slate-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#087CF0]"
             >
               Contact
             </a>

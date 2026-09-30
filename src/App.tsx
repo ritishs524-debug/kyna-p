@@ -115,7 +115,7 @@ function App() {
         currentPage={currentPage}
         onNavigate={handleNavigate}
       />
-      <main className="pt-18">
+      <main className="pt-[74px]">
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<Home onNavigate={handleNavigate} />} />

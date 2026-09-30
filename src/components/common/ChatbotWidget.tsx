@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { gsap } from '../../lib/gsap'
-import kynaMark from '../../assets/logo/kyna_withoutbg-04.PNG'
+import { brandImages } from '../../lib/cloudinary-images'
 
 type ChatMessage = {
 	id: number
@@ -316,34 +316,39 @@ export function ChatbotWidget() {
 		  }, [messages.length])
 
   return (
-	    <div className="pointer-events-none fixed bottom-20 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-24 sm:right-8">
+    <div className="pointer-events-none fixed bottom-7 right-7 z-50 flex flex-col items-end gap-3">
       {/* Collapsed bubble button */}
       {!isOpen && (
         <button
           type="button"
-	          ref={bubbleRef}
-	          onClick={handleOpen}
-	          className="pointer-events-auto inline-flex items-center gap-2 rounded-full
-	            bg-gradient-to-br from-sky-500 via-sky-500 to-indigo-500 px-4 py-3 text-sm
-	            font-semibold text-white shadow-[0_18px_55px_rgba(15,23,42,0.55)]
-	            transition-transform duration-200 ease-out hover:translate-y-[-1px]
-	            hover:shadow-[0_24px_80px_rgba(15,23,42,0.75)] focus-visible:outline-none
-	            focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2
-	            focus-visible:ring-offset-slate-950 dark:from-sky-400 dark:via-sky-500
-	            dark:to-indigo-400"
+          ref={bubbleRef}
+          onClick={handleOpen}
+          aria-label="Need Help? Chat with KYNA"
+          className="pointer-events-auto group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-[#087CF0] to-[#0284C7] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_35px_rgba(8,124,240,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_45px_rgba(8,124,240,0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2"
         >
-          <span
-            className="flex h-7 w-7 items-center justify-center rounded-full
-              bg-white/10 ring-1 ring-white/30"
-          >
-            <span className="text-base leading-none">💬</span>
-          </span>
-          <span className="flex flex-col items-start leading-tight">
-            <span className="text-[0.7rem] uppercase tracking-[0.16em] text-sky-100/80">
-              Need help?
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/30">
+            <svg
+              className="h-4 w-4 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+            <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-[#087CF0]" />
+          </div>
+
+          <div className="flex flex-col items-start text-left leading-tight">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-sky-100/90">
+              NEED HELP?
             </span>
-            <span className="text-xs sm:text-sm">Chat with KYNA</span>
-          </span>
+            <span className="text-xs font-bold sm:text-sm text-white">Chat with KYNA</span>
+          </div>
         </button>
       )}
 
@@ -364,7 +369,7 @@ export function ChatbotWidget() {
 	                ring-white/60"
 	            >
 	              <img
-	                src={kynaMark}
+	                src={brandImages.logoMark}
 	                alt="KYNA logo"
 		                loading="lazy"
 		                className="h-8 w-auto object-contain"
@@ -415,7 +420,7 @@ export function ChatbotWidget() {
 	                      ring-1 ring-white/70"
                   >
 	                    <img
-	                      src={kynaMark}
+	                      src={brandImages.logoMark}
 	                      alt="KYNA logo"
 					                      loading="lazy"
 					                      className="h-6 w-6 object-contain"

@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
-import kynaLogo from '../../assets/logo/kyna_withoutbg-01.PNG'
+import { brandImages } from '../../lib/cloudinary-images'
 
 const words = ['Patiala', 'Anamiva', 'Samana', 'Sangrur', 'Kyna Kids', 'Another Kyna']
 
@@ -94,7 +94,7 @@ export function KynaScrollAnimation() {
         <div className="kyna-logo-parallax relative flex h-full w-full items-center justify-center">
           {/* Giant logo filling the viewport */}
           <img
-            src={kynaLogo}
+            src={brandImages.logoHeader}
             alt="KYNA logo"
 	            loading="lazy"
 	            className="pointer-events-none absolute inset-0 h-full w-full object-contain opacity-90"
@@ -104,8 +104,8 @@ export function KynaScrollAnimation() {
           <div
             className="relative z-10 flex flex-col items-center justify-center space-y-6 text-center text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl"
             style={{
-              WebkitMaskImage: `url(${kynaLogo})`,
-              maskImage: `url(${kynaLogo})`,
+              WebkitMaskImage: `url(${brandImages.logoHeader})`,
+              maskImage: `url(${brandImages.logoHeader})`,
               WebkitMaskRepeat: 'no-repeat',
               maskRepeat: 'no-repeat',
               WebkitMaskPosition: 'center',

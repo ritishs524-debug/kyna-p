@@ -1,3 +1,5 @@
+import { isCloudinaryConfigured, uploadToCloudinary } from './cloudinary'
+
 // Fallback API base for static deployment
 // Uses environment variable if available, otherwise falls back to a default production URL
 const API_BASE = import.meta.env.VITE_API_URL || 'https://kyna-backend.onrender.com/api'
@@ -112,7 +114,23 @@ export async function deleteContactMessage(id: string): Promise<void> {
 }
 
 // ── Image Upload ──
-export async function uploadImage(file: File): Promise<string> {
+/**
+ * Uploads go straight to Cloudinary from the browser, so image storage keeps
+ * working even when the backend is down. If Cloudinary is not configured we
+ * fall back to the old backend route so nothing breaks mid-migration.
+ */
+export async function uploadImage(
+  file: File,
+  options: { folder?: string; onProgress?: (percent: number) => void } = {},
+): Promise<string> {
+  if (isCloudinaryConfigured()) {
+    const result = await uploadToCloudinary(file, {
+      folder: options.folder,
+      onProgress: options.onProgress,
+    })
+    return result.url
+  }
+
   const formData = new FormData()
   formData.append('file', file)
 

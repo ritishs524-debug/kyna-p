@@ -1,5 +1,14 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from '../../lib/gsap'
+import {
+  color,
+  cardFeature,
+  sectionWrap,
+  eyebrow,
+  btnPrimary,
+  btnGhost,
+  dark,
+} from '../../lib/design-tokens'
 
 interface FinalCtaSectionProps {
   onNavigate?: (page: 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact') => void
@@ -26,32 +35,32 @@ export function FinalCtaSection({ onNavigate }: FinalCtaSectionProps) {
   }, [])
 
   return (
-    <section ref={sectionRef} className="pb-4">
-      <div className="mx-auto max-w-6xl px-4 lg:px-6">
-        <div className="cta-inner relative mt-[18px] overflow-hidden rounded-[2.5rem] border border-sky-100/90 bg-gradient-to-r from-[#e3f2ff] via-[#f5f9ff] to-[#dceeff] px-6 py-10 text-center shadow-[0_24px_80px_rgba(15,23,42,0.18)] dark:border-sky-500/60 dark:bg-gradient-to-r dark:from-slate-900/90 dark:via-slate-950 dark:to-slate-900/90 dark:shadow-[0_24px_80px_rgba(15,23,42,0.9)] sm:px-12">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden bg-white pt-16 pb-16 lg:pt-20 lg:pb-24 dark:bg-slate-950"
+    >
+      <div className={sectionWrap}>
+        <div className={`cta-inner relative overflow-hidden ${cardFeature} ${dark.cardFeature} px-6 py-12 text-center sm:px-12`}>
           <div className="relative space-y-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-700/90 dark:text-sky-300">
+            <p className={`${eyebrow} ${color.blue} ${dark.eyebrow}`}>
               Ready to Start Your Recovery Journey?
             </p>
-            <h2 className="text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-50">
+            <h2 className={`text-balance text-[26px] leading-[1.2] font-bold tracking-tight ${color.navy} sm:text-[32px] ${dark.heading}`}>
               Book a free consultation at KYNA Physiotherapy today.
             </h2>
-            <p className="mx-auto max-w-xl text-sm text-slate-600 dark:text-slate-300">
+            <p className="mx-auto max-w-xl text-[15px] leading-[1.7] text-slate-500 dark:text-slate-400">
               Share your pain, sports injury or movement goals with our specialists and discover a
               personalised roadmap back to confident, pain-free movement.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
               <button
                 type="button"
                 onClick={() => onNavigate?.('contact')}
-                className="rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-10 py-3 text-xs font-semibold uppercase tracking-[0.32em] text-white shadow-[0_18px_45px_rgba(56,189,248,0.55)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_rgba(56,189,248,0.75)]"
+                className={`${btnPrimary} px-9 py-3 text-[11px]`}
               >
                 Book Free Consultation
               </button>
-              <a
-                href="tel:9878182115"
-                className="rounded-full border border-slate-200/80 bg-white/90 px-9 py-2.5 text-xs font-semibold uppercase tracking-[0.32em] text-slate-900 shadow-[0_10px_30px_rgba(15,23,42,0.12)] backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-300/80 hover:text-slate-900/90 dark:border-slate-700/80 dark:bg-slate-900/60 dark:text-slate-50 dark:hover:border-sky-400/80"
-              >
+              <a href="tel:9878182115" className={`${btnGhost} px-8 py-2.5 text-[11px]`}>
                 Call 98781 82115
               </a>
             </div>

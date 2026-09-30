@@ -2,42 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ── Aurora animation ── */
+/* ── Typography ── */
 @theme {
-  --animate-aurora: aurora 60s linear infinite;
-}
-
-@keyframes aurora {
-  from {
-    background-position: 50% 50%, 50% 50%;
-  }
-  to {
-    background-position: 350% 50%, 350% 50%;
-  }
-}
-
-/* ── Color CSS variables required by aurora-background component ── */
-:root {
-  --white: #fff;
-  --black: #000;
-  --transparent: transparent;
-
-  --blue-300: #93c5fd;
-  --blue-400: #60a5fa;
-  --blue-500: #3b82f6;
-  --indigo-300: #a5b4fc;
-  --violet-200: #ddd6fe;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 }
 
 @layer base {
   body {
 	    @apply bg-white text-slate-900 antialiased font-sans dark:bg-slate-950 dark:text-slate-50;
-  }
-}
-
-@layer utilities {
-  .gradient-border {
-    border-image: linear-gradient(to right, #4b55ad, #22d3ee) 1;
   }
 }
 
@@ -80,80 +53,6 @@
   to {
     transform: translateX(100%);
   }
-}
-
-/* Home services section – infinite horizontal marquee on desktop */
-.services-marquee-viewport {
-  overflow: hidden;
-}
-
-.services-marquee-track {
-  display: flex;
-  width: max-content;
-  animation: services-marquee 45s linear infinite;
-}
-
-@keyframes services-marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-	  .services-marquee-track,
-	  .services-marquee-track-mobile {
-	    animation: none;
-	  }
-}
-
-/* Home services section – auto-scrolling marquee on mobile */
-@media (max-width: 639px) {
-	  .services-marquee-viewport-mobile {
-	    overflow: hidden;
-		    padding-left: 0; /* edge-to-edge cards on mobile */
-		    padding-right: 0;
-	  }
-
-	  .services-marquee-track-mobile {
-	    display: flex;
-	    width: max-content;
-	    gap: 1rem;
-	    animation: services-marquee-mobile 40s linear infinite;
-	  }
-}
-
-@keyframes services-marquee-mobile {
-	  0% {
-	    transform: translateX(-50%);
-	  }
-	  100% {
-	    transform: translateX(0);
-	  }
-}
-
-/* Locations section — slow drifting gradient */
-.locations-gradient-bg {
-  background: linear-gradient(
-    135deg,
-    #0f172a 0%,
-    #0c4a6e 25%,
-    #164e63 50%,
-    #1e1b4b 75%,
-    #0f172a 100%
-  );
-  background-size: 400% 400%;
-  animation: locations-drift 20s ease infinite;
-}
-
-@keyframes locations-drift {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 100% 25%; }
-  50% { background-position: 100% 75%; }
-  75% { background-position: 0% 100%; }
-  100% { background-position: 0% 50%; }
 }
 
 /* Highlight animation for targeted service card after navigation */

@@ -15,6 +15,8 @@ dist-ssr
 # Local environment files (API keys, secrets)
 .env
 .env.*
+# but keep the documented template in the repo
+!.env.example
 
 # Editor directories and files
 .vscode/*

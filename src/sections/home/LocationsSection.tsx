@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { motion } from 'framer-motion'
+import { MapPin, Phone } from 'lucide-react'
 import BranchCards from '../../components/ui/branch-cards'
 import { smoothScrollTo } from '../../lib/useSmoothScroll'
 
@@ -13,6 +14,8 @@ const locations = [
   {
     name: 'Patiala',
     address: 'SCF-34, DLF Colony, Patiala',
+    pin: '#14B8A6',
+    pinBg: '#DFF5F1',
     mapEmbedSrc:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3430.179410946937!2d76.37964937524664!3d30.344569104329872!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3910288d9b66e069%3A0x6f21c2f478255502!2sKYNA%20Physiotherapy!5e0!3m2!1sen!2sin!4v1732171520000!5m2!1sen!2sin',
   },
@@ -20,6 +23,8 @@ const locations = [
     name: 'Anamiva Physiotherapy',
     address:
       'Sco 7-8, behind moti Palace, Malwa Colony, Rose Avenue, New Officers Colony, Patiala, Punjab 147001',
+    pin: '#8B5CF6',
+    pinBg: '#EFE9FC',
     mapEmbedSrc:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3430.179410946937!2d76.37964937524664!3d30.344569104329872!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3910288d9b66e069%3A0x6f21c2f478255502!2sKYNA%20Physiotherapy!5e0!3m2!1sen!2sin!4v1732171520000!5m2!1sen!2sin',
   },
@@ -27,6 +32,8 @@ const locations = [
     name: 'Samana',
     address:
       'Krishna Basti, opp. Jain Terapanthi Sabha, near Ganpati Jeweller, Waraich Colony, Samana, Punjab 147101',
+    pin: '#F0426B',
+    pinBg: '#FDE7EC',
     mapEmbedSrc:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3435.9812221160025!2d76.19591007524107!3d30.188621706416732!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39104411f0a0e529%3A0x7d597240fdfd1fab!2sKrishna%20Basti%2C%20Samana%2C%20Punjab%20147101!5e0!3m2!1sen!2sin!4v1732171860000!5m2!1sen!2sin',
   },
@@ -58,96 +65,165 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
   return (
     <section
       ref={sectionRef}
-      className="locations-section relative overflow-hidden bg-slate-950 text-slate-50"
+      className="relative overflow-hidden bg-white dark:bg-slate-950"
     >
-      {/* Subtle gradient background */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950" />
+      {/* ── Soft blue gradient atmosphere ── */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(1100px 520px at 8% 12%, #E3F0FD 0%, transparent 62%),' +
+            'radial-gradient(900px 460px at 92% 22%, #E6F3FE 0%, transparent 60%),' +
+            'radial-gradient(1000px 520px at 50% 100%, #EAF4FD 0%, transparent 65%)',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* ── Decorative abstract shapes (behind content) ── */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+        {/* top-left pale blob */}
+        <div className="absolute -top-6 -left-8 h-40 w-40 rounded-full bg-[#DCEBF9]/70" />
+        {/* top-left thin cyan curve */}
+        <svg className="absolute -top-2 left-0 h-[150px] w-[190px]" viewBox="0 0 190 150" fill="none">
+          <path
+            d="M-10 148C40 128 84 96 108 58c16-25 30-46 52-58"
+            stroke="#7FD9E8"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </svg>
+        {/* teal plus, top-left */}
+        <svg className="absolute top-[86px] left-[140px] h-6 w-6 text-[#5FD3DE]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.5 2h5a1.5 1.5 0 011.5 1.5V9h5.5A1.5 1.5 0 0122 10.5v5a1.5 1.5 0 01-1.5 1.5H16v5.5a1.5 1.5 0 01-1.5 1.5h-5a1.5 1.5 0 01-1.5-1.5V17H3.5A1.5 1.5 0 012 15.5v-5A1.5 1.5 0 013.5 9H9V3.5A1.5 1.5 0 0110.5 2z" />
+        </svg>
+
+        {/* top-right dot grid */}
+        <svg className="absolute top-[38px] right-[110px] h-[74px] w-[74px]" viewBox="0 0 74 74" fill="#9BCDEF">
+          {Array.from({ length: 6 }).map((_, r) =>
+            Array.from({ length: 6 }).map((__, c) => (
+              <circle key={`${r}-${c}`} cx={6 + c * 12.4} cy={6 + r * 12.4} r="2.1" />
+            )),
+          )}
+        </svg>
+        {/* large pale plus, top-right */}
+        <svg className="absolute top-[104px] right-[62px] h-10 w-10 text-[#C6E2F7]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.5 2h5a1.5 1.5 0 011.5 1.5V9h5.5A1.5 1.5 0 0122 10.5v5a1.5 1.5 0 01-1.5 1.5H16v5.5a1.5 1.5 0 01-1.5 1.5h-5a1.5 1.5 0 01-1.5-1.5V17H3.5A1.5 1.5 0 012 15.5v-5A1.5 1.5 0 013.5 9H9V3.5A1.5 1.5 0 0110.5 2z" />
+        </svg>
+
+        {/* bottom-left cyan curve */}
+        <svg className="absolute bottom-0 left-0 h-[170px] w-[150px]" viewBox="0 0 150 170" fill="none">
+          <path
+            d="M-8 6c34 34 66 66 96 104"
+            stroke="#7FD9E8"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </svg>
+
+        {/* bottom-right pale blob */}
+        <div className="absolute -right-10 -bottom-12 h-48 w-48 rounded-full bg-[#E4F1FC]/70" />
+        {/* teal plus, bottom-right */}
+        <svg className="absolute right-[118px] bottom-[104px] h-6 w-6 text-[#5FD3DE]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.5 2h5a1.5 1.5 0 011.5 1.5V9h5.5A1.5 1.5 0 0122 10.5v5a1.5 1.5 0 01-1.5 1.5H16v5.5a1.5 1.5 0 01-1.5 1.5h-5a1.5 1.5 0 01-1.5-1.5V17H3.5A1.5 1.5 0 012 15.5v-5A1.5 1.5 0 013.5 9H9V3.5A1.5 1.5 0 0110.5 2z" />
+        </svg>
       </div>
 
-      <div className="relative z-20 mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
-        {/* Section header */}
+      {/* 1500px is the *content* width so the 3-up grid spans edge to edge, as in the reference. */}
+      <div className="relative z-10 mx-auto max-w-[1500px] px-6 py-16 lg:py-20">
+        {/* ══ Top intro — centred ══ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE }}
           viewport={{ once: true, margin: '-80px' }}
-          className="mb-12 text-center"
+          className="text-center"
         >
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-sky-400">
+          <p className="text-[15px] font-semibold tracking-[0.32em] text-[#1683FF] uppercase dark:text-sky-400">
             Our Network
           </p>
-          <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl lg:text-4xl">
-            Branches Across Punjab
+
+          <h2 className="mt-5 text-[36px] leading-[1.1] font-extrabold tracking-tight text-[#0B2347] sm:text-[44px] lg:text-[48px] dark:text-white">
+            Branches Across <span className="text-[#18C7D8] dark:text-sky-400">Punjab</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-slate-400">
-            A growing network of KYNA Physiotherapy clinics offering intelligent rehab in Patiala,
-            Samana, Sangrur and beyond.
+
+          <p className="mx-auto mt-6 max-w-[900px] text-[17px] leading-[1.6] text-slate-500 sm:text-[18px] dark:text-slate-400">
+            A growing network of KYNA Physiotherapy clinics offering intelligent rehab in
+            Patiala, Samana, Sangrur and beyond.
           </p>
         </motion.div>
 
-        {/* Branch cards */}
-        <div className="mx-auto max-w-5xl">
+        {/* ══ Branch grid — 3 × 2 ══ */}
+        <div className="mt-12">
           <BranchCards branches={branches} />
         </div>
 
-        {/* Clinic details */}
-        <div className="mt-16">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6, ease: EASE }}
-            viewport={{ once: true }}
-            className="mb-8 text-center text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500"
-          >
-            Clinic Locations
-          </motion.p>
-
-          <div className="grid gap-5 md:grid-cols-3">
-            {locations.map((loc, i) => (
-              <motion.div
-                key={loc.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: EASE, delay: i * 0.1 }}
-                viewport={{ once: true, margin: '-60px' }}
-                className="flex flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 text-sm backdrop-blur-sm transition-all duration-300 hover:border-white/[0.12] hover:bg-white/[0.05]"
-              >
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400">
-                    {loc.name}
-                  </div>
-                  <p className="text-[13px] leading-relaxed text-slate-400">{loc.address}</p>
-                </div>
-
-                <div className="mt-4 h-36 overflow-hidden rounded-xl border border-white/[0.06]">
-                  <iframe
-                    title={`${loc.name} map`}
-                    src={loc.mapEmbedSrc}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="h-full w-full border-0"
-                    allowFullScreen
-                  />
-                </div>
-
-                <div className="mt-4">
-                  <a
-                    href="tel:9878182115"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.05] px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-slate-300 transition-all duration-300 hover:border-sky-500/30 hover:text-sky-300"
-                  >
-                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                    </svg>
-                    Call Clinic
-                  </a>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+        {/* ══ Clinic locations label with side rules ══ */}
+        <div className="mt-14 flex items-center justify-center gap-4 lg:mt-16">
+          <span className="h-px w-[70px] bg-gradient-to-r from-transparent to-sky-300 lg:w-[110px]" aria-hidden="true" />
+          <span className="flex shrink-0 items-center gap-2">
+            <MapPin className="h-[15px] w-[15px] text-[#1683FF] dark:text-sky-400" strokeWidth={2.2} />
+            <span className="text-[14px] font-semibold tracking-[0.28em] text-[#1683FF] uppercase dark:text-sky-400">
+              Clinic Locations
+            </span>
+          </span>
+          <span className="h-px w-[70px] bg-gradient-to-l from-transparent to-sky-300 lg:w-[110px]" aria-hidden="true" />
         </div>
 
-        {/* CTA */}
+        {/* ══ Clinic cards — 3 columns ══ */}
+        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+          {locations.map((loc, i) => (
+            <motion.div
+              key={loc.name}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASE, delay: i * 0.1 }}
+              viewport={{ once: true, margin: '-60px' }}
+              className="flex h-full flex-col rounded-[20px] border border-sky-100 bg-white p-6 shadow-[0_4px_16px_rgba(11,35,71,0.05)] lg:p-7 dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
+            >
+              {/* Name + address */}
+              <div className="flex items-start gap-3.5">
+                <span
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                  style={{ backgroundColor: loc.pinBg }}
+                  aria-hidden="true"
+                >
+                  <MapPin className="h-[18px] w-[18px]" style={{ color: loc.pin }} strokeWidth={2.2} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-[14px] font-semibold tracking-[0.08em] text-[#0B2347] uppercase dark:text-white">
+                    {loc.name}
+                  </h3>
+                  <p className="mt-1.5 text-[14px] leading-[1.5] text-slate-500 dark:text-slate-400">
+                    {loc.address}
+                  </p>
+                </div>
+              </div>
+
+              {/* Map */}
+              <div className="mt-6 h-[150px] w-full overflow-hidden rounded-[13px] border border-sky-100 lg:h-[156px] dark:border-slate-800">
+                <iframe
+                  title={`${loc.name} map`}
+                  src={loc.mapEmbedSrc}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="h-full w-full border-0"
+                  allowFullScreen
+                />
+              </div>
+
+              {/* Call clinic */}
+              <a
+                href="tel:9878182115"
+                className="mt-4 inline-flex h-[40px] w-fit items-center gap-2 rounded-full border border-[#1683FF] bg-white px-6 text-[12px] font-semibold tracking-[0.14em] text-[#1683FF] uppercase transition-colors duration-300 hover:bg-[#1683FF] hover:text-white dark:bg-slate-900 dark:text-sky-400 dark:hover:bg-sky-500 dark:hover:text-white"
+              >
+                <Phone className="h-[15px] w-[15px]" strokeWidth={2.2} />
+                Call Clinic
+              </a>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* ══ Bottom CTA ══ */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -158,9 +234,12 @@ export function LocationsSection({ onNavigate }: LocationsSectionProps) {
           <button
             type="button"
             onClick={handleViewAllBranches}
-            className="rounded-full border border-white/[0.1] bg-white/[0.04] px-7 py-2.5 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-300 transition-all duration-300 hover:border-sky-500/30 hover:bg-sky-500/5 hover:text-sky-300"
+            className="inline-flex h-[44px] items-center gap-2.5 rounded-full border border-[#1683FF] bg-white px-8 text-[12px] font-semibold tracking-[0.16em] text-[#1683FF] uppercase transition-colors duration-300 hover:bg-[#1683FF] hover:text-white dark:bg-slate-900 dark:text-sky-400 dark:hover:bg-sky-500 dark:hover:text-white"
           >
-            View all branches
+            View All Branches
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
           </button>
         </motion.div>
       </div>

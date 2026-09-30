@@ -1,193 +1,211 @@
-import { useRef, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import drSorabhImg from '../../assets/logo/drsorabh.png'
-import { GridGlowBackground } from '../../components/ui/grid-glow-background'
+import { MapPin, Sparkles, HeartHandshake, Users, Zap, Smile } from 'lucide-react'
+import { brandImages } from '../../lib/cloudinary-images'
 
 interface HeroSectionProps {
   onNavigate?: (page: 'home' | 'about' | 'services' | 'reviews' | 'team' | 'contact') => void
 }
 
-const T = {
-  slate950: '#020617', slate900: '#0f172a',
-  slate700: '#334155', slate500: '#64748b', slate400: '#94a3b8',
-  slate300: '#cbd5e1', slate50: '#f8fafc',
-  sky400: '#38bdf8', sky500: '#0ea5e9', sky300: '#7dd3fc',
-  indigo: '#4b55ad',
-  fontD: "'Playfair Display', Georgia, serif",
-  fontB: "'DM Sans', system-ui, sans-serif",
-} as const
+const benefits = [
+  {
+    icon: HeartHandshake,
+    iconBg: 'bg-cyan-50 text-[#18C7D8] dark:bg-cyan-950/40 dark:text-cyan-400',
+    title: 'Personalized Care',
+    description: 'Customized treatment plans for your unique needs.',
+  },
+  {
+    icon: Users,
+    iconBg: 'bg-sky-50 text-[#087CF0] dark:bg-sky-950/40 dark:text-sky-400',
+    title: 'Expert Team',
+    description: 'Led by experienced and trusted physiotherapists.',
+  },
+  {
+    icon: Zap,
+    iconBg: 'bg-indigo-50 text-indigo-500 dark:bg-indigo-950/40 dark:text-indigo-400',
+    title: 'Faster Recovery',
+    description: 'Get back to doing what you love, sooner.',
+  },
+  {
+    icon: Smile,
+    iconBg: 'bg-teal-50 text-[#20D4C4] dark:bg-teal-950/40 dark:text-teal-400',
+    title: 'Better Quality of Life',
+    description: 'Move freely. Feel stronger. Live healthier.',
+  },
+]
 
-const KF_ID = 'kyna-hero-kf'
-function injectKF() {
-  if (typeof document === 'undefined' || document.getElementById(KF_ID)) return
-  const s = document.createElement('style')
-  s.id = KF_ID
-  s.textContent = `
-@keyframes kf-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes kf-glow{0%,100%{transform:scale(1);opacity:.45}50%{transform:scale(1.06);opacity:.8}}
-@keyframes kf-sweep{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
-@keyframes kf-border{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes kf-pulse{0%,100%{box-shadow:0 0 0 0 rgba(56,189,248,.35)}50%{box-shadow:0 0 0 14px rgba(56,189,248,0)}}
-  `
-  document.head.appendChild(s)
-}
-
-
-/* ─── Framer Motion Variants ─── */
-const headlineWords = 'Where Recovery Meets Expertise'.split(' ')
-const wordContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.8 } } }
-const wordChild = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } } }
-
-const doctorSpring = { type: 'spring' as const, stiffness: 120, damping: 14 }
-
-/* ─── Main Component ─── */
 export function HeroSection({ onNavigate }: HeroSectionProps) {
-  const sectionRef = useRef<HTMLElement | null>(null)
-  const [, setReady] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    injectKF(); setReady(true)
-    const mq = window.matchMedia('(max-width: 768px)')
-    setIsMobile(mq.matches)
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
-
-  const floatWrap = (delay: number): React.CSSProperties => ({
-    animation: `kf-float 3.2s ease-in-out ${delay}s infinite`,
-  })
-
-  const s = {
-    section: {
-      minHeight: '100vh', position: 'relative' as const,
-      overflow: 'hidden', fontFamily: T.fontB, color: T.slate50,
-      display: 'flex', flexDirection: 'column' as const,
-    },
-    content: {
-      position: 'relative' as const, zIndex: 10, display: 'flex',
-      alignItems: 'center', justifyContent: 'space-between',
-      padding: isMobile ? '70px 20px 20px' : '0 24px 0',
-      maxWidth: 1100, margin: '0 auto', width: '100%',
-      height: '100%',
-      pointerEvents: 'none' as const,
-      gap: isMobile ? 8 : 40,
-      flexWrap: 'wrap' as const,
-      flexDirection: isMobile ? 'column' as const : 'row' as const,
-    },
-    leftCol: {
-      flex: isMobile ? '1 1 auto' : '1 1 480px', display: 'flex', flexDirection: 'column' as const,
-      alignItems: isMobile ? 'center' as const : 'flex-start' as const,
-      justifyContent: 'center',
-    },
-    rightCol: {
-      flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      ...(isMobile ? { width: '100%', marginTop: -10 } : {}),
-    },
-    headline: {
-      fontFamily: T.fontD, fontSize: isMobile ? 'clamp(26px, 7vw, 38px)' : 'clamp(28px, 5vw, 56px)', fontWeight: 600,
-      lineHeight: 1.15, textAlign: isMobile ? 'center' as const : 'left' as const, marginBottom: isMobile ? 12 : 16,
-      color: T.slate50, display: 'flex', flexWrap: 'wrap' as const,
-      justifyContent: isMobile ? 'center' : 'flex-start', gap: '0 10px',
-    },
-    subtext: {
-      fontFamily: T.fontB, fontSize: isMobile ? 14 : 16, lineHeight: 1.7,
-      color: T.slate400, textAlign: isMobile ? 'center' as const : 'left' as const, maxWidth: 520, marginBottom: isMobile ? 24 : 36,
-    },
-  }
-
   return (
-    <section ref={sectionRef} style={s.section} aria-label="KYNA Physiotherapy Hero">
-      {/* Grid Glow Background */}
-      <GridGlowBackground
-        backgroundColor={T.slate950}
-        gridColor="rgba(255, 255, 255, 0.03)"
-        glowColors={[T.indigo, T.sky500, '#4b55ad']}
-        glowCount={8}
-      >
-        <div style={s.content}>
-          {/* LEFT — Text content */}
-          <div style={s.leftCol}>
-            {/* Headline word by word */}
-            <motion.h1 style={s.headline} variants={wordContainer} initial="hidden" animate="visible">
-              {headlineWords.map((word, i) => (
-                <motion.span key={i} variants={wordChild} style={word === 'Expertise' ? { color: T.sky400 } : {}}>
-                  {word}
-                </motion.span>
-              ))}
+    <section className="relative overflow-hidden bg-[#F4FAFF] pt-14 pb-16 lg:pt-20 lg:pb-20 dark:bg-slate-950">
+      {/* Background Soft Glows */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-40 right-0 h-[600px] w-[600px] rounded-full bg-gradient-to-bl from-sky-200/40 via-cyan-100/30 to-transparent blur-3xl dark:from-sky-950/30 dark:via-slate-900/40" />
+        <div className="absolute top-1/2 -left-40 h-[500px] w-[500px] rounded-full bg-gradient-to-tr from-cyan-100/30 via-sky-100/20 to-transparent blur-3xl dark:from-cyan-950/20 dark:via-slate-900/30" />
+      </div>
+
+      <div className="mx-auto max-w-[1360px] px-6 lg:px-10">
+        {/* Hero Top Content: 2 Columns */}
+        <div className="flex flex-col items-center justify-between gap-12 lg:flex-row lg:gap-14">
+          {/* LEFT COLUMN (~45-48%) */}
+          <div className="flex flex-1 flex-col items-start text-left lg:max-w-[600px]">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className="mb-8 inline-flex items-center gap-2 rounded-full border border-sky-200/70 bg-[#E8F4FD] px-4 py-1.5 shadow-sm dark:border-sky-800/60 dark:bg-sky-950/50"
+            >
+              <Sparkles className="h-4 w-4 text-[#087CF0] dark:text-sky-400" />
+              <span className="text-xs font-semibold tracking-wide text-[#0B2347] dark:text-sky-200 sm:text-[13px]">
+                Expert Physiotherapy &amp; Rehabilitation
+              </span>
+            </motion.div>
+
+            {/* Main Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+              className="text-[44px] font-extrabold tracking-tight text-[#0B2347] sm:text-[54px] lg:text-[62px] leading-[1.08] dark:text-white"
+            >
+              Where Recovery
+              <br />
+              Meets{' '}
+              <span className="relative inline-block text-[#087CF0] dark:text-sky-400">
+                Expertise
+                {/* Thin cyan/blue decorative curved underline */}
+                <svg
+                  className="absolute -bottom-2.5 left-0 w-full text-[#18C7D8] dark:text-sky-400"
+                  viewBox="0 0 250 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M3 11C65 3 185 3 247 11"
+                    stroke="currentColor"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
             </motion.h1>
 
-            {/* Subtext */}
-            <motion.p style={s.subtext}
-              initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 1.4, ease: 'easeOut' }}>
-              Expert physiotherapy led by <span style={{ color: T.sky300, fontWeight: 600 }}>Dr. Sorabh</span> &amp; <span style={{ color: T.sky300, fontWeight: 600 }}>Dr. Angad</span> &amp; their dedicated team — helping you move better, heal faster, and live stronger.
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+              className="mt-7 text-base leading-[1.68] text-slate-600 sm:text-[17px] lg:max-w-[540px] dark:text-slate-300"
+            >
+              Expert physiotherapy led by{' '}
+              <strong className="font-semibold text-[#087CF0] dark:text-sky-400">
+                Dr. Sorabh &amp; Dr. Angad
+              </strong>{' '}
+              &amp; their dedicated team — helping you move better, heal faster, and live stronger.
             </motion.p>
 
-            {/* CTA buttons */}
-            <motion.div style={{ display: 'flex', gap: isMobile ? 12 : 16, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start', pointerEvents: 'auto', width: isMobile ? '100%' : 'auto' }}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.8 }}>
-              <button type="button" aria-label="Book a session with KYNA Physiotherapy"
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+              className="mt-8 flex w-full flex-wrap items-center gap-5 sm:w-auto lg:mt-9"
+            >
+              <button
+                type="button"
                 onClick={() => onNavigate?.('contact')}
-                style={{
-                  position: 'relative', padding: isMobile ? '12px 28px' : '14px 36px', borderRadius: 999,
-                  background: `linear-gradient(135deg, ${T.indigo}, ${T.sky500})`,
-                  color: 'white', fontFamily: T.fontB, fontSize: isMobile ? 13 : 14, fontWeight: 700,
-                  letterSpacing: '0.16em', textTransform: 'uppercase',
-                  border: 'none', cursor: 'pointer',
-                  boxShadow: `0 12px 40px rgba(56,189,248,0.45)`,
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = `0 18px 55px rgba(56,189,248,0.65)` }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = `0 12px 40px rgba(56,189,248,0.45)` }}>
-                Book a Session →
+                className="group flex h-[58px] w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#087CF0] to-[#0284C7] px-8 text-base font-bold text-white shadow-[0_12px_30px_rgba(8,124,240,0.3)] transition-all duration-200 hover:-translate-y-0.5 hover:from-[#0770D8] hover:to-[#0275B1] hover:shadow-[0_16px_40px_rgba(8,124,240,0.45)] sm:w-[250px]"
+              >
+                <span>Book a Session</span>
+                <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
               </button>
-              <button type="button" aria-label="Meet the KYNA physiotherapy team"
+
+              <button
+                type="button"
                 onClick={() => onNavigate?.('team')}
-                style={{
-                  padding: isMobile ? '12px 28px' : '14px 36px', borderRadius: 999,
-                  background: 'transparent',
-                  color: T.slate300, fontFamily: T.fontB, fontSize: isMobile ? 13 : 14, fontWeight: 600,
-                  letterSpacing: '0.14em', textTransform: 'uppercase',
-                  border: `1.5px solid ${T.slate700}`, cursor: 'pointer',
-                  transition: 'border-color 0.2s, color 0.2s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = T.sky400; e.currentTarget.style.color = T.sky300 }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = T.slate700; e.currentTarget.style.color = T.slate300 }}>
+                className="flex h-[58px] w-full items-center justify-center rounded-full border border-slate-300 bg-white/80 px-8 text-base font-bold text-[#0B2347] shadow-sm backdrop-blur-sm transition-all duration-200 hover:border-slate-400 hover:bg-slate-50 hover:text-[#087CF0] sm:w-[195px] dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-sky-400"
+              >
                 Meet the Team
               </button>
             </motion.div>
 
-            {/* Locations tag */}
-            <motion.p style={{ fontFamily: T.fontB, fontSize: isMobile ? 10 : 11, fontWeight: 500, letterSpacing: '0.35em', color: T.slate500, textTransform: 'uppercase', marginTop: isMobile ? 20 : 32, textAlign: isMobile ? 'center' as const : 'left' as const }}
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2 }}>
-              Patiala · Samana · Sangrur · Nabha
-            </motion.p>
+            {/* Locations */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+              className="mt-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 sm:text-[13px] lg:mt-9 dark:text-slate-400"
+            >
+              <MapPin className="h-4 w-4 shrink-0 text-[#087CF0] dark:text-sky-400" />
+              <span>PATIALA · SAMANA · SANGRUR · NABHA</span>
+            </motion.div>
           </div>
 
-          {/* RIGHT — Dr. Sorabh logo */}
-          <div style={s.rightCol}>
-            <motion.div style={{ zIndex: 3, position: 'relative', ...floatWrap(0) }}
-              initial={{ opacity: 0, x: 80 }} animate={{ opacity: 1, x: 0 }}
-              transition={{ ...doctorSpring, delay: 0.3 }}>
+          {/* RIGHT COLUMN (~52-55% - Team Image with Healthcare Glow) */}
+          <div className="relative flex flex-1 items-center justify-center lg:justify-end">
+            {/* Subtle Abstract Healthcare Glow & Decor */}
+            <div className="absolute -inset-4 -z-10 flex items-center justify-center">
+              <div className="h-[460px] w-[460px] rounded-full bg-gradient-to-tr from-cyan-200/50 via-sky-200/40 to-blue-200/30 blur-3xl dark:from-cyan-900/30 dark:via-sky-900/25 dark:to-blue-950/20" />
+            </div>
+
+            {/* Minimal Medical Cross / Plus Accents */}
+            <div className="pointer-events-none absolute top-4 right-10 -z-5 text-2xl font-light text-cyan-400/60 select-none">
+              +
+            </div>
+            <div className="pointer-events-none absolute bottom-12 left-6 -z-5 text-xl font-light text-sky-400/50 select-none">
+              +
+            </div>
+            <div className="pointer-events-none absolute top-1/2 left-2 -z-5 h-20 w-20 rounded-full border border-cyan-200/50 dark:border-cyan-800/30" />
+
+            {/* 3-Doctor Team Image (Provided Exact Image) */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="relative z-10 w-full max-w-[660px]"
+            >
               <img
-                src={drSorabhImg}
-                alt="Dr. Sorabh"
-                style={{
-                  width: isMobile ? 340 : 450,
-                  height: 'auto',
-                  objectFit: 'contain',
-                  position: 'relative',
-                  zIndex: 1,
-                  filter: `drop-shadow(0 0 30px rgba(56,189,248,0.35))`,
-                }}
+                src={brandImages.teamHero}
+                alt="KYNA Physiotherapy Team — Dr. Sorabh, Dr. Angad & Team"
+                className="h-auto w-full object-contain drop-shadow-[0_20px_35px_rgba(11,35,71,0.12)]"
               />
             </motion.div>
           </div>
         </div>
-      </GridGlowBackground>
+
+        {/* BENEFITS SECTION: 4 Equal Columns in Rounded Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.45, ease: 'easeOut' }}
+          className="mt-12 lg:mt-14"
+        >
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-[0_20px_50px_rgba(11,35,71,0.06)] lg:p-7 dark:border-slate-800/90 dark:bg-slate-900/90 dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+            <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+              {benefits.map((item) => {
+                const IconComponent = item.icon
+                return (
+                  <div key={item.title} className="flex flex-col items-start text-left">
+                    <div className="mb-3 flex items-center gap-3.5">
+                      <div
+                        className={`flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl ${item.iconBg}`}
+                      >
+                        <IconComponent className="h-6 w-6" />
+                      </div>
+                      <h3 className="text-lg font-bold text-[#0B2347] dark:text-white">
+                        {item.title}
+                      </h3>
+                    </div>
+                    <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                      {item.description}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </section>
   )
 }

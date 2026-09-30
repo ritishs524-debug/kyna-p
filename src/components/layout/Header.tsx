@@ -1,6 +1,6 @@
-import { useLayoutEffect, useRef, useState } from 'react'
-import { gsap } from '../../lib/gsap'
-import kynaLogo from '../../assets/logo/kyna_withoutbg-01.PNG'
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
+import { brandImages } from '../../lib/cloudinary-images'
+import { useModalScrollLock } from '../../lib/useModalScrollLock'
 
 const navItems = ['Home', 'About Us', 'Services', 'Reviews', 'Our Team', 'Contact'] as const
 
@@ -23,61 +23,77 @@ type HeaderProps = {
 }
 
 export function Header({ theme, onToggleTheme, currentPage, onNavigate }: HeaderProps) {
-  const headerRef = useRef<HTMLElement | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const panelRef = useRef<HTMLDivElement | null>(null)
+  const toggleRef = useRef<HTMLButtonElement | null>(null)
+  const wasOpen = useRef(false)
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const header = headerRef.current
-      if (!header) return
+  // The page must not glide behind the drawer — Lenis drives window scroll
+  // directly, so plain `overflow: hidden` is not enough on its own.
+  useModalScrollLock(mobileOpen)
 
-      gsap.from(header.querySelectorAll('[data-nav-item]'), {
-        opacity: 0,
-        y: -12,
-        duration: 0.7,
-        stagger: 0.08,
-        ease: 'power3.out',
-      })
+  // Move focus in on open, hand it back to the toggle on close.
+  useEffect(() => {
+    if (mobileOpen) {
+      wasOpen.current = true
+      const first = panelRef.current?.querySelector<HTMLElement>('button')
+      first?.focus()
+      return
+    }
+    if (wasOpen.current) {
+      wasOpen.current = false
+      toggleRef.current?.focus()
+    }
+  }, [mobileOpen])
 
-      gsap.to(header, {
-        backgroundColor: 'rgba(10,19,35,0.95)',
-        backdropFilter: 'blur(14px)',
-        boxShadow: '0 18px 55px rgba(2,6,23,0.7)',
-        scrollTrigger: {
-          trigger: document.documentElement,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
-        },
-      })
-    }, headerRef)
+  const onPanelKeyDown = useCallback((event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      setMobileOpen(false)
+      return
+    }
+    if (event.key !== 'Tab') return
 
-    return () => ctx.revert()
+    // Keep Tab inside the drawer so it never wanders into the dimmed page.
+    const focusables = panelRef.current?.querySelectorAll<HTMLElement>(
+      'button, a[href], [tabindex]:not([tabindex="-1"])',
+    )
+    if (!focusables || focusables.length === 0) return
+    const first = focusables[0]
+    const last = focusables[focusables.length - 1]
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
   }, [])
 
   return (
     <>
-      <header
-        ref={headerRef}
-        className="fixed inset-x-0 top-0 z-50 border-b border-slate-900/50 bg-gradient-to-r from-[#0b1220]/95 via-[#0e1c34]/95 to-[#0b1220]/95 text-slate-50 shadow-[0_18px_55px_rgba(2,6,23,0.7)] backdrop-blur-md"
-      >
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-4 lg:px-6">
-          <div className="flex items-center gap-3">
+      {/* Sits above the drawer backdrop (z-55) so the logo, theme toggle and
+          close button stay crisp and clickable while the drawer is open. */}
+      <header className="fixed inset-x-0 top-0 z-[60] h-[74px] border-b border-slate-100/90 bg-white/95 text-slate-800 shadow-[0_2px_15px_rgba(0,0,0,0.03)] backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-900/95 dark:text-slate-100">
+        <div className="mx-auto flex h-full max-w-[1360px] items-center justify-between px-6 lg:px-10">
+          {/* Logo on far left + any accompanying brand text, side-by-side & vertically centered */}
+          <div className="flex shrink-0 items-center gap-3">
             <button
               type="button"
               onClick={() => onNavigate('home')}
               aria-label="Go to home page"
-              className="relative flex h-[3.5rem] w-[8rem] items-center focus:outline-none"
+              className="group relative flex h-12 w-40 shrink-0 items-center overflow-hidden focus:outline-none"
             >
               <img
-                src={kynaLogo}
-                alt="KYNA Physiotherapy — Intelligent Rehab Clinics"
-                className="absolute left-0 top-1/2 h-[10rem] w-auto -translate-y-1/2 object-contain"
+                src={brandImages.logoHeader}
+                alt="KYNA Physiotherapy & Rehabilitation"
+                className="absolute left-0 top-1/2 h-36 w-auto -translate-y-1/2 object-contain transition-transform duration-200 group-hover:scale-105"
               />
             </button>
           </div>
 
-          <nav className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200 md:flex">
+          {/* Navigation in center/right */}
+          <nav className="hidden items-center gap-8 text-[15px] font-medium text-slate-700 dark:text-slate-200 md:flex lg:gap-10">
             {navItems.map((label) => {
               const page = labelToPage[label]
               const isActive = currentPage === page
@@ -85,59 +101,62 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
                 <button
                   key={label}
                   type="button"
-                  data-nav-item
                   onClick={() => onNavigate(page)}
-                  className={`relative transition-colors ${
-                    isActive ? 'text-sky-300' : 'hover:text-sky-300'
+                  className={`relative min-h-11 py-2 transition-colors duration-200 ${
+                    isActive
+                      ? 'font-semibold text-[#087CF0] dark:text-sky-400'
+                      : 'hover:text-[#087CF0] dark:hover:text-sky-400'
                   }`}
                 >
                   {label}
                   {isActive && (
-                    <span className="pointer-events-none absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-400" />
+                    <span className="pointer-events-none absolute -bottom-[19px] left-0 h-[3px] w-full rounded-full bg-[#087CF0] dark:bg-sky-400 shadow-[0_2px_8px_rgba(8,124,240,0.4)]" />
                   )}
                 </button>
               )
             })}
           </nav>
 
+          {/* Right side: Theme toggle pill & Mobile hamburger */}
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={onToggleTheme}
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="relative flex h-8 w-16 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 px-1 text-[0.6rem] font-semibold tracking-[0.18em] text-slate-400 shadow-sm transition hover:border-sky-400 hover:text-sky-200"
+              className="relative flex h-11 w-[62px] items-center rounded-full border border-slate-200 bg-slate-100/90 px-1 text-slate-600 shadow-inner transition hover:border-[#087CF0]/40 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
             >
               <span
-                className={`absolute left-1 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-900 shadow-md ring-1 ring-white/10 transition-transform duration-300 ${
+                className={`flex h-6 w-6 items-center justify-center rounded-full bg-white text-slate-800 shadow-md transition-transform duration-300 dark:bg-slate-900 dark:text-yellow-400 ${
                   theme === 'dark' ? 'translate-x-7' : 'translate-x-0'
                 }`}
               >
                 {theme === 'dark' ? (
-                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden="true">
-                    <circle cx="12" cy="12" r="5" fill="currentColor" />
-                    <path
-                      d="M12 3v2.5M12 18.5V21M4.22 4.22l1.77 1.77M17.9 17.9l1.88 1.88M3 12h2.5M18.5 12H21M4.22 19.78l1.77-1.77M17.9 6.1l1.88-1.88"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                      strokeLinecap="round"
-                    />
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden="true" fill="currentColor">
+                    <path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" />
                   </svg>
                 ) : (
                   <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5" fill="currentColor" />
                     <path
-                      d="M21 12.79A9 9 0 0111.21 3 7 7 0 1019 14.79 9.05 9.05 0 0121 12.79z"
-                      fill="currentColor"
+                      d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
                     />
                   </svg>
                 )}
               </span>
             </button>
 
+            {/* Mobile menu button */}
             <button
+              ref={toggleRef}
               type="button"
               onClick={() => setMobileOpen((v) => !v)}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              className="relative z-[60] inline-flex flex-col items-center justify-center gap-1 rounded-lg border border-slate-700/70 p-2 text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300 md:hidden"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-drawer"
+              className="inline-flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-xl border border-slate-200 p-2 text-slate-700 transition hover:border-[#087CF0] hover:text-[#087CF0] dark:border-slate-700 dark:text-slate-200 md:hidden"
             >
               {mobileOpen ? (
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -145,9 +164,9 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
                 </svg>
               ) : (
                 <>
-                  <span className="block h-[2px] w-5 bg-current" />
-                  <span className="block h-[2px] w-5 bg-current" />
-                  <span className="block h-[2px] w-5 bg-current" />
+                  <span className="block h-[2px] w-5 bg-current rounded-full" />
+                  <span className="block h-[2px] w-5 bg-current rounded-full" />
+                  <span className="block h-[2px] w-5 bg-current rounded-full" />
                 </>
               )}
             </button>
@@ -155,57 +174,71 @@ export function Header({ theme, onToggleTheme, currentPage, onNavigate }: Header
         </div>
       </header>
 
-      {/* Mobile menu — rendered outside header to avoid z-index conflicts */}
+      {/* Mobile drawer — a real dialog: fills to the bottom of the viewport,
+          locks the page behind it, and takes focus while it is open. */}
       {mobileOpen && (
-        <>
+        <div className="fixed inset-0 z-[55] md:hidden">
+          {/* Click-away layer. Not focusable — Escape and the header's close
+              button are the accessible ways out. */}
           <div
-            className="fixed inset-0 z-[55] bg-black/60 md:hidden"
+            aria-hidden="true"
             onClick={() => setMobileOpen(false)}
+            className="absolute inset-0 bg-slate-900/45 backdrop-blur-sm"
           />
-          <div className="fixed inset-x-0 top-[72px] bottom-0 z-[56] overflow-y-auto bg-[#0b1220] px-5 py-6 md:hidden">
-            <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">
-              {navItems.map((label) => {
-                const page = labelToPage[label]
-                const isActive = currentPage === page
-                return (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => {
-                      onNavigate(page)
-                      setMobileOpen(false)
-                    }}
-                    className={`w-full rounded-xl border px-4 py-3.5 text-left transition ${
-                      isActive
-                        ? 'border-sky-500/80 bg-sky-500/10 text-sky-300'
-                        : 'border-slate-700/70 hover:border-sky-500/60 hover:text-sky-300'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
+
+          <div
+            id="mobile-drawer"
+            ref={panelRef}
+            role="dialog"
+            aria-label="Site menu"
+            data-lenis-prevent
+            onKeyDown={onPanelKeyDown}
+            className="absolute inset-x-0 top-[74px] bottom-0 flex flex-col bg-white shadow-[0_-8px_40px_rgba(11,35,71,0.18)] dark:bg-slate-900 dark:shadow-[0_-8px_40px_rgba(0,0,0,0.55)]"
+          >
+            <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pt-5 pb-4">
+              <div className="flex flex-col gap-1.5">
+                {navItems.map((label) => {
+                  const page = labelToPage[label]
+                  const isActive = currentPage === page
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => {
+                        onNavigate(page)
+                        setMobileOpen(false)
+                      }}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`flex min-h-12 w-full items-center justify-between rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${
+                        isActive
+                          ? 'bg-sky-50 text-[#087CF0] dark:bg-sky-950/40 dark:text-sky-400'
+                          : 'text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <span>{label}</span>
+                      {isActive && <span className="h-2 w-2 rounded-full bg-[#087CF0]" />}
+                    </button>
+                  )
+                })}
+              </div>
             </nav>
-            <div className="mt-6 flex flex-col gap-3">
-              <a
-                href="tel:9878182115"
-                className="rounded-full border border-slate-700/70 px-4 py-3 text-center text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-slate-200 transition hover:border-sky-500/60 hover:text-sky-300"
-              >
-                📞 Call 98781 82115
-              </a>
+
+            {/* Pinned footer — never scrolls away, and clears the iOS home
+                indicator so the button is never sat under the gesture bar. */}
+            <div className="shrink-0 border-t border-slate-100 px-6 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => {
                   onNavigate('contact')
                   setMobileOpen(false)
                 }}
-                className="rounded-full bg-gradient-to-r from-[#4b55ad] to-sky-500 px-4 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-white shadow-lg shadow-sky-500/30"
+                className="w-full rounded-full bg-gradient-to-r from-[#087CF0] to-[#0284C7] py-3.5 text-center text-sm font-bold text-white shadow-md shadow-[#087CF0]/25"
               >
-                Free Consultation
+                Book a Session →
               </button>
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   )

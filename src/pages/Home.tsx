@@ -14,7 +14,7 @@ type HomeProps = {
 
 export function Home({ onNavigate }: HomeProps) {
   return (
-    <div className="flex flex-col gap-0 pb-0 lg:pb-0">
+    <div className="flex flex-col gap-0 pb-20 md:pb-0">
       <HeroSection onNavigate={onNavigate} />
       <TrustSection />
       <AboutSection />

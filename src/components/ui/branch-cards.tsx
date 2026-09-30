@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 
 /* ─── Types ─── */
 
-interface BranchItem {
+export interface BranchItem {
   num: string
   name: string
   sub: string
@@ -15,68 +15,75 @@ interface BranchCardsProps {
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
-/* ─── Accent colors per card ─── */
+/* ─── Accent per card (matches reference) ─── */
+
 const ACCENTS = [
-  { dot: '#06b6d4', tag: 'bg-cyan-500/10 text-cyan-300', hover: 'hover:border-cyan-500/30' },
-  { dot: '#8b5cf6', tag: 'bg-violet-500/10 text-violet-300', hover: 'hover:border-violet-500/30' },
-  { dot: '#10b981', tag: 'bg-emerald-500/10 text-emerald-300', hover: 'hover:border-emerald-500/30' },
-  { dot: '#f59e0b', tag: 'bg-amber-500/10 text-amber-300', hover: 'hover:border-amber-500/30' },
-  { dot: '#3b82f6', tag: 'bg-blue-500/10 text-blue-300', hover: 'hover:border-blue-500/30' },
-  { dot: '#ec4899', tag: 'bg-pink-500/10 text-pink-300', hover: 'hover:border-pink-500/30' },
-]
+  '#14B8A6', // 01 teal
+  '#8B5CF6', // 02 purple
+  '#10B981', // 03 green
+  '#F59E0B', // 04 orange
+  '#1683FF', // 05 blue
+  '#EC4899', // 06 pink
+] as const
 
 /* ─── Single card ─── */
 
 function BranchCard({ branch, index }: { branch: BranchItem; index: number }) {
-  const accent = ACCENTS[index] || ACCENTS[0]
+  const dot = ACCENTS[index] ?? ACCENTS[0]
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 28 }}
+    <motion.a
+      href={branch.href}
+      initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: EASE, delay: index * 0.08 }}
+      transition={{ duration: 0.6, ease: EASE, delay: index * 0.07 }}
       viewport={{ once: true, margin: '-60px' }}
-      className={`group relative flex items-center gap-5 rounded-2xl border border-white/[0.06] bg-white/[0.03] px-6 py-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.06] hover:shadow-lg hover:shadow-black/20 ${accent.hover}`}
+      className="group flex h-[105px] items-center gap-4 rounded-[20px] border border-sky-100 bg-white px-6 shadow-[0_4px_16px_rgba(11,35,71,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-[0_12px_30px_rgba(11,35,71,0.09)] lg:px-7 dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
     >
-      {/* Accent dot */}
-      <div
-        className="h-2.5 w-2.5 shrink-0 rounded-full"
-        style={{ backgroundColor: accent.dot }}
+      {/* Coloured indicator */}
+      <span
+        className="h-[11px] w-[11px] shrink-0 rounded-full"
+        style={{ backgroundColor: dot }}
+        aria-hidden="true"
       />
 
-      {/* Text */}
-      <div className="min-w-0 flex-1">
-        <h3 className="text-[14px] font-medium tracking-wide text-white/90">
+      {/* Title + subtitle */}
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[16px] font-semibold text-[#0B2347] dark:text-white">
           {branch.name}
-        </h3>
-        <p className="mt-0.5 text-[12px] tracking-wide text-white/40">
+        </span>
+        <span className="mt-1 block truncate text-[14px] leading-[1.4] text-slate-500 dark:text-slate-400">
           {branch.sub}
-        </p>
-      </div>
+        </span>
+      </span>
 
-      {/* Arrow */}
-      <svg
-        className="h-4 w-4 shrink-0 text-white/20 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white/50"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={1.5}
+      {/* Circular arrow button */}
+      <span
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8F4FD] transition-colors duration-300 group-hover:bg-[#1683FF] dark:bg-sky-950/50 dark:group-hover:bg-sky-500"
+        aria-hidden="true"
       >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-      </svg>
-    </motion.div>
+        <svg
+          className="h-4 w-4 text-[#0B2347] transition-colors duration-300 group-hover:text-white dark:text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.8}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </span>
+    </motion.a>
   )
 }
 
-/* ─── Grid wrapper ─── */
+/* ─── Grid wrapper — 3 × 2 on desktop, 2 on tablet, 1 on mobile ─── */
 
 export default function BranchCards({ branches }: BranchCardsProps) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-3 lg:gap-x-7 lg:gap-y-6">
       {branches.map((b, i) => (
         <BranchCard key={b.name} branch={b} index={i} />
       ))}
     </div>
   )
 }
-

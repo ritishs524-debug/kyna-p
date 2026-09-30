@@ -1,11 +1,22 @@
-import { useState, useEffect } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, type Variants } from 'framer-motion'
-import { MapPin, Sparkles } from 'lucide-react'
-import { getTeamMembers, type TeamMemberData } from '../lib/api'
+'use client'
 
-const teamMembers = [
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Compass, HeartHandshake, ShieldCheck, Sparkles } from 'lucide-react'
+import { PageHero } from '../components/ui/PageHero'
+import { SectionHeading } from '../components/ui/SectionHeading'
+import { CTASection } from '../components/ui/CTASection'
+import { RevealGroup } from '../components/ui/Reveal'
+import { TeamCard, type TeamMember } from '../components/ui/cards'
+import { getTeamMembers, type TeamMemberData } from '../lib/api'
+import { container, dark, sectionLight, sectionTint } from '../lib/design-tokens'
+
+/**
+ * The ten therapists, unchanged. Images come from the CMS when it responds;
+ * without one, each card falls back to initials so the grid never breaks.
+ */
+const teamMembers: readonly TeamMember[] = [
   {
-    id: 'sorabh-sharma',
     name: 'Sorabh Sharma (PT)',
     primaryRole: 'Sports Specialist · Osteopath',
     tags: ['Sports Rehab', 'Manual Therapy'],
@@ -15,7 +26,6 @@ const teamMembers = [
     location: 'Patiala',
   },
   {
-    id: 'pradeep-kumar',
     name: 'Pradeep Kumar (PT)',
     primaryRole: 'Ortho & Neuro Specialist',
     tags: ['Spine Care', 'Neuro Rehab'],
@@ -25,7 +35,6 @@ const teamMembers = [
     location: 'Patiala',
   },
   {
-    id: 'angadjot-singh',
     name: 'Angadjot Singh (PT)',
     primaryRole: 'Ortho Specialist · Osteopath',
     tags: ['Joint Health', 'Posture'],
@@ -35,7 +44,6 @@ const teamMembers = [
     location: 'Samana',
   },
   {
-    id: 'pratima-chakraborty',
     name: 'Pratima Chakraborty (PT)',
     primaryRole: 'Gynae Specialist · Lamaze Practitioner',
     tags: ['Women’s Health', 'Birth Prep'],
@@ -45,7 +53,6 @@ const teamMembers = [
     location: 'Patiala',
   },
   {
-    id: 'aakash-kalra',
     name: 'Aakash Kalra (PT)',
     primaryRole: 'Ortho Specialist',
     tags: ['Knee & Shoulder', 'Return to Sport'],
@@ -55,7 +62,6 @@ const teamMembers = [
     location: 'Patiala',
   },
   {
-    id: 'harpreet-kaur',
     name: 'Harpreet Kaur (PT)',
     primaryRole: 'Ortho Specialist',
     tags: ['Chronic Pain', 'Posture'],
@@ -65,7 +71,6 @@ const teamMembers = [
     location: 'Patiala',
   },
   {
-    id: 'naina-rattan',
     name: 'Naina Rattan (PT)',
     primaryRole: 'Ortho Specialist',
     tags: ['Spine', 'Everyday Mobility'],
@@ -75,7 +80,6 @@ const teamMembers = [
     location: 'Patiala',
   },
   {
-    id: 'divyansh-bansal',
     name: 'Divyansh Bansal (PT)',
     primaryRole: 'Sports Specialist',
     tags: ['Athlete Care', 'Performance'],
@@ -85,7 +89,6 @@ const teamMembers = [
     location: 'Patiala',
   },
   {
-    id: 'komalpreet-kaur',
     name: 'Komalpreet Kaur (PT)',
     primaryRole: 'Physiotherapist',
     tags: ['Rehab Support', 'Education'],
@@ -95,7 +98,6 @@ const teamMembers = [
     location: 'Patiala',
   },
   {
-    id: 'mansi',
     name: 'Mansi (PT)',
     primaryRole: 'Physiotherapist',
     tags: ['Exercise Therapy', 'Recovery'],
@@ -104,226 +106,125 @@ const teamMembers = [
     initials: 'M',
     location: 'Patiala',
   },
+]
+
+/** Team philosophy, drawn from the About page's existing approach copy. */
+const philosophy = [
+  {
+    icon: Compass,
+    title: 'Your Story First',
+    body: 'Every protocol begins with understanding your story, your goals and your lifestyle before a plan is written.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Qualified & Continuously Trained',
+    body: 'Every therapist holds the necessary qualifications and certifications, and keeps building on them.',
+  },
+  {
+    icon: HeartHandshake,
+    title: 'Specialists, Not Generalists',
+    body: 'Sports rehab, orthopaedics, neurology and women’s health — you work with the person who knows your condition.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Care That Feels Personal',
+    body: 'The goal is a memorable experience built on a real patient-therapist relationship, not a conveyor belt.',
+  },
 ] as const
 
-/* ─── Animation variants ─── */
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.3 },
-  },
-}
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: {
-    opacity: 1, y: 0, scale: 1,
-    transition: { duration: 0.6, ease: [0.6, 0.05, 0.01, 0.9] },
-  },
-}
-
-/* ─── Single card ─── */
-interface MemberForCard {
-  id?: string
-  name: string
-  primaryRole: string
-  tags: readonly string[] | string[]
-  focus: string
-  initials: string
-  image?: string
-  location?: string
-}
-
-function TeamMemberCard({ member }: { member: MemberForCard }) {
-  const [isHovered, setIsHovered] = useState(false)
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), { stiffness: 300, damping: 30 })
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), { stiffness: 300, damping: 30 })
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    mouseX.set((e.clientX - rect.left - rect.width / 2) / (rect.width / 2))
-    mouseY.set((e.clientY - rect.top - rect.height / 2) / (rect.height / 2))
-  }
-
-  const handleMouseLeave = () => {
-    mouseX.set(0); mouseY.set(0); setIsHovered(false)
-  }
-
-  return (
-    <motion.div variants={itemVariants} style={{ perspective: 1000 }}>
-      <motion.div
-        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={handleMouseLeave}
-        className="group relative"
-      >
-        <div className="relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-sm backdrop-blur-xl transition-shadow duration-500 hover:shadow-lg dark:border-slate-800/60 dark:bg-slate-900">
-          {/* Hover gradient */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-sky-500/10 via-white/5 to-transparent"
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.4 }}
-          />
-
-          {/* Sparkle */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={isHovered ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
-            className="absolute right-4 top-4 z-10"
-          >
-            <Sparkles className="h-4 w-4 text-sky-500 dark:text-sky-400" />
-          </motion.div>
-
-          <div className="relative z-10 p-6">
-            {/* Avatar */}
-            <div className="mb-4 flex justify-center">
-              <motion.div className="relative" whileHover={{ scale: 1.05 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-                <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-slate-200/60 bg-gradient-to-br from-sky-100 to-sky-50 dark:border-slate-700/60 dark:from-sky-900/40 dark:to-slate-800">
-                  {member.image ? (
-                    <img src={member.image} alt={member.name} className="h-full w-full rounded-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-2xl font-bold text-sky-600 dark:text-sky-300">
-                      {member.initials}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Info */}
-            <div className="text-center">
-              <h3 className="mb-1 text-lg font-semibold tracking-tight text-slate-900 dark:text-white">{member.name}</h3>
-              <span className="mb-2 inline-block rounded-full bg-sky-50 px-3 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
-                {member.primaryRole}
-              </span>
-
-              {member.location && (
-                <div className="mt-1.5 flex items-center justify-center gap-1 text-xs text-slate-400 dark:text-slate-500">
-                  <MapPin className="h-3 w-3" />
-                  <span>{member.location}</span>
-                </div>
-              )}
-
-              <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{member.focus}</p>
-
-              {/* Tags */}
-              <motion.div className="mt-3 flex flex-wrap justify-center gap-1.5" animate={isHovered ? { opacity: 1 } : { opacity: 0.7 }} transition={{ duration: 0.3 }}>
-                {member.tags.map((tag, idx) => (
-                  <motion.span
-                    key={tag}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.08 * idx, type: 'spring' }}
-                    className="rounded-full border border-slate-200/60 bg-slate-50 px-2.5 py-0.5 text-[0.6rem] font-medium text-slate-500 transition-colors hover:bg-sky-50 hover:text-sky-600 dark:border-slate-700/60 dark:bg-slate-800/50 dark:text-slate-400 dark:hover:bg-sky-900/30 dark:hover:text-sky-300"
-                  >
-                    {tag}
-                  </motion.span>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  )
-}
-
-/* ─── Main Page ─── */
 export function Team() {
+  const navigate = useNavigate()
   const [dbTeam, setDbTeam] = useState<TeamMemberData[]>([])
-  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     getTeamMembers()
-      .then((data) => { if (data.length > 0) setDbTeam(data) })
-      .catch(() => {})
-      .finally(() => setLoaded(true))
+      .then((data) => {
+        if (data.length > 0) setDbTeam(data)
+      })
+      .catch(() => {
+        /* keep the bundled team list when the CMS is unreachable */
+      })
   }, [])
 
-  const useDb = dbTeam.length > 0
-
-  const members: MemberForCard[] = useDb
-    ? dbTeam.map((m) => ({ ...m, location: 'Patiala' }))
-    : teamMembers.map((m) => ({ ...m, tags: [...m.tags] }))
-
-  if (!loaded) return null
+  // The CMS wins when it responds; the bundled list is the fallback. The page
+  // never returns null, so there is no blank flash while it loads.
+  const members: TeamMember[] =
+    dbTeam.length > 0
+      ? dbTeam.map((m) => ({
+          name: m.name,
+          primaryRole: m.primaryRole,
+          focus: m.focus,
+          initials: m.initials,
+          image: m.image || undefined,
+          location: 'Patiala',
+          tags: m.tags,
+        }))
+      : teamMembers.map((m) => ({ ...m, tags: m.tags ? [...m.tags] : undefined }))
 
   return (
-    <section className="relative w-full overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.2, 0.08] }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
-          className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-sky-400/25 blur-[180px]"
-        />
-        <motion.div
-          animate={{ scale: [1.1, 1, 1.1], opacity: [0.08, 0.2, 0.08] }}
-          transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
-          className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-emerald-400/20 blur-[180px]"
-        />
-      </div>
+    <div className="flex flex-col pb-20 md:pb-0">
+      <PageHero
+        eyebrow="Our Expert Team"
+        title="Meet the Experts Behind KYNA"
+        intro="Every therapist at KYNA is a licensed professional with advanced training in their area of practice. Together, they combine sports rehab, orthopaedics, neurology and women's health to build truly personalised treatment journeys."
+      />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.6, 0.05, 0.01, 0.9] }}
-          className="mb-14 text-center"
-        >
-          <motion.span
-            className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/90 px-5 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-sky-700 shadow-sm dark:bg-slate-900/80 dark:text-sky-300"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            <Sparkles className="h-3 w-3" />
-            Our Team
-          </motion.span>
+      {/* ── Team grid ── */}
+      <section className={`${sectionLight} ${dark.sectionLight}`}>
+        <div className={`${container.content} py-16 lg:py-20`}>
+          <SectionHeading
+            eyebrow={`${members.length} Specialists`}
+            title="Specialists Who Treat You Like Family"
+            intro="Each member of our team has undergone extensive training and holds the necessary qualifications and certifications in their respective fields."
+          />
 
-          <motion.h1
-            className="mt-4 text-balance text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            Specialists Who Treat You
-            <br />
-            <span className="bg-gradient-to-r from-sky-500 to-sky-400 bg-clip-text text-transparent">
-              Like Family
-            </span>
-          </motion.h1>
+          <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+            {members.map((member) => (
+              <TeamCard key={member.name} member={member} />
+            ))}
+          </RevealGroup>
+        </div>
+      </section>
 
-          <motion.p
-            className="mx-auto mt-4 max-w-2xl text-sm text-slate-500 sm:text-base dark:text-slate-400"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            Every therapist at KYNA is a licensed professional with advanced training in their area of
-            practice. Together, they combine sports rehab, orthopaedics, neurology and women&apos;s health to
-            build truly personalised treatment journeys.
-          </motion.p>
-        </motion.div>
+      {/* ── Team philosophy ── */}
+      <section className={`${sectionTint} ${dark.sectionTint}`}>
+        <div className={`${container.content} py-16 lg:py-20`}>
+          <SectionHeading
+            eyebrow="Team Philosophy"
+            title="How we work, together and with you"
+            intro="Four things every KYNA therapist holds to, whichever clinic you visit."
+          />
 
-        {/* Team grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {members.map((member) => (
-            <TeamMemberCard key={member.id ?? member.name} member={member} />
-          ))}
-        </motion.div>
-      </div>
-    </section>
+          <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4 lg:gap-6">
+            {philosophy.map((item) => (
+              <article
+                key={item.title}
+                className="group h-full rounded-[20px] border border-sky-100 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_44px_rgba(11,35,71,0.10)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_4px_18px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_18px_44px_rgba(0,0,0,0.5)]"
+              >
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-[#087CF0] transition-transform duration-300 group-hover:scale-105 dark:bg-sky-950/40 dark:text-sky-400">
+                  <item.icon className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <h3 className="mt-5 text-[17px] font-bold tracking-tight text-[#0B2347] dark:text-white">
+                  {item.title}
+                </h3>
+                <p className="mt-2.5 text-[14px] leading-[1.7] text-slate-500 dark:text-slate-400">
+                  {item.body}
+                </p>
+              </article>
+            ))}
+          </RevealGroup>
+        </div>
+      </section>
+
+      <CTASection
+        eyebrow="Work With Us"
+        title="Ready to work with our team?"
+        body="Tell us what you are dealing with and we will pair you with the specialist who knows that area best."
+        primaryLabel="Book a Session"
+        onPrimary={() => navigate('/contact')}
+        secondaryLabel="Call 98781 82115"
+        secondaryHref="tel:9878182115"
+      />
+    </div>
   )
 }
