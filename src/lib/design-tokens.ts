@@ -125,7 +125,7 @@ export const btnPrimary =
 export const btnOutline =
   'inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/80 px-8 font-bold text-[#0B2347] shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 hover:text-[#087CF0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#087CF0] dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-sky-400'
 
-/** Legacy uppercase pill — kept for the Home FinalCtaSection button styles. */
+/** Small uppercase pill — the button pair inside the shared CTA card. */
 export const btnPrimaryLegacy =
   'inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#1683FF] to-[#0284C7] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_12px_30px_rgba(22,131,255,0.28)] transition hover:-translate-y-0.5'
 export const btnGhost =

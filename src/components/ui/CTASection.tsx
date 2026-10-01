@@ -3,8 +3,6 @@
 import type { ReactNode } from 'react'
 import {
   btnGhost,
-  btnOutline,
-  btnPrimary,
   btnPrimaryLegacy,
   cardFeature,
   color,
@@ -28,11 +26,11 @@ type CTASectionProps = {
 }
 
 /**
- * The closing call-to-action shared by every inner page.
+ * The closing call-to-action shared by every page, Home included.
  *
- * Visually identical to Home's `FinalCtaSection` (same gradient card, same
- * eyebrow, same button pair) so the last thing a visitor sees on any page
- * matches the last thing they see on Home.
+ * Home used to render its own copy of this card. It now delegates here (see
+ * `FinalCtaSection`), so there is exactly one definition of the card's
+ * gradient, eyebrow, type scale and button pair.
  */
 export function CTASection({
   eyebrow: eyebrowText = 'Ready to Start Your Recovery Journey?',
@@ -47,6 +45,7 @@ export function CTASection({
 }: CTASectionProps) {
   return (
     <section
+      data-cta
       className={`relative overflow-hidden bg-white pt-16 pb-16 lg:pt-20 lg:pb-24 dark:bg-slate-950 ${className}`}
     >
       <div className={container.content}>
@@ -93,37 +92,5 @@ export function CTASection({
         </Reveal>
       </div>
     </section>
-  )
-}
-
-/** Convenience: the two buttons the CTA uses, for pages that need them inline. */
-export function CTAButtons({
-  primaryLabel,
-  onPrimary,
-  secondaryLabel,
-  secondaryHref,
-}: Pick<
-  CTASectionProps,
-  'primaryLabel' | 'onPrimary' | 'secondaryLabel' | 'secondaryHref'
->) {
-  return (
-    <div className="flex flex-wrap items-center gap-4">
-      <button
-        type="button"
-        onClick={onPrimary}
-        className={`${btnPrimary} h-[52px] px-8 text-[15px] lg:h-[58px] lg:px-9 lg:text-base`}
-      >
-        {primaryLabel}
-        <span aria-hidden="true">→</span>
-      </button>
-      {secondaryLabel && secondaryHref && (
-        <a
-          href={secondaryHref}
-          className={`${btnOutline} h-[52px] px-7 text-[15px] lg:h-[58px] lg:px-8 lg:text-base`}
-        >
-          {secondaryLabel}
-        </a>
-      )}
-    </div>
   )
 }
